@@ -1,21 +1,44 @@
 "use client";
 
 import { ArrowUp, Bell, Menu } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useTransition } from "react";
 import Owen from "@/app/owen.jpg";
 import Image from "next/image";
 import ThemeSwitch from "./theme-switcher-button";
 import { AuthError } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { fetchUserDetails } from "@/actions/fetch-user-details";
+import { User } from "@/lib/collection.types";
+import capitalizeFirstLetter from "@/utils/capitalize";
+import { logOut } from "@/actions/logout";
+import Link from "next/link";
+import LogoutButton from "../buttons/logout-button";
+
+interface UserWithRole extends User {
+  role: string;
+}
 
 const ProfileBar = ({ firstName, lastName, role }: { firstName: string; lastName: string; role: string }) => {
   const [isDropDownActive, setIsDropDownActive] = useState<boolean>(false);
+  const [userDetails, setUserDetails] = useState<UserWithRole>();
+  const [loading, startTransition] = useTransition();
 
   const router = useRouter();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const fetchUserOnLoad = async () => {
+      const { user, error, role } = await fetchUserDetails();
+      if (!error && user) {
+        setUserDetails({ ...user, role });
+        return;
+      }
+      return console.error(error);
+    };
+
+    fetchUserOnLoad();
+
     const dropDown = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsDropDownActive(false);
@@ -24,9 +47,20 @@ const ProfileBar = ({ firstName, lastName, role }: { firstName: string; lastName
     document.addEventListener("mousedown", dropDown);
 
     // return document.removeEventListener("mousedown", dropDown);
-  }, [dropdownRef.current]);
+  }, []);
 
-  const handleSignOut = async () => {};
+  // const handleLogout = async () => {
+  //   startTransition(async () => {
+  //     const error = await logOut();
+  //     // When logged out, load then redirect to landing page
+  //     if (!error) {
+  //       router.push("/");
+  //     } else {
+  //       // If error, log the error
+  //       console.log(error);
+  //     }
+  //   });
+  // };
 
   return (
     <div className='absolute top-0 right-0 px-2 py-2'>
@@ -45,7 +79,7 @@ const ProfileBar = ({ firstName, lastName, role }: { firstName: string; lastName
               } hover:bg-green-300  dark:hover:bg-green-700 transition-all`}
             >
               <Image className='rounded-full' width={35} height={35} src={Owen} alt='profile image' />
-              <p className='text-xl font-bold select-none hidden lg:inline'>{`${firstName} ${lastName}`}</p>
+              <p className='text-xl font-bold select-none hidden lg:inline'>{userDetails ? `${userDetails.first_name} ${userDetails.last_name}` : `${firstName} ${lastName}`}</p>
               <ArrowUp className={`${isDropDownActive ? "rotate-180" : "rotate-0"} transition-transform hidden lg:inline`} size={25} />
             </div>
             <div
@@ -55,13 +89,15 @@ const ProfileBar = ({ firstName, lastName, role }: { firstName: string; lastName
             >
               <ul className=''>
                 <li className='border-b border-grey-400 flex flex-col items-center cursor-pointe select-none px-2 py-2 rounded transition-all'>
-                  <span className='font-semibold text-lg'>{`${firstName} ${lastName}`}</span>
-                  <span>{role}</span>
+                  <span className='font-semibold text-lg'>{userDetails ? `${userDetails.first_name} ${userDetails.last_name}` : `${firstName} ${lastName}`}</span>
+                  <span>{userDetails ? capitalizeFirstLetter(userDetails.role) : role}</span>
                 </li>
-                <li onClick={handleSignOut} className='cursor-pointer hover:bg-green-400 px-2 py-2 rounded transition-all'>
-                  Sign Out
+                <li>
+                  <LogoutButton className='cursor-pointer hover:bg-green-400 px-2 py-2 rounded transition-all w-full' />
                 </li>
-                <li className='cursor-pointer hover:bg-green-400 px-2 py-2 rounded transition-all'>Settings</li>
+                <Link href='/teacher/settings'>
+                  <button className='cursor-pointer hover:bg-green-400 px-2 py-2 rounded transition-all w-full'>Settings</button>
+                </Link>
               </ul>
             </div>
           </div>

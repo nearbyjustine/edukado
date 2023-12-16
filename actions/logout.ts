@@ -15,6 +15,5 @@ export const logOut = async () => {
   // const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
   const { error } = await supabase.auth.signOut();
-  console.log(error);
   return error;
 };

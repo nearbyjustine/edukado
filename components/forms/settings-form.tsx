@@ -19,17 +19,27 @@ import { fetchUserDetails } from "@/actions/fetch-user-details";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@/lib/collection.types";
 
-export const SettingsForm = ({ className, userDetails }: { className?: string; userDetails: User }) => {
+export const SettingsForm = ({ className }: { className?: string }) => {
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState("");
-  const [user, setUser] = useState<User>(userDetails);
+  const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
+
+  const setFormValue = (user: User) => {
+    form.reset();
+    form.setValue("first_name", user.first_name, { shouldValidate: true });
+    form.setValue("middle_name", user.middle_name, { shouldValidate: true });
+    form.setValue("last_name", user.last_name, { shouldValidate: true });
+    form.setValue("gender", user.gender, { shouldValidate: true });
+    form.setValue("birth_date", new Date(user.birth_date), { shouldValidate: true });
+  };
 
   useEffect(() => {
     const fetchUserOnLoad = async () => {
       const { user, error } = await fetchUserDetails();
       if (!error && user) {
         setUser(user);
+        setFormValue(user);
         return;
       }
       return console.error(error);
@@ -37,7 +47,6 @@ export const SettingsForm = ({ className, userDetails }: { className?: string; u
 
     fetchUserOnLoad();
   }, []);
-
   const onSubmit = (values: FormSchemaType) => {
     startTransition(async () => {
       const error = await updateUser(values);
@@ -46,11 +55,7 @@ export const SettingsForm = ({ className, userDetails }: { className?: string; u
         const { user, error: userError } = await fetchUserDetails();
         if (!userError) {
           setUser(user);
-          form.setValue("first_name", user.first_name, { shouldValidate: true });
-          form.setValue("middle_name", user.middle_name, { shouldValidate: true });
-          form.setValue("last_name", user.last_name, { shouldValidate: true });
-          form.setValue("gender", user.gender, { shouldValidate: true });
-          form.setValue("birth_date", new Date(user.birth_date), { shouldValidate: true });
+          setFormValue(user);
           return;
         }
 
@@ -63,11 +68,11 @@ export const SettingsForm = ({ className, userDetails }: { className?: string; u
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: user.first_name,
-      middle_name: user.middle_name,
-      last_name: user.last_name,
-      gender: user.gender,
-      birth_date: new Date(user.birth_date),
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      gender: "",
+      birth_date: new Date(),
     },
   });
 

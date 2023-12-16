@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const cookieStore = cookies();
+  // console.log(cookieStore.getAll());
   // SSR
   const supabase = createClient(cookieStore);
   // AUTH HELPER
@@ -20,12 +21,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error }, { status: 401 });
   }
 
-  // const role = user.user_metadata["role"];
-  // const { data, error: detailsError } = await supabase.from("profiles").select().eq("id", user.id).single();
+  const role = user.user_metadata["role"];
+  const { data, error: detailsError } = await supabase.from("profiles").select().eq("id", user.id).single();
 
-  // if (detailsError || !data) {
-  //   return NextResponse.json({ error: detailsError }, { status: 401 });
-  // }
+  if (detailsError || !data) {
+    return NextResponse.json({ error: detailsError }, { status: 401 });
+  }
 
-  // return NextResponse.json({ user: data }, { status: 200 });
+  return NextResponse.json({ user: data }, { status: 200 });
+  // return NextResponse.json({ status: 200 });
 }

@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
-const LogoutButton = () => {
+const LogoutButton = ({ className }: { className?: string }) => {
   const [loading, startTransition] = useTransition();
 
   const router = useRouter();
@@ -23,9 +23,9 @@ const LogoutButton = () => {
   };
 
   return (
-    <Button disabled={loading} onClick={() => handleLogout()}>
+    <button className={className} disabled={loading} onClick={() => handleLogout()}>
       {loading ? "Loading..." : "Logout"}
-    </Button>
+    </button>
   );
 };
 
