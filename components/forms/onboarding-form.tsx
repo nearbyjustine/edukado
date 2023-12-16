@@ -41,7 +41,7 @@ export const OnboardingForm = ({ className }: { className?: string }) => {
       middle_name: "",
       last_name: "",
       gender: "",
-      birth_date: "",
+      birth_date: new Date(),
     },
   });
 

@@ -1,25 +1,28 @@
 import { SettingsForm } from "@/components/forms/settings-form";
+import { User } from "@/lib/collection.types";
 import { createClient } from "@/utils/supabase/server";
+import { AuthError, PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import React from "react";
 
-const SettingsPage = async () => {
-  const cookieStore = cookies();
-  const supabase = await createClient(cookieStore);
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (!error && user) {
-    const { data: userDetails, error: userDetailsError } = await supabase.from("profiles").select().eq("id", user.id).single();
-    if (!userDetailsError && userDetails) {
-      return (
-        <div>
-          <SettingsForm userDetails={userDetails} />
-        </div>
-      );
+type UserResponse =
+  | {
+      user: User | null;
+      status: number;
     }
-  }
+  | {
+      error: PostgrestError | AuthError | null;
+      status: number;
+    };
+
+const SettingsPage = async () => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/user/fetch-self`, {
+    cache: "no-cache",
+  });
+
+  console.log(await response.json());
+
+  return <div>{/* <SettingsForm userDetails={userDetails} /> */}</div>;
   return <div>Something went wrong</div>;
 };
 

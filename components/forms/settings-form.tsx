@@ -15,25 +15,46 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect, useRouter } from "next/navigation";
 import { FormSchemaType, formSchema } from "@/schema/onboarding-form.schema";
 import { updateUser, updateUserHasOnboarded } from "@/actions/update-user-details";
-import { fetchUserDetails } from "@/actions/fetch-user-details-browser";
+import { fetchUserDetails } from "@/actions/fetch-user-details";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@/lib/collection.types";
 
 export const SettingsForm = ({ className, userDetails }: { className?: string; userDetails: User }) => {
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState("");
+  const [user, setUser] = useState<User>(userDetails);
+  const [isLoading, setIsLoading] = useState(true);
 
-  console.log(userDetails);
+  useEffect(() => {
+    const fetchUserOnLoad = async () => {
+      const { user, error } = await fetchUserDetails();
+      if (!error && user) {
+        setUser(user);
+        return;
+      }
+      return console.error(error);
+    };
+
+    fetchUserOnLoad();
+  }, []);
 
   const onSubmit = (values: FormSchemaType) => {
     startTransition(async () => {
       const error = await updateUser(values);
 
       if (!error) {
-        const onboardingError = await updateUserHasOnboarded();
-        if (!onboardingError) return redirect("/");
+        const { user, error: userError } = await fetchUserDetails();
+        if (!userError) {
+          setUser(user);
+          form.setValue("first_name", user.first_name, { shouldValidate: true });
+          form.setValue("middle_name", user.middle_name, { shouldValidate: true });
+          form.setValue("last_name", user.last_name, { shouldValidate: true });
+          form.setValue("gender", user.gender, { shouldValidate: true });
+          form.setValue("birth_date", new Date(user.birth_date), { shouldValidate: true });
+          return;
+        }
 
-        return setServerError(onboardingError.message);
+        return setServerError(userError.message);
       }
       return setServerError(error.message);
     });
@@ -42,11 +63,11 @@ export const SettingsForm = ({ className, userDetails }: { className?: string; u
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: userDetails.first_name,
-      middle_name: userDetails.middle_name,
-      last_name: userDetails.last_name,
-      gender: userDetails.gender,
-      birth_date: userDetails.birth_date,
+      first_name: user.first_name,
+      middle_name: user.middle_name,
+      last_name: user.last_name,
+      gender: user.gender,
+      birth_date: new Date(user.birth_date),
     },
   });
 

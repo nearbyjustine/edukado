@@ -5,10 +5,15 @@ import { FormSchemaType } from "@/schema/onboarding-form.schema";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import moment from "moment";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/lib/database.types";
 
 export const updateUser = async (values: FormSchemaType) => {
   const cookieStore = cookies();
-  const supabase = await createClient(cookieStore);
+  // SSR
+  // const supabase = await createClient(cookieStore);
+  // AUTH HELPER
+  const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
   const {
     data: { user },
@@ -16,7 +21,7 @@ export const updateUser = async (values: FormSchemaType) => {
   } = await supabase.auth.getUser();
 
   if (!error && user) {
-    const date = String(moment(new Date(values.birth_date)).format("YYYY-MM-D"));
+    const date = moment(new Date(values.birth_date)).format("YYYY-MM-D");
     const { error: updateUserError } = await supabase
       .from("profiles")
       .update({ ...values, birth_date: date })
@@ -29,7 +34,10 @@ export const updateUser = async (values: FormSchemaType) => {
 
 export const updateUserHasOnboarded = async () => {
   const cookieStore = cookies();
+  // SSR
   const supabase = await createClient(cookieStore);
+  // AUTH HELPER
+  // const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
   const {
     data: { user },

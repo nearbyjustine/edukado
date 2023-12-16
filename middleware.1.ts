@@ -1,29 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/middleware";
-import { createClient as createBrowserClient } from "@/utils/supabase/client";
-import { headers } from "next/headers";
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "./lib/database.types";
-
-const protectedRoutes = ["/teacher", "/teacher/*", "/student", "/student/*"];
-const teacherProtectedRoutes = ["/teacher", "/teacher/*"];
-const studentProtectedRoutes = ["/student", "/student/*"];
-const loginRoutes = ["/teacher-login", "/student-login", "/"];
+import { protectedRoutes, studentProtectedRoutes, teacherProtectedRoutes, loginRoutes } from "./middleware";
 
 export async function middleware(request: NextRequest) {
   try {
     // The middleware was doing some auth checking and redirecting users who are not logged in,
     // this runs on all requests and was redirecting the loading of assets to
     // a /session-expired page which didn't as an HTML page is not a CSS file.
-
     // if (request.nextUrl.pathname.startsWith("/_next/")) {
     //   return NextResponse.next();
     // }
-
     // SSR
     const { supabase, response } = createClient(request);
-    // AUTH-HELPERS
-    // const supabase = createMiddlewareClient<Database>(req: request, res: );
 
     // Refresh session if expired - required for Server Components
     // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
@@ -68,16 +56,3 @@ export async function middleware(request: NextRequest) {
     });
   }
 }
-
-// Ensure the middleware is only called for relevant paths.
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
-};
