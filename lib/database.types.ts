@@ -26,30 +26,30 @@ export interface Database {
       }
       profiles: {
         Row: {
-          birth_date: string | null
+          birth_date: string
           first_name: string
           gender: string
           id: string
           last_name: string
-          middle_name: string | null
+          middle_name: string
           updated_at: string | null
         }
         Insert: {
-          birth_date?: string | null
+          birth_date?: string
           first_name?: string
           gender?: string
           id: string
           last_name?: string
-          middle_name?: string | null
+          middle_name?: string
           updated_at?: string | null
         }
         Update: {
-          birth_date?: string | null
+          birth_date?: string
           first_name?: string
           gender?: string
           id?: string
           last_name?: string
-          middle_name?: string | null
+          middle_name?: string
           updated_at?: string | null
         }
         Relationships: [

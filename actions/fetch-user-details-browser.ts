@@ -12,10 +12,9 @@ const templateUser: User = {
   updated_at: "",
 };
 
-export const fetchUserDetails = () => {
+export const fetchUserDetails = (userId: string) => {
   const supabase = createClient();
 
-  const data = supabase.from("profiles").select().single();
-
+  const data = supabase.from("profiles").select().eq("id", userId);
   return data;
 };
