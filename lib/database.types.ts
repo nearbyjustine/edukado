@@ -87,20 +87,23 @@ export interface Database {
         Row: {
           classroom_id: string
           created_at: string
-          id: number
+          id: string
           name: string
+          teacher_id: string
         }
         Insert: {
           classroom_id: string
           created_at?: string
-          id?: number
+          id?: string
           name?: string
+          teacher_id?: string
         }
         Update: {
           classroom_id?: string
           created_at?: string
-          id?: number
+          id?: string
           name?: string
+          teacher_id?: string
         }
         Relationships: [
           {
@@ -108,6 +111,13 @@ export interface Database {
             columns: ["classroom_id"]
             isOneToOne: false
             referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subjects_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]

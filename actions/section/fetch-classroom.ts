@@ -20,10 +20,10 @@ export const fetchClassroomsOnGradeLevel = async (gradeLevel: GradeLevelEnum) =>
   return data;
 };
 
-export const fetchClassroomOnId = async (id: string) => {
+export const fetchClassroomByGradeLevelAndSection = async (gradeLevel: GradeLevelEnum, section: string) => {
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
-  const data = await supabase.from("classrooms").select().eq("id", id);
+  const data = await supabase.from("classrooms").select().eq("grade_level", gradeLevel).eq("section", section).single();
   return data;
 };
