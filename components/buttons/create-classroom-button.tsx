@@ -80,7 +80,7 @@ const CreateClassroomButton = () => {
             </PopoverTrigger>
             <PopoverContent className='w-[200px] p-0'>
               <Command>
-                <CommandInput placeholder='Enter section...' />
+                <CommandInput placeholder='Enter   section...' />
                 <CommandEmpty className=''>
                   <Dialog>
                     <DialogTrigger className='w-full'>
