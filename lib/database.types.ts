@@ -14,19 +14,19 @@ export interface Database {
           created_at: string
           grade_level: Database["public"]["Enums"]["grade_level_enum"]
           id: string
-          section: string | null
+          section: string
         }
         Insert: {
           created_at?: string
           grade_level: Database["public"]["Enums"]["grade_level_enum"]
           id?: string
-          section?: string | null
+          section?: string
         }
         Update: {
           created_at?: string
           grade_level?: Database["public"]["Enums"]["grade_level_enum"]
           id?: string
-          section?: string | null
+          section?: string
         }
         Relationships: []
       }
