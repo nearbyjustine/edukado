@@ -9,6 +9,27 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      classrooms: {
+        Row: {
+          created_at: string
+          grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          id: string
+          section: string | null
+        }
+        Insert: {
+          created_at?: string
+          grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          id?: string
+          section?: string | null
+        }
+        Update: {
+          created_at?: string
+          grade_level?: Database["public"]["Enums"]["grade_level_enum"]
+          id?: string
+          section?: string | null
+        }
+        Relationships: []
+      }
       notes: {
         Row: {
           id: number
@@ -62,6 +83,35 @@ export interface Database {
           }
         ]
       }
+      subjects: {
+        Row: {
+          classroom_id: string
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          classroom_id: string
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Update: {
+          classroom_id?: string
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -70,6 +120,13 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      grade_level_enum:
+        | "Grade 1"
+        | "Grade 2"
+        | "Grade 3"
+        | "Grade 4"
+        | "Grade 5"
+        | "Grade 6"
       roles_enum:
         | "student"
         | "teacher"
