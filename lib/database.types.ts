@@ -9,6 +9,47 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      activity: {
+        Row: {
+          content: string
+          created_at: string
+          file_url: string | null
+          id: string
+          link_url: string | null
+          subject_id: string
+          teacher_id: string
+          title: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          link_url?: string | null
+          subject_id: string
+          teacher_id?: string
+          title?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          link_url?: string | null
+          subject_id?: string
+          teacher_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       classrooms: {
         Row: {
           created_at: string

@@ -26,7 +26,8 @@ export async function GET(request: NextRequest) {
     section,
     subjects (id, name)`
     )
-    .eq("subjects.teacher_id", user.id);
+    .eq("subjects.teacher_id", user.id)
+    .order("grade_level");
 
   return response.json({ classroomData, classroomError }, { status: 200 });
 }

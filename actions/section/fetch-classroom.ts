@@ -8,7 +8,7 @@ export const fetchAllClassrooms = async () => {
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
-  const data = await supabase.from("classrooms").select();
+  const data = await supabase.from("classrooms").select().order("grade_level");
   return data;
 };
 

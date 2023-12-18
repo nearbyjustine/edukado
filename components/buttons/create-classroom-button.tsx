@@ -52,7 +52,7 @@ const CreateClassroomButton = () => {
     };
 
     fetchSectionsByLevel();
-  }, [gradeLevelValue, newSectionValue]);
+  }, [gradeLevelValue, newSectionValue, sectionValue]);
 
   const handleNewSectionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewSectionValue(() => event.target.value);
@@ -97,7 +97,7 @@ const CreateClassroomButton = () => {
     setIsClassroomDialogOpen((prev) => !prev);
     setSubject("");
     setIsNewSubjectButtonLoading((prev) => !prev);
-    router.push("/teacher/subjects");
+    router.refresh();
     return;
   };
 

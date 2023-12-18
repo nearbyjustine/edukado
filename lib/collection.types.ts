@@ -6,3 +6,6 @@ export type GradeLevelEnum = Database["public"]["Enums"]["grade_level_enum"];
 export type Classroom = Database["public"]["Tables"]["classrooms"]["Row"];
 export type ClassroomInsert = Database["public"]["Tables"]["classrooms"]["Insert"];
 export type ClassroomWithSubjects = Database["public"]["Tables"]["classrooms"]["Row"] & Database["public"]["Tables"]["subjects"]["Row"];
+export type ActivityInsert = Database["public"]["Tables"]["activity"]["Insert"];
+export type ActivityType = Database["public"]["Tables"]["activity"]["Row"];
+export type ActivityWithTeacher = Database["public"]["Tables"]["activity"]["Row"] & User;
