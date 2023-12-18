@@ -10,7 +10,7 @@ import { Database } from "@/lib/database.types";
 
 type FormSchemaTypeWithoutAvatar = Omit<FormSchemaType, "avatar_image">;
 
-export const updateUser = async (values: FormSchemaTypeWithoutAvatar, avatar_url: string) => {
+export const updateUser = async (values: FormSchemaTypeWithoutAvatar, avatar_url?: string) => {
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
@@ -26,7 +26,7 @@ export const updateUser = async (values: FormSchemaTypeWithoutAvatar, avatar_url
   const date = moment(new Date(values.birth_date)).format("YYYY-MM-D");
   const { error: updateUserError } = await supabase
     .from("profiles")
-    .update({ ...values, birth_date: date, avatar_url: avatar_url })
+    .update({ ...values, birth_date: date, avatar_url: avatar_url || "" })
     .eq("id", user.id);
 
   return updateUserError;
