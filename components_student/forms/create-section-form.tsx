@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { DialogTitle, DialogDescription, DialogHeader, DialogContent, DialogFooter } from "../ui/dialog";
+import { DialogTitle, DialogDescription, DialogHeader, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
