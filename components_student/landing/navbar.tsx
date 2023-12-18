@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "../ui/navigation-menu";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Icons } from "../ui/icons";
-import { Button } from "../ui/button";
+import { Icons } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 
 const Navbar = () => {
