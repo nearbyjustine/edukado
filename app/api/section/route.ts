@@ -1,7 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
-export const fetchTeacherClassroom = async () => {
+const response = NextResponse;
+
+export async function GET(request: NextRequest) {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
@@ -11,19 +14,19 @@ export const fetchTeacherClassroom = async () => {
   } = await supabase.auth.getUser();
 
   if (!user || error) {
-    return { user, error };
+    return response.json({ error: error }, { status: 401 });
   }
 
   const { data: classroomData, error: classroomError } = await supabase
-    .from("subjects")
+    .from("classrooms")
     .select(
       `
     id,
-    name,
-    classroom (id, grade_level, section),
-  `
+    grade_level,
+    section,
+    subjects (id, name)`
     )
-    .eq("teacher_id", user.id);
+    .eq("subjects.teacher_id", user.id);
 
-  return { classroomData, classroomError };
-};
+  return response.json({ classroomData, classroomError }, { status: 200 });
+}

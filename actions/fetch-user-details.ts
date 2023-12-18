@@ -14,6 +14,7 @@ const templateUser: User = {
   last_name: "",
   middle_name: "",
   updated_at: "",
+  avatar_url: "",
 };
 
 export const fetchUserDetails = async () => {
@@ -31,10 +32,9 @@ export const fetchUserDetails = async () => {
   if (!error && user) {
     const role = user.user_metadata["role"];
     const { data, error: detailsError } = await supabase.from("profiles").select().eq("id", user.id).single();
-
-    if (data) return { user: data, detailsError, role };
-    return { user: templateUser, detailsError, role };
+    if (data) return { user: data, detailsError, role, avatar_url: data.avatar_url };
+    return { user: templateUser, detailsError, role, avatar_url: "" };
   }
 
-  return { user: templateUser, error, role: "" };
+  return { user: templateUser, error, role: "", avatar_url: "" };
 };

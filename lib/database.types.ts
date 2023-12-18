@@ -47,6 +47,7 @@ export interface Database {
       }
       profiles: {
         Row: {
+          avatar_url: string
           birth_date: string
           first_name: string
           gender: string
@@ -56,6 +57,7 @@ export interface Database {
           updated_at: string | null
         }
         Insert: {
+          avatar_url?: string
           birth_date?: string
           first_name?: string
           gender?: string
@@ -65,6 +67,7 @@ export interface Database {
           updated_at?: string | null
         }
         Update: {
+          avatar_url?: string
           birth_date?: string
           first_name?: string
           gender?: string

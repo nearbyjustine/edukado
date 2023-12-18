@@ -18,13 +18,12 @@ interface UserWithRole extends User {
   role: string;
 }
 
-const ProfileBar = ({ firstName, lastName, role }: { firstName: string; lastName: string; role: string }) => {
+const ProfileBar = ({ firstName, lastName, role, avatarUrl }: { firstName: string; lastName: string; role: string; avatarUrl: string }) => {
   const [isDropDownActive, setIsDropDownActive] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<UserWithRole>();
   const [loading, startTransition] = useTransition();
 
   const router = useRouter();
-
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,19 +48,6 @@ const ProfileBar = ({ firstName, lastName, role }: { firstName: string; lastName
     // return document.removeEventListener("mousedown", dropDown);
   }, []);
 
-  // const handleLogout = async () => {
-  //   startTransition(async () => {
-  //     const error = await logOut();
-  //     // When logged out, load then redirect to landing page
-  //     if (!error) {
-  //       router.push("/");
-  //     } else {
-  //       // If error, log the error
-  //       console.log(error);
-  //     }
-  //   });
-  // };
-
   return (
     <div className='absolute top-0 right-0 px-2 py-2'>
       <div className='flex flex-1 justify-end gap-1 md:gap-5 items-center'>
@@ -78,7 +64,7 @@ const ProfileBar = ({ firstName, lastName, role }: { firstName: string; lastName
                 isDropDownActive ? "bg-green-300 dark:bg-green-700" : ""
               } hover:bg-green-300  dark:hover:bg-green-700 transition-all`}
             >
-              <Image className='rounded-full' width={35} height={35} src={Owen} alt='profile image' />
+              <Image className='rounded-full w-10 h-10' width={35} height={35} src={avatarUrl ? avatarUrl : Owen} alt='profile image' />
               <p className='text-xl font-bold select-none hidden lg:inline'>{userDetails ? `${userDetails.first_name} ${userDetails.last_name}` : `${firstName} ${lastName}`}</p>
               <ArrowUp className={`${isDropDownActive ? "rotate-180" : "rotate-0"} transition-transform hidden lg:inline`} size={25} />
             </div>

@@ -12,18 +12,15 @@ import { Calendar } from "@/components/ui/calendar";
 import format from "date-fns/format";
 import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect, useRouter } from "next/navigation";
 import { FormSchemaType, formSchema } from "@/schema/onboarding-form.schema";
-import { updateUser, updateUserHasOnboarded } from "@/actions/update-user-details";
+import { updateUser } from "@/actions/update-user-details";
 import { fetchUserDetails } from "@/actions/fetch-user-details";
-import { createClient } from "@/utils/supabase/client";
 import { User } from "@/lib/collection.types";
 
 export const SettingsForm = ({ className }: { className?: string }) => {
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState("");
   const [user, setUser] = useState<User>();
-  const [isLoading, setIsLoading] = useState(true);
 
   const setFormValue = (user: User) => {
     form.reset();
@@ -47,9 +44,25 @@ export const SettingsForm = ({ className }: { className?: string }) => {
 
     fetchUserOnLoad();
   }, []);
+
+  const uploadFile = async (file: File) => {
+    let url = `${process.env.NEXT_PUBLIC_SITE_URL}/api/user/upload-avatar`;
+
+    const formData = new FormData();
+    formData.set("avatar_file", file);
+    const response = await fetch(url, {
+      method: "POST",
+      body: formData,
+    });
+    return response;
+  };
+
   const onSubmit = (values: FormSchemaType) => {
     startTransition(async () => {
-      const error = await updateUser(values);
+      const { avatar_image, ...otherValues } = values;
+      const response = await uploadFile(avatar_image);
+      const url = (await response.json()) as { url: string };
+      const error = await updateUser(otherValues, url.url);
 
       if (!error) {
         const { user, error: userError } = await fetchUserDetails();
@@ -137,7 +150,7 @@ export const SettingsForm = ({ className }: { className?: string }) => {
                 Gender
                 <Required />
               </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
+              <Select value={field.value} onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder='Select gender' />
@@ -188,6 +201,30 @@ export const SettingsForm = ({ className }: { className?: string }) => {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name='avatar_image'
+          render={({ field: { value, onChange, ...field } }) => (
+            <FormItem>
+              <FormLabel>
+                Upload Avatar Image <span className='font-thin italic'>(Maximum file size of 5MB. JPG, JPEG and PNG only allowed.)</span>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  onChange={(event) => {
+                    onChange(event.target?.files?.[0]);
+                  }}
+                  multiple={false}
+                  id='avatar_image'
+                  accept='image/jpeg, image/jpg, image/png'
+                  type='file'
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        ></FormField>
         <div className='text-sm text-destructive/70 grid '>{serverError && <span>* {serverError}</span>}</div>
         <Button variant='default' disabled={isPending} type='submit'>
           Submit

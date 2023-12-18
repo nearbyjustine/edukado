@@ -6,11 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const cookieStore = cookies();
-  // console.log(cookieStore.getAll());
-  // SSR
   const supabase = createClient(cookieStore);
-  // AUTH HELPER
-  // const supabase = createRouteHandlerClient<Database>({ cookies: () => cookieStore });
 
   const {
     data: { user },

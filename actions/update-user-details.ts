@@ -8,11 +8,10 @@ import moment from "moment";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
 
-export const updateUser = async (values: FormSchemaType) => {
+type FormSchemaTypeWithoutAvatar = Omit<FormSchemaType, "avatar_image">;
+
+export const updateUser = async (values: FormSchemaTypeWithoutAvatar, avatar_url: string) => {
   const cookieStore = cookies();
-  // SSR
-  // const supabase = await createClient(cookieStore);
-  // AUTH HELPER
   const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
   const {
@@ -20,16 +19,17 @@ export const updateUser = async (values: FormSchemaType) => {
     error,
   } = await supabase.auth.getUser();
 
-  if (!error && user) {
-    const date = moment(new Date(values.birth_date)).format("YYYY-MM-D");
-    const { error: updateUserError } = await supabase
-      .from("profiles")
-      .update({ ...values, birth_date: date })
-      .eq("id", user.id);
-    return updateUserError;
+  if (error || !user) {
+    return error;
   }
 
-  return error;
+  const date = moment(new Date(values.birth_date)).format("YYYY-MM-D");
+  const { error: updateUserError } = await supabase
+    .from("profiles")
+    .update({ ...values, birth_date: date, avatar_url: avatar_url })
+    .eq("id", user.id);
+
+  return updateUserError;
 };
 
 export const updateUserHasOnboarded = async () => {
@@ -56,4 +56,21 @@ export const updateUserHasOnboarded = async () => {
   }
 
   return error;
+};
+
+export const uploadAvatarImageTeacher = async (data: FormData) => {
+  const cookieStore = cookies();
+  const supabase = await createClient(cookieStore);
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return error;
+  }
+  // const fileFormat = ;
+  const response = await supabase.storage.from("avatar").upload(`avatar_${user.id}_${Date.now()}.`, data);
+  return response;
 };

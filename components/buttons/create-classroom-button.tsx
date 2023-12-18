@@ -15,6 +15,7 @@ import { addClassroom } from "@/actions/section/add-classroom";
 import { fetchClassroomByGradeLevelAndSection, fetchClassroomsOnGradeLevel } from "@/actions/section/fetch-classroom";
 import capitalizeFirstLetter from "@/utils/capitalize";
 import { addSubject } from "@/actions/section/add-subject";
+import { redirect, useRouter } from "next/navigation";
 
 const CreateClassroomSchema = z.object({
   grade_level: z.string({ required_error: "Grade level is required" }),
@@ -35,6 +36,8 @@ const CreateClassroomButton = () => {
   const [isNewSectionButtonLoading, setIsNewSectionButtonLoading] = React.useState(false);
   const [isNewSubjectButtonLoading, setIsNewSubjectButtonLoading] = React.useState(false);
   const [subject, setSubject] = React.useState("");
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSectionsByLevel = async () => {
@@ -68,8 +71,10 @@ const CreateClassroomButton = () => {
       setIsNewSectionButtonLoading((prev) => !prev);
       return;
     }
+
     setIsSectionDialogOpen((prev) => !prev);
     setIsNewSectionButtonLoading((prev) => !prev);
+    setSectionValue(newSectionValue);
     setNewSectionValue("");
     return;
   };
@@ -86,12 +91,13 @@ const CreateClassroomButton = () => {
     if (addSubjectError) {
       setNewSubjectError(addSubjectError.message);
       setIsNewSubjectButtonLoading((prev) => !prev);
-      console.log(addSubjectError.message);
       return;
     }
+
     setIsClassroomDialogOpen((prev) => !prev);
     setSubject("");
     setIsNewSubjectButtonLoading((prev) => !prev);
+    router.push("/teacher/subjects");
     return;
   };
 
@@ -183,14 +189,13 @@ const CreateClassroomButton = () => {
               </Command>
             </PopoverContent>
           </Popover>
-          {/* IMPLEMENT LATER: PAG PININDOT, LALABAS UNG DIALOG NG NEW SECTION */}
           <div className='flex justify-end ml-[8.6rem] -z-0'>
             <button
               onClick={() => {
                 setIsSectionDialogOpen((prev) => !prev);
               }}
             >
-              <PlusCircle className='text-primary' />
+              <PlusCircle className='text-primary rounded-full bg-primary/0 hover:text-primary/70 hover:scale-[1.1] transition-transform align-middle/ ' />
             </button>
           </div>
         </div>

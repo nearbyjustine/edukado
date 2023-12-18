@@ -9,6 +9,5 @@ export const addSubject = async (subject: string, classroomId: string) => {
   const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
   const data = await supabase.from("subjects").insert({ name: subject, classroom_id: classroomId });
-  console.log(data);
   return data;
 };

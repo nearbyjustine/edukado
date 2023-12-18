@@ -23,9 +23,7 @@ const CreateSectionFormDialog = ({ gradeValue, setGradeValue }: { gradeValue: Gr
     formState: { errors },
   } = useForm<CreateSectionType>({ resolver: zodResolver(CreateSectionSchema) });
 
-  const onSubmit: SubmitHandler<CreateSectionType> = async (data) => {
-    console.log(data);
-  };
+  const onSubmit: SubmitHandler<CreateSectionType> = async (data) => {};
   return (
     <div>
       <DialogContent>
