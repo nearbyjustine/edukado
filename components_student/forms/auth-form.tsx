@@ -9,18 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUp } from "@/actions/sign-up";
-import { logIn } from "@/actions/login";
+import { signUp } from "@/actions_student/sign-up";
+import { logIn } from "@/actions_student/login";
 import { SignUpSchema, SignUpSchemaType } from "@/schema/auth-form.schema";
 import { AuthError } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
 interface AuthFormProps extends HTMLAttributes<HTMLDivElement> {
   auth: "login" | "sign-up";
-  role: "student" | "teacher";
 }
 
-export function AuthForm({ className, auth, role, ...props }: AuthFormProps) {
+export function AuthForm({ className, auth, ...props }: AuthFormProps) {
   const [loading, startTransition] = useTransition();
   const [serverError, setServerError] = useState("");
   const router = useRouter();
@@ -35,7 +34,7 @@ export function AuthForm({ className, auth, role, ...props }: AuthFormProps) {
     startTransition(async () => {
       let response: AuthError | null;
       if (auth == "sign-up") {
-        response = await signUp(data, role);
+        response = await signUp(data);
       } else {
         response = await logIn(data);
       }

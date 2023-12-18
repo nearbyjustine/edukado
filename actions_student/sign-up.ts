@@ -7,7 +7,7 @@ import { notFound, redirect } from "next/navigation";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
 
-export const signUp = async (formData: SignUpSchemaType, role: "teacher" | "student") => {
+export const signUp = async (formData: SignUpSchemaType) => {
   const origin = headers().get("origin");
   const cookieStore = cookies();
   // SSR
@@ -21,7 +21,7 @@ export const signUp = async (formData: SignUpSchemaType, role: "teacher" | "stud
     options: {
       data: {
         hasOnboarded: false,
-        role: role,
+        role: "student",
       },
     },
   });

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import { AuthForm } from "@/components/forms/auth-form";
+import { AuthForm } from "@/components_student/forms/auth-form";
 import { Icons } from "@/components/ui/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -42,7 +42,7 @@ export default function AuthenticationPage() {
                   <h1 className='text-2xl font-semibold tracking-tight'>Create an account</h1>
                   <p className='text-sm text-muted-foreground'>Enter your email below to create your account</p>
                 </div>
-                <AuthForm role='student' auth='sign-up' />
+                <AuthForm auth='sign-up' />
                 <p className='px-8 text-center text-sm text-muted-foreground'>
                   By clicking continue, you agree to our{" "}
                   <Link href='/terms' className='underline underline-offset-4 hover:text-primary'>

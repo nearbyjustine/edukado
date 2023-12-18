@@ -33,7 +33,9 @@ const Navbar = () => {
           <Button asChild variant='nav' className='text-primary-foreground'>
             <Link href='/teacher-login'>Sign in as Teacher</Link>
           </Button>
-          <Button variant='nav_alt'>Sign in as Student</Button>
+          <Button variant='nav_alt'>
+            <Link href='/student-login'>Sign in as Student</Link>
+          </Button>
         </div>
       </div>
       <div className='absolute top-1 right-1 sm:hidden px-4 py-2'>
