@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "../ui/navigation-menu";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Icons } from "../ui/icons";
