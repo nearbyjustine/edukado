@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const Response = NextResponse;
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<void | NextResponse> {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -14,16 +14,18 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    return error;
+    return Response.json({ error }, { status: 401 });
   }
+
   try {
     const file = await request.formData();
     const instructionalMaterial = file.get("instructional_material") as File;
     const response = await supabase.storage.from("instructional_materials").upload(`im_${user.id}_${Date.now()}_${instructionalMaterial.name}`, instructionalMaterial);
-    if (response.data) return Response.json({ url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatar/${response.data.path}` }, { status: 200 });
-  } catch (error) {
-    if (error) {
-      return Response.json({ error: error }, { status: 401 });
+
+    if (response.data) {
+      return Response.json({ url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatar/${response.data.path}` }, { status: 200 });
     }
+  } catch (error) {
+    return Response.json({ error }, { status: 401 });
   }
 }
