@@ -9,7 +9,7 @@ import OrderedList from "@tiptap/extension-ordered-list";
 import ListItem from "@tiptap/extension-list-item";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 
-const Tiptap = ({ description, onChange, className, fetchedContent }: { description: string; onChange: (richtext: string) => void; className: string; fetchedContent: string }) => {
+const Tiptap = ({ description, onChange, className, fetchedContent }: { description: string; onChange: (richtext: string) => void; className: string; fetchedContent?: string }) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({}),
@@ -34,7 +34,7 @@ const Tiptap = ({ description, onChange, className, fetchedContent }: { descript
         },
       }),
     ],
-    content: fetchedContent,
+    content: fetchedContent || "",
     editorProps: {
       attributes: {
         class: className,
