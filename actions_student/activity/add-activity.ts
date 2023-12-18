@@ -8,6 +8,6 @@ export const addActivity = async (title: string, content: string, subjectId: str
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
-  const data = await supabase.from("activity").insert({ subject_id: subjectId, content: content, title: title, file_url: fileUrl, link_url: linkUrl });
+  const data = await supabase.from("activities").insert({ subject_id: subjectId, content: content, title: title, file_url: fileUrl, link_url: linkUrl });
   return data;
 };

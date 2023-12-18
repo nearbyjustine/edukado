@@ -8,7 +8,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data, error } = await supabase.from("activity").select().eq("id", params.id).single();
+  const { data, error } = await supabase.from("activities").select().eq("id", params.id).single();
 
   if (error || !data) {
     return NextResponse.json({ error: error }, { status: 401 });

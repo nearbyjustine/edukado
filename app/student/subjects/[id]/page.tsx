@@ -1,10 +1,5 @@
-import { fetchSubjectById } from "@/actions/section/fetch-subject";
-import Activity from "@/components/main-ui/subject/activity";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import CreateActivityButton from "@/components/buttons/create-activity-button";
-import ActivityDashboard from "@/components/main-ui/subject/activity-dashboard";
-import { Suspense } from "react";
+import { fetchSubjectById } from "@/actions_student/section/fetch-subject";
+import ActivityDashboard from "@/components_student/main-ui/subject/activity-dashboard";
 
 export default async function SubjectPage({ params }: { params: { id: string } }) {
   const subject = await fetchSubjectById(params.id);

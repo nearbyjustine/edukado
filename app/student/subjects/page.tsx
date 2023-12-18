@@ -1,4 +1,4 @@
-import SubjectsDisplay from "@/components/main-ui/classroom/subjects-display";
+import SubjectsDisplay from "@/components_student/main-ui/classroom/subjects-display";
 import React from "react";
 
 const Subjects = () => {

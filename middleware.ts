@@ -5,9 +5,9 @@ import { headers } from "next/headers";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "./lib/database.types";
 
-const protectedRoutes = ["/teacher", "/teacher/*", "/student", "/student/*"];
-const teacherProtectedRoutes = ["/teacher", "/teacher/*"];
-const studentProtectedRoutes = ["/student", "/student/*"];
+const protectedRoutes = ["/teacher", "/teacher/:path*", "/student", "/student/:path*"];
+const teacherProtectedRoutes = ["/teacher", "/teacher/:path*"];
+const studentProtectedRoutes = ["/student", "/student/:path*"];
 const loginRoutes = ["/teacher-login", "/student-login", "/"];
 
 export async function middleware(request: NextRequest) {
@@ -42,8 +42,9 @@ export async function middleware(request: NextRequest) {
       const hasOnboarded = session.user.user_metadata["hasOnboarded"];
 
       // if there is a session, check if user has onboarded, otherwise redirect them to onboarding page
-      if (!hasOnboarded && request.nextUrl.pathname !== "/onboarding") {
-        return NextResponse.redirect(new URL("/onboarding", originUrl));
+      if (!hasOnboarded) {
+        if (role === "student" && request.nextUrl.pathname !== "/onboarding_student") return NextResponse.redirect(new URL("/onboarding_student", originUrl));
+        if (role === "teacher" && request.nextUrl.pathname !== "/onboarding") return NextResponse.redirect(new URL("/onboarding", originUrl));
       } else {
         // if there is a session, and user is a teacher, dont allow to go to student routes
         if (role === "teacher" && studentProtectedRoutes.includes(request.nextUrl.pathname)) return NextResponse.redirect(new URL("/teacher", originUrl));

@@ -1,9 +1,4 @@
-import { fetchUserDetails } from "@/actions/fetch-user-details";
-import LogoutButton from "@/components/buttons/logout-button";
-import QuickBits from "@/components/main-ui/dashboard/quick-bits";
-import { useAuth } from "@/components/providers/auth.providers";
-import { createClient } from "@/utils/supabase/client";
-import { cookies } from "next/headers";
+import QuickBits from "@/components_student/main-ui/dashboard/quick-bits";
 
 const TeacherDashboardPage = async () => {
   return (

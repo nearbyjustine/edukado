@@ -12,6 +12,7 @@ import Tiptap from "../tiptap";
 import { addActivity } from "@/actions/activity/add-activity";
 import { useIsActivityModalOpenContext } from "../providers/activityModalProvider";
 import { useRouter } from "next/navigation";
+import { headers } from "next/headers";
 
 const MAX_FILE_SIZE = 20_971_520;
 

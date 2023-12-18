@@ -8,6 +8,7 @@ export async function POST(request: NextRequest): Promise<void | NextResponse> {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
+  console.log(cookieStore);
   const {
     data: { user },
     error,

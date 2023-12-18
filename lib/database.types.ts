@@ -9,7 +9,7 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      activity: {
+      activities: {
         Row: {
           content: string
           created_at: string
@@ -42,10 +42,17 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "activity_subject_id_fkey"
+            foreignKeyName: "activities_subject_id_fkey"
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]
@@ -127,6 +134,42 @@ export interface Database {
           }
         ]
       }
+      students: {
+        Row: {
+          classroom_id: string
+          created_at: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          classroom_id: string
+          created_at?: string
+          id?: number
+          user_id?: string
+        }
+        Update: {
+          classroom_id?: string
+          created_at?: string
+          id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "students_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       subjects: {
         Row: {
           classroom_id: string
@@ -160,6 +203,32 @@ export interface Database {
           {
             foreignKeyName: "subjects_teacher_id_fkey"
             columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      teachers: {
+        Row: {
+          created_at: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teachers_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]

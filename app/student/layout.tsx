@@ -1,7 +1,7 @@
 import { fetchUserDetails } from "@/actions/fetch-user-details";
-import CollapseSideBar from "@/components/collapse-from-sidebar";
-import ProfileBar from "@/components/main-ui/profile-dropdown";
-import Sidebar from "@/components/main-ui/sidebar";
+import CollapseSideBar from "@/components_student/collapse-from-sidebar";
+import ProfileBar from "@/components_student/main-ui/profile-dropdown";
+import Sidebar from "@/components_student/main-ui/sidebar";
 
 export default async function TeacherLayout({ children }: { children: React.ReactNode }) {
   const { user, error, role, avatar_url } = await fetchUserDetails();

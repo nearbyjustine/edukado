@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useTransition } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useCollapseContext } from "../providers/collapseProvider";
 import { useForm } from "react-hook-form";
@@ -8,7 +8,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Tiptap from "../tiptap";
+import Tiptap from "@/components_student/tiptap";
 import { addActivity } from "@/actions/activity/add-activity";
 import { useIsActivityModalOpenContext } from "../providers/activityModalProvider";
 import { useRouter } from "next/navigation";

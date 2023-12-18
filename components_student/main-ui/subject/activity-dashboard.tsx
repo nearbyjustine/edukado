@@ -1,9 +1,8 @@
 "use client";
 
-import CreateActivityButton from "@/components/buttons/create-activity-button";
 import React, { Suspense, useEffect, useState } from "react";
 import Activity from "./activity";
-import ActivityModal from "@/components/modal/activity-modal";
+import ActivityModal from "@/components_student/modal/activity-modal";
 import moment from "moment";
 
 type ActivityWithTeacher = {
@@ -45,9 +44,6 @@ const ActivityDashboard = ({ subject, gradeLevel, section, subjectId }: { subjec
       <div className='relative bg-green-500 text-white dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col justify-end h-32 py-2 px-4'>
         <div className='font-bold text-2xl'>{subject}</div>
         <div className='font-medium '>{`${gradeLevel} - ${section}`}</div>
-        <div className='absolute bottom-2 right-2'>
-          <CreateActivityButton />
-        </div>
       </div>
       <div className='flex flex-col gap-4'>
         <Suspense fallback={<p>Loading activities...</p>}>

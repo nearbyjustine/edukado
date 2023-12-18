@@ -32,12 +32,12 @@ const Activity = ({ name, activity, date, activityId, subjectId }: { name: strin
           <div></div>
         </div>
       </Link>
-      <Link className='cursor-pointer hidden group-hover:inline-block hover:text-primary' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}/activities/${activityId}/edit`}>
+      <Link className='cursor-pointer hidden hover:text-primary' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}/activities/${activityId}/edit`}>
         <Pencil width={20} height={20} />
       </Link>
       <Dialog>
         <DialogTrigger>
-          <button className='cursor-pointer hidden group-hover:inline-block hover:text-destructive'>
+          <button className='cursor-pointer hidden hover:text-destructive'>
             <X width={20} height={20} />
           </button>
         </DialogTrigger>
@@ -47,12 +47,12 @@ const Activity = ({ name, activity, date, activityId, subjectId }: { name: strin
           </DialogHeader>
           <DialogDescription>This action cannot be undone. This will permanently delete your activity.</DialogDescription>
           <DialogFooter>
-            <DialogClose>
+            {/* <DialogClose>
               <Button onClick={handleDeleteActivity} variant={"destructive"}>
                 Delete
               </Button>
               <Button variant={"ghost"}>Cancel</Button>
-            </DialogClose>
+            </DialogClose> */}
           </DialogFooter>
         </DialogContent>
       </Dialog>

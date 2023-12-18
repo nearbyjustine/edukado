@@ -8,6 +8,6 @@ export const updateActivity = async (title: string, content: string, activityId:
   const cookieStore = cookies();
   const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
 
-  const data = await supabase.from("activity").update({ content: content, title: title, file_url: fileUrl, link_url: linkUrl }).eq("id", activityId);
+  const data = await supabase.from("activities").update({ content: content, title: title, file_url: fileUrl, link_url: linkUrl }).eq("id", activityId);
   return data;
 };

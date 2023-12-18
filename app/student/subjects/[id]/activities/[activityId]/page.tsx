@@ -7,6 +7,7 @@ export const revalidate = 0;
 
 export default async function ActivityPage({ params }: { params: { id: string; activityId: string } }) {
   const { data: activity, error } = await fetchActivityById(params.activityId);
+  console.log(activity);
   if (error || !activity) {
     return <div>Error: Something must have happened</div>;
   }

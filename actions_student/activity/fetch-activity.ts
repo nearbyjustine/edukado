@@ -5,7 +5,7 @@ export async function fetchActivityById(id: string) {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
-  const { data, error } = await supabase.from("activity").select().eq("id", id).single();
+  const { data, error } = await supabase.from("activities").select().eq("id", id).single();
 
   return { data, error };
 }

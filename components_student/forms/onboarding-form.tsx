@@ -13,17 +13,23 @@ import format from "date-fns/format";
 import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect, useRouter } from "next/navigation";
-import { FormSchemaType, formSchema } from "@/schema/onboarding-form.schema";
-import { updateUser, updateUserHasOnboarded } from "@/actions/update-user-details";
+import { OnboardingSchemaType, onboardingSchema } from "@/schema_student/onboarding-form.schema";
+import { updateStudentUser, updateUser, updateUserHasOnboarded } from "@/actions_student/update-user-details";
+import { fetchClassroomsOnGradeLevel } from "@/actions_student/section/fetch-classroom";
+import { Classroom, GradeLevelEnum } from "@/lib/collection.types";
 
 export const OnboardingForm = ({ className }: { className?: string }) => {
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState("");
+  const [sections, setSections] = useState<Classroom[]>();
+  // const [gradeLevel, setGradeLevel] = useState("");
+  // const [section, setSection] = useState("");
 
-  const onSubmit = (values: FormSchemaType) => {
+  const onSubmit = (values: OnboardingSchemaType) => {
     startTransition(async () => {
-      const error = await updateUser(values);
-
+      const { grade_level, section, ...otherValues } = values;
+      const error = await updateStudentUser(otherValues, grade_level, section);
+      console.log(error);
       if (!error) {
         const onboardingError = await updateUserHasOnboarded();
         if (!onboardingError) return redirect("/");
@@ -34,14 +40,23 @@ export const OnboardingForm = ({ className }: { className?: string }) => {
     });
   };
 
-  const form = useForm<FormSchemaType>({
-    resolver: zodResolver(formSchema),
+  const handleFetchSection = async (e: GradeLevelEnum) => {
+    const data = await fetchClassroomsOnGradeLevel(e);
+    if (data.error && !data.data) return setServerError(data.error.message);
+    setSections(data.data);
+    form.setValue("section", "");
+  };
+
+  const form = useForm<OnboardingSchemaType>({
+    resolver: zodResolver(onboardingSchema),
     defaultValues: {
       first_name: "",
       middle_name: "",
       last_name: "",
       gender: "",
       birth_date: new Date(),
+      grade_level: "",
+      section: "",
     },
   });
 
@@ -153,6 +168,67 @@ export const OnboardingForm = ({ className }: { className?: string }) => {
                   />
                 </PopoverContent>
               </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name='grade_level'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Grade Level</FormLabel>
+              <Select
+                onValueChange={(e) => {
+                  handleFetchSection(e as GradeLevelEnum);
+                  field.onChange(e);
+                }}
+                defaultValue={field.value}
+                disabled={isPending}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select grade level' />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value='Grade 1'>Grade 1</SelectItem>
+                  <SelectItem value='Grade 2'>Grade 2</SelectItem>
+                  <SelectItem value='Grade 3'>Grade 3</SelectItem>
+                  <SelectItem value='Grade 4'>Grade 4</SelectItem>
+                  <SelectItem value='Grade 5'>Grade 5</SelectItem>
+                  <SelectItem value='Grade 6'>Grade 6</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name='section'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Section</FormLabel>
+              <Select
+                onValueChange={(e) => {
+                  field.onChange(e);
+                }}
+                defaultValue={field.value}
+                disabled={isPending}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select section' />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {sections &&
+                    sections.map((section) => (
+                      <SelectItem key={section.id} value={section.section}>
+                        {section.section}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Icons } from "../ui/icons";
+import { Icons } from "@/components/ui/icons";
 import Link from "next/link";
 import SidebarItem from "./sidebar-items";
 import { BookOpen, Calendar, Folder, LayoutDashboard, LineChart, Menu, Settings } from "lucide-react";
@@ -18,17 +18,17 @@ const Sidebar = () => {
     >
       <Menu className='absolute right-3 top-3 hover:cursor-pointer hidden lg:inline text-primary' size={30} onClick={() => setCollapse(!collapse)} />
 
-      <Link href='/teacher' className={`hidden ${collapse ? "lg:hidden" : "lg:block"}  mb-5`}>
+      <Link href='/student' className={`hidden ${collapse ? "lg:hidden" : "lg:block"}  mb-5`}>
         <Icons.edukado className='fill-green-600' />
       </Link>
-      <SidebarItem href='/teacher' text='Dashboard' Icon={LayoutDashboard} />
-      <SidebarItem href='/teacher/subjects' text='Classrooms' Icon={BookOpen} />
-      {/* <SidebarItem href='/teacher/exams' text='Examinations' Icon={'pen-tool}' />
-      <SidebarItem href='/teacher/lessons' text='Lessons' Icon={'sticky-note}' />
-      <SidebarItem href='/teacher/activities' text='Activities' Icon={'clipboard'} /> */}
-      <SidebarItem href='/teacher/calendar' text='Calendar' Icon={Calendar} />
-      <SidebarItem href='/teacher/reports' text='Reports' Icon={LineChart} />
-      <SidebarItem href='/teacher/settings' text='Settings' Icon={Settings} />
+      <SidebarItem href='/student' text='Dashboard' Icon={LayoutDashboard} />
+      <SidebarItem href='/student/subjects' text='Subjects' Icon={BookOpen} />
+      {/* <SidebarItem href='/student/exams' text='Examinations' Icon={'pen-tool}' />
+      <SidebarItem href='/student/lessons' text='Lessons' Icon={'sticky-note}' />
+      <SidebarItem href='/student/activities' text='Activities' Icon={'clipboard'} /> */}
+      <SidebarItem href='/student/calendar' text='Calendar' Icon={Calendar} />
+      <SidebarItem href='/student/reports' text='Reports' Icon={LineChart} />
+      <SidebarItem href='/student/settings' text='Settings' Icon={Settings} />
     </div>
   );
 };

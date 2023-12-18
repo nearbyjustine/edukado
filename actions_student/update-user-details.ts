@@ -31,6 +31,38 @@ export const updateUser = async (values: FormSchemaTypeWithoutAvatar, avatar_url
 
   return updateUserError;
 };
+export const updateStudentUser = async (values: FormSchemaTypeWithoutAvatar, grade_level: string, section: string) => {
+  const cookieStore = cookies();
+  const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return error;
+  }
+
+  const { data: classroomData, error: classroomError } = await supabase.from("classrooms").select().eq("grade_level", grade_level).eq("section", section).single();
+
+  if (classroomError || !classroomData) return classroomError;
+
+  const date = moment(new Date(values.birth_date)).format("YYYY-MM-D");
+  console.log(values);
+  const { error: updateUserError } = await supabase
+    .from("profiles")
+    .update({ ...values, birth_date: date })
+    .eq("id", user.id);
+
+  if (updateUserError) return updateUserError;
+
+  const { error: insertStudentError } = await supabase.from("students").insert({ classroom_id: classroomData.id });
+
+  if (insertStudentError) return insertStudentError;
+
+  return null;
+};
 
 export const updateUserHasOnboarded = async () => {
   const cookieStore = cookies();
