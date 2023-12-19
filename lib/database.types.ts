@@ -11,6 +11,7 @@ export interface Database {
     Tables: {
       activities: {
         Row: {
+          classroom_id: string | null
           content: string
           created_at: string
           file_url: string | null
@@ -21,6 +22,7 @@ export interface Database {
           title: string
         }
         Insert: {
+          classroom_id?: string | null
           content?: string
           created_at?: string
           file_url?: string | null
@@ -31,6 +33,7 @@ export interface Database {
           title?: string
         }
         Update: {
+          classroom_id?: string | null
           content?: string
           created_at?: string
           file_url?: string | null
@@ -41,6 +44,13 @@ export interface Database {
           title?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "activities_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "activities_subject_id_fkey"
             columns: ["subject_id"]
@@ -134,23 +144,68 @@ export interface Database {
           }
         ]
       }
+      student_answers: {
+        Row: {
+          activity_id: string
+          content: string
+          created_at: string
+          file_url: string
+          id: number
+          link_url: string
+          student_id: string
+        }
+        Insert: {
+          activity_id: string
+          content?: string
+          created_at?: string
+          file_url?: string
+          id?: number
+          link_url?: string
+          student_id?: string
+        }
+        Update: {
+          activity_id?: string
+          content?: string
+          created_at?: string
+          file_url?: string
+          id?: number
+          link_url?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_answers_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_answers_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       students: {
         Row: {
           classroom_id: string
           created_at: string
-          id: number
+          id: string
           user_id: string
         }
         Insert: {
           classroom_id: string
           created_at?: string
-          id?: number
+          id?: string
           user_id?: string
         }
         Update: {
           classroom_id?: string
           created_at?: string
-          id?: number
+          id?: string
           user_id?: string
         }
         Relationships: [
@@ -159,6 +214,13 @@ export interface Database {
             columns: ["classroom_id"]
             isOneToOne: false
             referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "students_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {

@@ -16,7 +16,7 @@ const Activity = ({ name, activity, date, activityId, subjectId }: { name: strin
   };
   return (
     <div className={cn("gap-4 items-center group", hidden ? "hidden" : "flex")}>
-      <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}/activities/${activityId}`}>
+      <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/student/subjects/${subjectId}/activities/${activityId}`}>
         <div className='flex justify-between py-2 px-6 border hover:bg-primary/10 transition-colors rounded-md '>
           <div className='flex gap-4 items-center'>
             <div className='bg-green-500 rounded-3xl h-auto w-auto p-2 text-white'>
@@ -32,30 +32,6 @@ const Activity = ({ name, activity, date, activityId, subjectId }: { name: strin
           <div></div>
         </div>
       </Link>
-      <Link className='cursor-pointer hidden hover:text-primary' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}/activities/${activityId}/edit`}>
-        <Pencil width={20} height={20} />
-      </Link>
-      <Dialog>
-        <DialogTrigger>
-          <button className='cursor-pointer hidden hover:text-destructive'>
-            <X width={20} height={20} />
-          </button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you sure you want to delete this </DialogTitle>
-          </DialogHeader>
-          <DialogDescription>This action cannot be undone. This will permanently delete your activity.</DialogDescription>
-          <DialogFooter>
-            {/* <DialogClose>
-              <Button onClick={handleDeleteActivity} variant={"destructive"}>
-                Delete
-              </Button>
-              <Button variant={"ghost"}>Cancel</Button>
-            </DialogClose> */}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

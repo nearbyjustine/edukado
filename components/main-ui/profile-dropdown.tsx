@@ -49,7 +49,7 @@ const ProfileBar = ({ firstName, lastName, role, avatarUrl }: { firstName: strin
   }, []);
 
   return (
-    <div className='absolute z-10 top-0 right-0 px-2 py-2'>
+    <div className='absolute top-0 right-0 px-2 py-2'>
       <div className='flex flex-1 justify-end gap-1 md:gap-5 items-center'>
         <div className='relative'>
           <Bell className='hover:cursor-pointer' size={25} />
