@@ -19,8 +19,18 @@ export default async function ActivityPage({ params }: { params: { id: string; a
       <div className='flex flex-col gap-4'>
         <h1 className='text-2xl font-bold'>{activity.title}</h1>
         <div>{parse(activity.content)}</div>
-        {activity.file_url && <Link href={activity.file_url}>File to download</Link>}
-        {activity.link_url && <Link href={activity.link_url}>Additional resources</Link>}
+        {activity.file_url && (
+          <Link className='text-blue-400 hover:underline flex gap-2 items-center' href={activity.file_url}>
+            <ArrowDownToLine width={20} height={20} />
+            File to download
+          </Link>
+        )}
+        {activity.link_url && (
+          <Link className='text-blue-400 hover:underline flex gap-2 items-center' href={activity.link_url}>
+            <Link2 width={20} height={20} />
+            Additional resources
+          </Link>
+        )}
       </div>
       <div className='flex flex-col gap-4'>
         {answers && answers.length > 0 ? (
@@ -42,7 +52,7 @@ export default async function ActivityPage({ params }: { params: { id: string; a
                     {answer.link_url && (
                       <Link className='text-blue-400 hover:underline flex gap-2 items-center' href={answer.link_url}>
                         <Link2 width={20} height={20} />
-                        {`File that ${answer.profiles.first_name} sent`}
+                        {`Link that ${answer.profiles.first_name} sent`}
                       </Link>
                     )}
                   </div>

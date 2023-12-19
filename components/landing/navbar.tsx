@@ -18,13 +18,13 @@ const Navbar = () => {
         </div>
         <div className='flex text-primary-foreground '>
           <Button variant='nav' asChild className='text-sm sm:text-lg font-semibold'>
-            <Link href={""}>Home</Link>
+            <Link href='/'>Home</Link>
           </Button>
           <Button variant='nav' asChild className='text-sm sm:text-lg font-semibold'>
-            <Link href={""}>About</Link>
+            <Link href='/about'>About</Link>
           </Button>
           <Button variant='nav' asChild className='text-sm sm:text-lg font-semibold'>
-            <Link href={""}>Contact</Link>
+            <Link href='/contact'>Contact</Link>
           </Button>
         </div>
         <div className='flex gap-1'>
