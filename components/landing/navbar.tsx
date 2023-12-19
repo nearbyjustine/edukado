@@ -21,10 +21,10 @@ const Navbar = () => {
             <Link href='/'>Home</Link>
           </Button>
           <Button variant='nav' asChild className='text-sm sm:text-lg font-semibold'>
-            <Link href='/about'>About</Link>
+            <Link href='#'>About</Link>
           </Button>
           <Button variant='nav' asChild className='text-sm sm:text-lg font-semibold'>
-            <Link href='/contact'>Contact</Link>
+            <Link href='#'>Contact</Link>
           </Button>
         </div>
         <div className='flex gap-1'>

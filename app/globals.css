@@ -188,6 +188,152 @@ img {
   }
 }
 
+.frame {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.frame .overlap-wrapper {
+  background-color: #ffffff;
+  width: 1280px; /* Adjusted width for better balance */
+  height: 720px; /* Adjusted height for better balance */
+}
+
+.frame .overlap {
+  position: relative;
+  top: 42px; /* Adjusted top position for better balance */
+  left: 5px; /* Adjusted left position for better balance */
+  width: 1271px; /* Adjusted width for better balance */
+  height: 662px; /* Adjusted height for better balance */
+  top: 0;
+}
+
+.frame .overlap-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1271px; /* Adjusted width for better balance */
+  height: 662px; /* Adjusted height for better balance */
+}
+
+.frame .logo {
+  width: 200px; /* Adjusted width for better balance */
+  height: auto; /* Maintain the aspect ratio */
+  margin-top: 0px;
+}
+
+.frame .vector {
+  position: absolute;
+  width: 1100px; /* Adjusted width for better balance */
+  height: 650px; /* Adjusted height for better balance */
+  top: 73px; /* Adjusted top position for better balance */
+  left: 217px; /* Adjusted left position for better balance */
+}
+
+.frame .bg {
+  position: absolute;
+  width: 473px; /* Adjusted width for better balance */
+  height: 590px; /* Adjusted height for better balance */
+  top: 70px; /* Adjusted top position for better balance */
+  left: 772px; /* Adjusted left position for better balance */
+  object-fit: cover;
+}
+
+.frame .home-about-contact {
+  position: absolute;
+  width: 480px; /* Adjusted width for better balance */
+  top: 0;
+  left: 375px; /* Adjusted left position for better balance */
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  font-size: 18px; /* Adjusted font size for better balance */
+  letter-spacing: 0;
+  line-height: normal;
+  display: flex;
+  justify-content: center;
+  top: 0;
+  margin-top: 20px;
+}
+
+.frame .home-about-contact a {
+  color: #000000;
+  text-decoration: none;
+  margin: 0 30px;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.frame .home-about-contact a:hover {
+  color: #22c55e;
+}
+
+.frame .home-about-contact .active {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.frame .central-i-santa-rosa {
+  position: absolute;
+  width: 360px; /* Adjusted width for better balance */
+  top: 300px; /* Adjusted top position for better balance */
+  left: -30px;
+  font-family: "Inter-Medium", Helvetica;
+  font-weight: 500;
+  color: #157b3a;
+  font-size: 24px; /* Adjusted font size for better balance */
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.frame .CENTRAL-removebg {
+  position: absolute;
+  width: 175px; /* Adjusted width for better balance */
+  height: auto; /* Maintain the aspect ratio */
+  top: 142px; /* Adjusted top position for better balance */
+  left: 53px; /* Adjusted left position for better balance */
+  object-fit: cover;
+}
+
+.frame img:not(.vector):not(.logo) {
+  opacity: 0;
+  animation: fadeIn 2s ease-in-out forwards;
+}
+
+.contact-info {
+  position: absolute;
+  bottom: -10px; /* Adjust the distance from the bottom as needed */
+  left: 30%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #000000; /* Adjust the color as needed */
+  font-size: 14px; /* Adjust the font size as needed */
+  line-height: 1;
+}
+
+.name-info {
+  position: absolute;
+  bottom: -90px; /* Adjust the distance from the bottom as needed */
+  left: 5%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #000000; /* Adjust the color as needed */
+  font-size: 14px; /* Adjust the font size as needed */
+  line-height: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .hero-content {
   flex: 1;
   width: 600px;
