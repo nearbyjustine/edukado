@@ -3,7 +3,7 @@
 import CreateActivityButton from "@/components/buttons/create-activity-button";
 import React, { Suspense, useEffect, useState } from "react";
 import Activity from "./activity";
-import ActivityModal from "@/components/modal/activity-modal";
+import ActivityModal from "@/components/providers/modal/activity-modal";
 import moment from "moment";
 
 type ActivityWithTeacher = {
@@ -22,19 +22,14 @@ type ActivityWithTeacher = {
 };
 
 const ActivityDashboard = ({ subject, gradeLevel, section, subjectId }: { subject: string; gradeLevel: string; section: string; subjectId: string }) => {
-  const [needToRefetch, setNeedToRefetch] = useState(false);
   const [activities, setActivities] = useState<ActivityWithTeacher[]>();
   useEffect(() => {
     const fetchActivities = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity/fetch-activity-by-subject/${subjectId}`, {
-          cache: "no-store",
-        });
-        const { activities }: { activities: ActivityWithTeacher[] } = await response.json();
-        setActivities(activities);
-      } catch (error) {
-        console.log(error);
-      }
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity/fetch-activity-by-subject/${subjectId}`, {
+        cache: "no-store",
+      });
+      const { activities }: { activities: ActivityWithTeacher[] } = await response.json();
+      setActivities(activities);
     };
 
     fetchActivities();
