@@ -20,6 +20,7 @@ export const updateUser = async (values: FormSchemaTypeWithoutAvatar, avatar_url
   } = await supabase.auth.getUser();
 
   if (error || !user) {
+    console.log(error);
     return error;
   }
 
