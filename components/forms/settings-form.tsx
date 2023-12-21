@@ -62,9 +62,12 @@ export const SettingsForm = ({ className }: { className?: string }) => {
   const onSubmit = (values: FormSchemaType) => {
     startTransition(async () => {
       const { avatar_image, ...otherValues } = values;
-      const response = await uploadFile(avatar_image);
-      const url = (await response.json()) as { url: string };
-      const error = await updateUser(otherValues, url.url);
+      let url = { url: "" };
+      if (avatar_image) {
+        const response = await uploadFile(avatar_image);
+        url = (await response.json()) as { url: string };
+      }
+      const error = await updateUser(otherValues, url.url || "");
 
       if (!error) {
         const { user, error: userError } = await fetchUserDetails();

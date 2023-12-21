@@ -20,6 +20,7 @@ export const updateUser = async (values: FormSchemaTypeWithoutAvatar, avatar_url
   } = await supabase.auth.getUser();
 
   if (error || !user) {
+    console.log(error);
     return error;
   }
 
@@ -29,6 +30,7 @@ export const updateUser = async (values: FormSchemaTypeWithoutAvatar, avatar_url
     .update({ ...values, birth_date: date, avatar_url: avatar_url || "" })
     .eq("id", user.id);
 
+  console.log(updateUserError);
   return updateUserError;
 };
 

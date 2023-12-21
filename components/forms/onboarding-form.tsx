@@ -21,6 +21,7 @@ export const OnboardingForm = ({ className }: { className?: string }) => {
   const [serverError, setServerError] = useState("");
 
   const onSubmit = (values: FormSchemaType) => {
+    console.log(values);
     startTransition(async () => {
       const error = await updateUser(values);
 
@@ -32,6 +33,10 @@ export const OnboardingForm = ({ className }: { className?: string }) => {
       }
       return setServerError(error.message);
     });
+  };
+
+  const onErrors = (errors: any) => {
+    console.error(errors);
   };
 
   const form = useForm<FormSchemaType>({
@@ -51,7 +56,7 @@ export const OnboardingForm = ({ className }: { className?: string }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4 mt-5", className)}>
+      <form method='POST' onSubmit={form.handleSubmit(onSubmit, onErrors)} className={cn("space-y-4 mt-5", className)}>
         <FormField
           control={form.control}
           name='first_name'

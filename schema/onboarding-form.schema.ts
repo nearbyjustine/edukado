@@ -11,7 +11,8 @@ export const formSchema = z.object({
   avatar_image: z
     .custom<File>((val) => val instanceof File, "Please upload a file")
     .refine((file) => file?.size <= MAX_FILE_SIZE, { message: `Max image size is 5MB.` })
-    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file?.type), { message: "Only .jpg, .jpeg, and .png formats are supported." }),
+    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file?.type), { message: "Only .jpg, .jpeg, and .png formats are supported." })
+    .optional(),
 });
 
 export type FormSchemaType = z.infer<typeof formSchema>;
