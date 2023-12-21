@@ -81,7 +81,7 @@ const ProfileBar = ({ firstName, lastName, role, avatarUrl }: { firstName: strin
                 <li>
                   <LogoutButton className='cursor-pointer hover:bg-green-400 px-2 py-2 rounded transition-all w-full' />
                 </li>
-                <Link href='/teacher/settings'>
+                <Link href='/student/settings'>
                   <button className='cursor-pointer hover:bg-green-400 px-2 py-2 rounded transition-all w-full'>Settings</button>
                 </Link>
               </ul>

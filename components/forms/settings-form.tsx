@@ -16,11 +16,13 @@ import { FormSchemaType, formSchema } from "@/schema/onboarding-form.schema";
 import { updateUser } from "@/actions/update-user-details";
 import { fetchUserDetails } from "@/actions/fetch-user-details";
 import { User } from "@/lib/collection.types";
+import { useRouter } from "next/navigation";
 
 export const SettingsForm = ({ className }: { className?: string }) => {
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState("");
   const [user, setUser] = useState<User>();
+  const router = useRouter();
 
   const setFormValue = (user: User) => {
     form.reset();
@@ -77,6 +79,7 @@ export const SettingsForm = ({ className }: { className?: string }) => {
 
         return setServerError(userError.message);
       }
+      router.refresh();
       return setServerError(error.message);
     });
   };
