@@ -12,7 +12,7 @@ const CreateActivityButton = () => {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button className='hover:bg-primary/80 hover:scale-[1.1] transition-transform'>
+        <Button className='hover:bg-primary/80 hover:scale-[1.1] transition-transform'>
             <PlusCircle className='text-white' />
           </Button>
         </DropdownMenuTrigger>
