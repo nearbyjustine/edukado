@@ -27,7 +27,7 @@ const CreateSectionFormDialog = ({ gradeValue, setGradeValue }: { gradeValue: Gr
   return (
     <div>
       <DialogContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form method="POST" onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle>Create Section</DialogTitle>
             <DialogDescription>Create a section for your class. Then click add section to make </DialogDescription>
