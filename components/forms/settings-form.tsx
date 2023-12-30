@@ -101,7 +101,7 @@ export const SettingsForm = ({ className }: { className?: string }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4 mt-5", className)}>
+      <form method='post' onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4 mt-5", className)}>
         <FormField
           control={form.control}
           name='first_name'
