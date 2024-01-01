@@ -11,19 +11,20 @@ export const fetchTeacherClassroom = async () => {
   } = await supabase.auth.getUser();
 
   if (!user || error) {
-    return { user, error };
+    return { user: null, error };
   }
 
   const { data: classroomData, error: classroomError } = await supabase
-    .from("subjects")
+    .from("classrooms")
     .select(
       `
     id,
-    name,
-    classroom (id, grade_level, section),
-  `
+    grade_level,
+    section,
+    subjects (id, name)`
     )
-    .eq("teacher_id", user.id);
+    .eq("subjects.teacher_id", user.id)
+    .order("grade_level");
 
   return { classroomData, classroomError };
 };

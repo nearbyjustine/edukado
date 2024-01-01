@@ -5,6 +5,7 @@ import { GradeLevelEnum } from "@/lib/collection.types";
 import capitalizeFirstLetter from "@/utils/capitalize";
 import { headers } from "next/headers";
 import EmptySubjectBox from "./empty-subject-box";
+import { fetchSubject } from "@/actions/subjects/fetch-subjects";
 
 type ClassroomWithSubjectType = {
   id: string;
@@ -19,14 +20,14 @@ type ClassroomWithSubjectType = {
 };
 
 const SubjectsDisplay = async () => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/section`, {
-    cache: "no-store",
-    // NOTE: We need to manually attach
-    // the headers from the original request to the fetch call made
-    // from the Server Component 👇
-    headers: headers(),
-  });
-  const { classroomData: classrooms }: { classroomData: ClassroomWithSubjectType[] } = await response.json();
+  const response = await fetchSubject();
+
+  const { classroomData: classrooms, classroomError } = response;
+
+  if (!classrooms && classroomError) {
+    return <div>Error. Something happened.</div>;
+  }
+
   return (
     <div>
       <div className='flex flex-col gap-4'>
