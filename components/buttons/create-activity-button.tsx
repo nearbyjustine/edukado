@@ -4,26 +4,46 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useIsActivityModalOpenContext } from "../providers/activityModalProvider";
-
-const CreateActivityButton = () => {
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import ActivityModal from "../providers/modal/activity-modal";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+const CreateActivityButton = ({ subjectId }: { subjectId: string }) => {
   const [isModalOpen, setIsModalOpen] = useIsActivityModalOpenContext();
+  const [isActivityOpen, setIsActivityOpen] = useState(false);
 
   return (
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger>
-        <Button className='hover:bg-primary/80 hover:scale-[1.1] transition-transform'>
+          <Button className='hover:bg-primary/80 hover:scale-[1.1] transition-transform'>
             <PlusCircle className='text-white' />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel className='select-none'>Assessment Types</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setIsModalOpen((prev) => !prev)} className='w-40 cursor-pointer'>
+          <DropdownMenuItem
+            onClick={() => {
+              setIsActivityOpen((prev) => !prev);
+            }}
+            className='w-40 cursor-pointer'
+          >
             Activity
           </DropdownMenuItem>
+          <Link href={`${usePathname()}/quiz`}>
+            <DropdownMenuItem className='cursor-pointer'>Quiz</DropdownMenuItem>
+          </Link>
         </DropdownMenuContent>
       </DropdownMenu>
+      <Sheet open={isActivityOpen} onOpenChange={setIsActivityOpen}>
+        <SheetTrigger></SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <ActivityModal subjectId={subjectId} />
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

@@ -41,7 +41,7 @@ const ActivityDashboard = ({ subject, gradeLevel, section, subjectId }: { subjec
         <div className='font-bold text-2xl'>{subject}</div>
         <div className='font-medium '>{`${gradeLevel} - ${section}`}</div>
         <div className='absolute bottom-2 right-2'>
-          <CreateActivityButton />
+          <CreateActivityButton subjectId={subjectId} />
         </div>
       </div>
       <div className='flex flex-col gap-4'>
@@ -59,7 +59,7 @@ const ActivityDashboard = ({ subject, gradeLevel, section, subjectId }: { subjec
             ))}
         </Suspense>
       </div>
-      <ActivityModal subjectId={subjectId} />
+      {/* <ActivityModal subjectId={subjectId} /> */}
     </div>
   );
 };

@@ -77,18 +77,13 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
 
   return (
     <div
-      className={cn(
-        "absolute flex flex-col gap-4 bg-background text-foreground top-0 left-0 h-screen p-4",
-        isModalOpen ? "flex" : "hidden",
-        collapse ? " w-[calc(100vw-57px)]" : " w-[calc(100vw-256px)]"
-      )}
+    // className={cn(
+    //   "absolute flex flex-col gap-4 bg-background text-foreground top-0 left-0 h-screen p-4",
+    //   isModalOpen ? "flex" : "hidden",
+    //   collapse ? " w-[calc(100vw-57px)]" : " w-[calc(100vw-256px)]"
+    // )}
     >
-      <div>
-        <Button className='text-primary-foreground' onClick={() => setIsModalOpen((prev) => !prev)}>
-          X
-        </Button>
-      </div>
-      <div className='p-4 rounded-sm flex-1 max-w-2xl border border-primary'>
+      <div className='flex-1'>
         <Form {...form}>
           <form className='flex relative h-full flex-col space-y-4' onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
@@ -112,16 +107,13 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
                 <FormItem>
                   <FormLabel className='text-xl font-bold'>Content</FormLabel>
                   <FormControl>
-                    <Tiptap className='min-h-[250px] max-h-[400px] overflow-scroll p-4 border border-input rounded-md' description={field.name} onChange={field.onChange} />
+                    <Tiptap className='min-h-[200px] max-h-[200px] overflow-scroll p-4 border border-input rounded-md' description={field.name} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button disabled={isPending} type='submit' className='mt-4'>
-              Add Activity
-            </Button>
-            <div className='absolute bottom-0 space-y-4'>
+            <div className='space-y-4'>
               <FormField
                 control={form.control}
                 name='url'
@@ -158,6 +150,9 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
                   </FormItem>
                 )}
               ></FormField>
+              <Button disabled={isPending} type='submit' className='mt-4'>
+                Add Activity
+              </Button>
             </div>
           </form>
         </Form>

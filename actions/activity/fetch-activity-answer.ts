@@ -1,3 +1,5 @@
+"use server";
+
 import { answerActivity } from "@/actions/activity/answer-activity";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";

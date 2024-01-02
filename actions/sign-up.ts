@@ -8,7 +8,6 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
 
 export const signUp = async (formData: SignUpSchemaType) => {
-  const origin = headers().get("origin");
   const cookieStore = cookies();
   // SSR
   const supabase = createClient(cookieStore);

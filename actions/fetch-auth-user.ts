@@ -1,3 +1,5 @@
+"use server";
+
 import { User } from "@/lib/collection.types";
 import { Database } from "@/lib/database.types";
 import { createClient } from "@/utils/supabase/server";

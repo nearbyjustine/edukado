@@ -7,7 +7,6 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
 
 export const logOut = async () => {
-  const origin = headers().get("origin");
   const cookieStore = cookies();
   // SSR
   const supabase = createClient(cookieStore);
