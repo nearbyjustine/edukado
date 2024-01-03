@@ -1,3 +1,4 @@
+"use client";
 import React, { Dispatch, SetStateAction, useTransition } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "../../ui/button";
@@ -71,18 +72,12 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
       }
 
       setIsModalOpen((prev) => !prev);
-      router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}`);
+      router.refresh();
     });
   };
 
   return (
-    <div
-    // className={cn(
-    //   "absolute flex flex-col gap-4 bg-background text-foreground top-0 left-0 h-screen p-4",
-    //   isModalOpen ? "flex" : "hidden",
-    //   collapse ? " w-[calc(100vw-57px)]" : " w-[calc(100vw-256px)]"
-    // )}
-    >
+    <div className={cn("flex w-[35rem] flex-col gap-4 bg-background text-foreground h-screen")}>
       <div className='flex-1'>
         <Form {...form}>
           <form className='flex relative h-full flex-col space-y-4' onSubmit={form.handleSubmit(onSubmit)}>
@@ -107,7 +102,7 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
                 <FormItem>
                   <FormLabel className='text-xl font-bold'>Content</FormLabel>
                   <FormControl>
-                    <Tiptap className='min-h-[200px] max-h-[200px] overflow-scroll p-4 border border-input rounded-md' description={field.name} onChange={field.onChange} />
+                    <Tiptap className='min-h-[200px] max-h-[400px] overflow-scroll p-4 border border-input rounded-md' description={field.name} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

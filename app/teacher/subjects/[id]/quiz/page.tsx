@@ -8,7 +8,7 @@ const CreateQuizPage = () => {
   return (
     <div>
       {/* <Form> */}
-      <div></div>
+      <div>QuizPage</div>
       {/* </Form> */}
     </div>
   );

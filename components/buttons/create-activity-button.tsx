@@ -9,9 +9,6 @@ import ActivityModal from "../providers/modal/activity-modal";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 const CreateActivityButton = ({ subjectId }: { subjectId: string }) => {
-  const [isModalOpen, setIsModalOpen] = useIsActivityModalOpenContext();
-  const [isActivityOpen, setIsActivityOpen] = useState(false);
-
   return (
     <div>
       <DropdownMenu>
@@ -23,27 +20,14 @@ const CreateActivityButton = ({ subjectId }: { subjectId: string }) => {
         <DropdownMenuContent>
           <DropdownMenuLabel className='select-none'>Assessment Types</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              setIsActivityOpen((prev) => !prev);
-            }}
-            className='w-40 cursor-pointer'
-          >
-            Activity
-          </DropdownMenuItem>
+          <Link href={`${usePathname()}/activities`}>
+            <DropdownMenuItem>Activity</DropdownMenuItem>
+          </Link>
           <Link href={`${usePathname()}/quiz`}>
             <DropdownMenuItem className='cursor-pointer'>Quiz</DropdownMenuItem>
           </Link>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Sheet open={isActivityOpen} onOpenChange={setIsActivityOpen}>
-        <SheetTrigger></SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <ActivityModal subjectId={subjectId} />
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
     </div>
   );
 };

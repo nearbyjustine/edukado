@@ -8,7 +8,7 @@ export async function fetchAllActivityAnswers(id: string) {
   const supabase = await createClient(cookieStore);
 
   const { data, error } = await supabase
-    .from("student_answers")
+    .from("student_answers_activity")
     .select(
       `
     id,

@@ -14,7 +14,10 @@ export interface Database {
           classroom_id: string | null
           content: string
           created_at: string
+          date_close: string | null
+          date_open: string
           file_url: string | null
+          grade: number
           id: string
           link_url: string | null
           subject_id: string
@@ -25,7 +28,10 @@ export interface Database {
           classroom_id?: string | null
           content?: string
           created_at?: string
+          date_close?: string | null
+          date_open?: string
           file_url?: string | null
+          grade?: number
           id?: string
           link_url?: string | null
           subject_id: string
@@ -36,7 +42,10 @@ export interface Database {
           classroom_id?: string | null
           content?: string
           created_at?: string
+          date_close?: string | null
+          date_open?: string
           file_url?: string | null
+          grade?: number
           id?: string
           link_url?: string | null
           subject_id?: string
@@ -85,6 +94,30 @@ export interface Database {
           grade_level?: Database["public"]["Enums"]["grade_level_enum"]
           id?: string
           section?: string
+        }
+        Relationships: []
+      }
+      discussions: {
+        Row: {
+          content: string
+          created_at: string
+          description: string | null
+          id: number
+          title: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          description?: string | null
+          id?: number
+          title?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          description?: string | null
+          id?: number
+          title?: string
         }
         Relationships: []
       }
@@ -144,7 +177,7 @@ export interface Database {
           }
         ]
       }
-      student_answers: {
+      student_answers_activity: {
         Row: {
           activity_id: string
           content: string
@@ -174,14 +207,14 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "student_answers_activity_id_fkey"
+            foreignKeyName: "student_answers_activity_activity_id_fkey"
             columns: ["activity_id"]
             isOneToOne: false
             referencedRelation: "activities"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "student_answers_student_id_fkey"
+            foreignKeyName: "student_answers_activity_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -270,6 +303,24 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      teacher_grade_student: {
+        Row: {
+          created_at: string
+          grade: number | null
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          grade?: number | null
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          grade?: number | null
+          id?: number
+        }
+        Relationships: []
       }
       teachers: {
         Row: {

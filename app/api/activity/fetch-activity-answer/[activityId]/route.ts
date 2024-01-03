@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: { activity
 
   if (userError || !user) return NextResponse.json({ data: null, error: userError });
 
-  const { data, error } = await supabase.from("student_answers").select().eq("activity_id", params.activityId).eq("student_id", user.id).single();
+  const { data, error } = await supabase.from("student_answers_activity").select().eq("activity_id", params.activityId).eq("student_id", user.id).single();
 
   if (error || !data) {
     return NextResponse.json({ answer: data, error: error }, { status: 401 });

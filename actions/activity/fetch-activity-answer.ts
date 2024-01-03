@@ -16,7 +16,7 @@ export async function fetchActivityAnswer(activityId: string) {
   if (userError || !user) return { data: null, error: userError };
 
   const { data, error } = await supabase
-    .from("student_answers")
+    .from("student_answers_activity")
     .select(
       `
     id,
