@@ -1,3 +1,4 @@
+"use client";
 import { deleteActivity } from "@/actions/activity/delete-activity-client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -7,7 +8,7 @@ import { ClipboardList, Pencil, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const Activity = ({ name, activity, date, activityId, subjectId }: { name: string; activity: string; date: string; activityId: string; subjectId: string }) => {
+const Activity = ({ name, activity, date, activityId, subjectId, grade }: { name: string; activity: string; date: string; activityId: string; subjectId: string; grade: number }) => {
   const [hidden, setHidden] = useState(false);
   const handleDeleteActivity = async () => {
     const response = await deleteActivity(activityId);
@@ -29,7 +30,9 @@ const Activity = ({ name, activity, date, activityId, subjectId }: { name: strin
               <p>{date}</p>
             </div>
           </div>
-          <div></div>
+          <div>
+            <p className='py-1 px-2 bg-primary text-sm text-primary-foreground rounded-md'>0/{grade}</p>
+          </div>
         </div>
       </Link>
     </div>

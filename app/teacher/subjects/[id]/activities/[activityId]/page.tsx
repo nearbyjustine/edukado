@@ -19,7 +19,13 @@ export default async function ActivityPage({ params }: { params: { id: string; a
   return (
     <div className='flex flex-col gap-12 justify-start'>
       <div className='flex flex-col gap-4'>
-        <h1 className='text-2xl font-bold'>{activity.title}</h1>
+        <div className='max-w-fit'>
+          <h1 className='text-2xl font-bold relative'>
+            {activity.title}
+            <span className='absolute text-sm font-normal top-0 -right-20 rounded-md bg-primary text-primary-foreground px-2'>{activity.grade} pts</span>
+          </h1>
+        </div>
+
         <div>{parse(activity.content)}</div>
         {activity.file_url && (
           <Link className='text-blue-400 hover:underline flex gap-2 items-center' href={activity.file_url}>

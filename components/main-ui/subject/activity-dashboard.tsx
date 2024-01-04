@@ -26,7 +26,7 @@ const ActivityDashboard = async ({ subject, gradeLevel, section, subjectId }: { 
               subjectId={subjectId}
               activityId={activity.id}
               activity={activity.title}
-              date={`${moment(new Date(activity.date_open)).format("MMMM Do YYYY")} ${activity.date_close ? "- " + moment(new Date(activity.date_close)).format("MMMM Do YYYY") : ""}`}
+              date={`${moment(new Date(activity.date_open)).format("MMMM DD, YYYY")} ${activity.date_close ? "- " + moment(new Date(activity.date_close)).format("MMMM DD, YYYY") : ""}`}
               name={`${activity.profiles!.first_name} ${activity.profiles!.last_name}`}
               grade={activity.grade}
             />
