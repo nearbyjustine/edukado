@@ -1,40 +1,14 @@
-"use client";
-
 import CreateActivityButton from "@/components/buttons/create-activity-button";
-import React, { Suspense, useEffect, useState } from "react";
 import Activity from "./activity";
 import ActivityModal from "@/components/providers/modal/activity-modal";
 import moment from "moment";
+import { ActivityType, ActivityWithTeacher } from "@/lib/collection.types";
+import { fetchAllActivitiesBySubject } from "@/actions/activity/fetch-activity";
 
-type ActivityWithTeacher = {
-  content: string;
-  created_at: string;
-  file_url: string | null;
-  id: string;
-  link_url: string | null;
-  subject_id: string;
-  teacher_id: string;
-  title: string;
-  profiles: {
-    first_name: string;
-    last_name: string;
-  };
-};
+const ActivityDashboard = async ({ subject, gradeLevel, section, subjectId }: { subject: string; gradeLevel: string; section: string; subjectId: string }) => {
+  const { data: activities, error } = await fetchAllActivitiesBySubject(subjectId);
 
-const ActivityDashboard = ({ subject, gradeLevel, section, subjectId }: { subject: string; gradeLevel: string; section: string; subjectId: string }) => {
-  const [activities, setActivities] = useState<ActivityWithTeacher[]>();
-  useEffect(() => {
-    const fetchActivities = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/activity/fetch-activity-by-subject/${subjectId}`, {
-        cache: "no-store",
-      });
-      const { activities }: { activities: ActivityWithTeacher[] } = await response.json();
-      setActivities(activities);
-    };
-
-    fetchActivities();
-  }, []);
-
+  if (error || !activities) return <div>Loading...</div>;
   return (
     <div className='flex flex-col gap-4 mt-9 w-[50rem]'>
       <div className='relative bg-green-500 text-white dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col justify-end h-32 py-2 px-4'>
@@ -45,19 +19,18 @@ const ActivityDashboard = ({ subject, gradeLevel, section, subjectId }: { subjec
         </div>
       </div>
       <div className='flex flex-col gap-4'>
-        <Suspense fallback={<p>Loading activities...</p>}>
-          {activities &&
-            activities.map((activity) => (
-              <Activity
-                key={activity.id}
-                subjectId={subjectId}
-                activityId={activity.id}
-                activity={activity.title}
-                date={`${moment(new Date(activity.created_at)).format("MMMM Do YYYY")}`}
-                name={`${activity.profiles.first_name} ${activity.profiles.last_name}`}
-              />
-            ))}
-        </Suspense>
+        {activities &&
+          activities.map((activity) => (
+            <Activity
+              key={activity.id}
+              subjectId={subjectId}
+              activityId={activity.id}
+              activity={activity.title}
+              date={`${moment(new Date(activity.date_open)).format("MMMM Do YYYY")} ${activity.date_close ? "- " + moment(new Date(activity.date_close)).format("MMMM Do YYYY") : ""}`}
+              name={`${activity.profiles!.first_name} ${activity.profiles!.last_name}`}
+              grade={activity.grade}
+            />
+          ))}
       </div>
       {/* <ActivityModal subjectId={subjectId} /> */}
     </div>

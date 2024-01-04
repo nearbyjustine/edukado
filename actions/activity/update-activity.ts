@@ -4,11 +4,20 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
 import { ActivityInsert } from "@/lib/collection.types";
 import { createClient } from "@/utils/supabase/server";
+import moment from "moment";
 
-export const updateActivity = async (title: string, content: string, activityId: string, fileUrl: string, linkUrl: string) => {
+export const updateActivity = async (title: string, content: string, activityId: string, fileUrl: string, linkUrl: string, grade: number, date_open: Date, date_close: Date) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const data = await supabase.from("activities").update({ content: content, title: title, file_url: fileUrl, link_url: linkUrl }).eq("id", activityId);
+  const dateOpen = moment(new Date(date_open)).format("YYYY-MM-D");
+  const dateClose = moment(new Date(date_close)).format("YYYY-MM-D") || null;
+
+  const data = await supabase
+    .from("activities")
+    .update({ content: content, title: title, file_url: fileUrl, link_url: linkUrl, grade, date_open: dateOpen, date_close: dateClose })
+    .eq("id", activityId);
+
+  console.log(data);
   return data;
 };

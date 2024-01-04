@@ -5,9 +5,14 @@ import { PlusCircle } from "lucide-react";
 import CreateActivityButton from "@/components/buttons/create-activity-button";
 import ActivityDashboard from "@/components/main-ui/subject/activity-dashboard";
 import { Suspense } from "react";
+import { unstable_noStore as noStore, revalidatePath } from "next/cache";
+export const revalidate = 0;
 
 export default async function SubjectPage({ params }: { params: { id: string } }) {
-  const subject = await fetchSubjectById(params.id);
+  noStore();
+  revalidatePath(`/teacher/subjects/${params.id}`);
+
+  const subject = await fetchSubjectById(params.id, `/teacher/subjects/${params.id}`);
   if (subject.error || !subject.data || !subject.data.classrooms) {
     return <div>Error: Something must have happened</div>;
   }

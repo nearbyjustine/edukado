@@ -14,23 +14,33 @@ import { Button } from "@/components/ui/button";
 import Tiptap from "@/components/tiptap";
 import { useCollapseContext } from "@/components/providers/collapseProvider";
 import { updateActivity } from "@/actions/activity/update-activity";
+import { Separator } from "@/components/ui/separator";
+import { DatePicker } from "@/components/calendar/date-picker";
 
 const MAX_FILE_SIZE = 20_971_520;
 
-const ActivityFormSchema = z.object({
-  title: z
-    .string({ required_error: "Title is a requirement" })
-    .min(5, {
-      message: "Title is too short",
-    })
-    .max(100, { message: "Title is too long" }),
-  content: z.string({ required_error: "Content is a requirement" }).min(5, { message: "Content is too short" }),
-  file: z
-    .custom<File>((val) => val instanceof File, "Please upload a file")
-    .refine((file) => file?.size <= MAX_FILE_SIZE, { message: `Max image size is 20MB.` })
-    .optional(),
-  url: z.string().url("Must be a valid url").optional(),
-});
+const ActivityFormSchema = z
+  .object({
+    title: z
+      .string({ required_error: "Title is a requirement" })
+      .min(5, {
+        message: "Title is too short",
+      })
+      .max(100, { message: "Title is too long" }),
+    content: z.string({ required_error: "Content is a requirement" }).min(5, { message: "Content is too short" }),
+    file: z
+      .custom<File>((val) => val instanceof File, "Please upload a file")
+      .refine((file) => file?.size <= MAX_FILE_SIZE, { message: `Max image size is 20MB.` })
+      .optional(),
+    url: z.string().url("Must be a valid url").optional(),
+    grade: z.coerce.number({ required_error: "Grade should be initialized" }).gte(0, { message: "Grade must not be less than 0" }),
+    date_open: z.date({ required_error: "Date to start is required" }),
+    date_close: z.date({ required_error: "Date to close is required" }),
+  })
+  .refine((data) => data.date_open.getTime() <= data.date_close.getTime(), {
+    message: "Opening date must be earlier than closing date",
+    path: ["date_open"],
+  });
 
 const ActivityEdit = ({
   subjectId,
@@ -39,6 +49,9 @@ const ActivityEdit = ({
   content,
   fileUrl,
   linkUrl,
+  grade,
+  date_open,
+  date_close,
 }: {
   subjectId: string;
   activityId: string;
@@ -46,6 +59,9 @@ const ActivityEdit = ({
   content: string;
   linkUrl: string | null;
   fileUrl: string | null;
+  grade: number;
+  date_open: string;
+  date_close: string | null;
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -56,6 +72,9 @@ const ActivityEdit = ({
       title: title || "",
       content: content || "",
       url: linkUrl || undefined,
+      grade: grade,
+      date_open: new Date(date_open),
+      date_close: (date_close && new Date(date_close)) || undefined,
     },
   });
 
@@ -84,11 +103,17 @@ const ActivityEdit = ({
       if (IMFile) {
         const response = await uploadFile(IMFile);
         const fileUrl = (await response.json()) as { url: string };
-        const error = await updateActivity(title, content, activityId, fileUrl.url, linkUrl || "");
-        console.log(error);
+        const error = await updateActivity(title, content, activityId, fileUrl.url, linkUrl || "", values.grade, values.date_open, values.date_close);
+        if (error.error) {
+          console.log(error);
+          return;
+        }
       } else {
-        const error = await updateActivity(title, content, activityId, fileUrl || "", linkUrl || "");
-        console.log(error);
+        const error = await updateActivity(title, content, activityId, fileUrl || "", linkUrl || "", values.grade, values.date_open, values.date_close);
+        if (error.error) {
+          console.log(error);
+          return;
+        }
       }
 
       router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}`);
@@ -97,9 +122,9 @@ const ActivityEdit = ({
 
   return (
     <div className={cn("flex w-[35rem] flex-col gap-4 bg-background text-foreground h-screen")}>
-      <div className='p-4'>
+      <div className='flex-1'>
         <Form {...form}>
-          <form className='flex relative flex-col space-y-4' onSubmit={form.handleSubmit(onSubmit)}>
+          <form className='flex relative h-full flex-col space-y-4' onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name='title'
@@ -132,9 +157,6 @@ const ActivityEdit = ({
                 </FormItem>
               )}
             />
-            <Button disabled={isPending} type='submit' className='mt-4'>
-              Update Activity
-            </Button>
             <div className='space-y-4'>
               <FormField
                 control={form.control}
@@ -172,6 +194,56 @@ const ActivityEdit = ({
                   </FormItem>
                 )}
               ></FormField>
+            </div>
+            <div>
+              <Separator className='my-8' />
+            </div>
+            <div className='space-y-4'>
+              <FormField
+                control={form.control}
+                name='grade'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Grade</FormLabel>
+                    <FormControl>
+                      <Input min={0} {...field} type='number' id='grade' />
+                    </FormControl>
+                    <FormDescription>Grade alloted to activity</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              ></FormField>
+              <FormField
+                control={form.control}
+                name='date_open'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col gap-1'>
+                    <FormLabel>Date Open</FormLabel>
+                    <FormControl>
+                      <DatePicker field={field} />
+                    </FormControl>
+                    <FormDescription>This is the date where the activity will open and be visible</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              ></FormField>
+              <FormField
+                control={form.control}
+                name='date_close'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col gap-1'>
+                    <FormLabel>Date Close</FormLabel>
+                    <FormControl>
+                      <DatePicker field={field} />
+                    </FormControl>
+                    <FormDescription>This is the date where the activity will close</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              ></FormField>
+              <Button disabled={isPending} type='submit' className='mt-4'>
+                Update Activity
+              </Button>
             </div>
           </form>
         </Form>

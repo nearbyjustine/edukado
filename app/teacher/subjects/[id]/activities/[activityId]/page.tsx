@@ -4,10 +4,12 @@ import ActivityEdit from "@/components/main-ui/activity/activity-edit";
 import parse from "html-react-parser";
 import { ArrowDownToLine, Link2 } from "lucide-react";
 import Link from "next/link";
-
+import { unstable_noStore as noStore } from "next/cache";
 export const revalidate = 0;
 
 export default async function ActivityPage({ params }: { params: { id: string; activityId: string } }) {
+  noStore();
+
   const { data: activity, error } = await fetchActivityById(params.activityId);
   const { data: answers, error: answerError } = await fetchAllActivityAnswers(params.activityId);
   if (error || !activity) {
