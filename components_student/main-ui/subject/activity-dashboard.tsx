@@ -1,6 +1,5 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Activity from "./activity";
-import ActivityModal from "@/components_student/modal/activity-modal";
 import moment from "moment";
 import { fetchAllActivitiesBySubject } from "@/actions/activity/fetch-activity";
 
