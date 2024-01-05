@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
+import { usePathname, useRouter } from "next/navigation";
 
 const QuizFormSchema = z.object({
   title: z.string({ required_error: "Quiz title is required" }),
@@ -14,12 +15,20 @@ const QuizFormSchema = z.object({
 });
 
 const QuizForm = () => {
+  const router = useRouter();
+  const path = usePathname();
   const form = useForm<z.infer<typeof QuizFormSchema>>({
     resolver: zodResolver(QuizFormSchema),
   });
 
-  const onSubmit = (values: z.infer<typeof QuizFormSchema>) => {
-    console.log("hi");
+  const onSubmit = async (values: z.infer<typeof QuizFormSchema>) => {
+    // Create Quiz server action
+    console.log(values);
+
+    const id = "sample-id";
+    // Proceed to CreateQuizQuestionPage
+
+    router.push(`/${path}/${id}`);
   };
 
   return (
@@ -51,8 +60,14 @@ const QuizForm = () => {
             </FormItem>
           )}
         />
-        <Button type='submit'>Create Quiz</Button>
-        <Button variant={"destructive"}>Cancel</Button>
+        <div className='flex justify-end gap-2'>
+          <Button className='' type='submit'>
+            Create Quiz
+          </Button>
+          <Button className='' variant={"destructive"}>
+            Cancel
+          </Button>
+        </div>
       </form>
     </Form>
   );

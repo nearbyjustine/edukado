@@ -177,6 +177,21 @@ export interface Database {
           }
         ]
       }
+      quizzes: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
       student_answers_activity: {
         Row: {
           activity_id: string
@@ -306,16 +321,19 @@ export interface Database {
       }
       teacher_grade_student: {
         Row: {
+          comment: string | null
           created_at: string
           grade: number | null
           id: number
         }
         Insert: {
+          comment?: string | null
           created_at?: string
           grade?: number | null
           id?: number
         }
         Update: {
+          comment?: string | null
           created_at?: string
           grade?: number | null
           id?: number

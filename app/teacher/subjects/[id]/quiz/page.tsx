@@ -7,7 +7,7 @@ import QuizForm from "@/components/forms/quiz-form";
 
 const CreateQuizPage = () => {
   return (
-    <div>
+    <div className='w-full md:w-2/3 lg:w-2/3 '>
       <QuizForm />
     </div>
   );

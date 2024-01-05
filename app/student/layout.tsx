@@ -10,7 +10,7 @@ export default async function TeacherLayout({ children }: { children: React.Reac
       <Sidebar />
       <CollapseSideBar>
         {!error && <ProfileBar avatarUrl={avatar_url} firstName={user.first_name} lastName={user.last_name} role={role} />}
-        <main className='mx-2 my-6'>{children}</main>
+        <main className='w-full mx-2 my-6'>{children}</main>
       </CollapseSideBar>
     </div>
   );
