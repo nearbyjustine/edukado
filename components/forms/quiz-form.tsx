@@ -25,10 +25,11 @@ const QuizForm = () => {
     // Create Quiz server action
     console.log(values);
 
+    // Get newly created id of quiz
     const id = "sample-id";
-    // Proceed to CreateQuizQuestionPage
 
-    router.push(`/${path}/${id}`);
+    // Proceed to CreateQuizQuestionPage
+    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path}/${id}`);
   };
 
   return (
