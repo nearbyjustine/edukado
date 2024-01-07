@@ -63,7 +63,7 @@ const QuizQuestionForm = () => {
   return (
     <>
       <Form {...form}>
-        <form className='flex flex-col w-full gap-6' onSubmit={form.handleSubmit(onSaveAndExit)}>
+        <form method='post' className='flex flex-col w-full gap-6' onSubmit={form.handleSubmit(onSaveAndExit)}>
           <FormField
             control={form.control}
             name='title'
