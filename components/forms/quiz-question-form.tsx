@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ const QuizQuestionSchema = z.object({
   options: z.array(
     z.object({
       answer: z.string(),
-      isCorrect: z.boolean(),
+      is_correct: z.boolean(),
     }),
     { required_error: "Every option must be filled with answers" }
   ),
@@ -39,7 +39,7 @@ const QuizQuestionForm = () => {
     name: "options",
   });
 
-  const [typeOfQuestion, setTypeOfQuestion] = useState<z.infer<typeof QuestionTypeSchema>>("Multiple Choice");
+  const watchType = useWatch<z.infer<typeof QuizQuestionSchema>>({ control: form.control, name: "type" });
 
   const onNextQuestion = (values: z.infer<typeof QuizQuestionSchema>) => {
     console.log("RESULT: ", values);
@@ -55,7 +55,7 @@ const QuizQuestionForm = () => {
     for (let i = 0; i < value; i++) {
       append({
         answer: "",
-        isCorrect: false,
+        is_correct: false,
       });
     }
   };
@@ -86,7 +86,6 @@ const QuizQuestionForm = () => {
                 <FormControl>
                   <Select
                     onValueChange={(value) => {
-                      setTypeOfQuestion(value as z.infer<typeof QuestionTypeSchema>);
                       field.onChange(value);
                     }}
                     defaultValue={field.value}
@@ -104,13 +103,20 @@ const QuizQuestionForm = () => {
               </FormItem>
             )}
           />
-          {typeOfQuestion === "Multiple Choice" && (
+
+          {/* NUMBER OF OPTIONS FOR MULTIPLE CHOICE */}
+
+          {watchType === "Multiple Choice" && (
             <FormItem>
               <FormLabel>Number of Choices</FormLabel>
               <FormControl>
-                <Select onValueChange={(value) => handleOptionNumberChange(parseInt(value))}>
+                <Select
+                  onValueChange={(value) => {
+                    handleOptionNumberChange(parseInt(value));
+                  }}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder={"4"} defaultValue={"4"} />
+                    <SelectValue placeholder={"..."} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value='2'>2</SelectItem>
@@ -123,33 +129,32 @@ const QuizQuestionForm = () => {
             </FormItem>
           )}
 
-          {typeOfQuestion === "Multiple Choice" &&
+          {/* MULTIPLE CHOICE */}
+
+          {watchType === "Multiple Choice" &&
             fields.map((arrayField, index) => {
-              console.log(arrayField);
-              console.log(index);
+              const { errors } = form.formState;
+              const errorForAnswer = errors.options;
+              console.log(errorForAnswer);
               return (
-                <FormField
-                  key={arrayField.id}
-                  control={form.control}
-                  name='options'
-                  render={({ field }) => {
-                    console.log(field);
-                    return (
-                      <div className='space-y-2'>
-                        <Input defaultValue={arrayField.answer} onChange={field.onChange} type='text' />
-                        <div className='flex gap-2 items-center'>
-                          <Checkbox onCheckedChange={(value) => field.onChange(value)} id={`is_correct_${arrayField.id}`} />
-                          <FormLabel htmlFor={`is_correct_${arrayField.id}`} className=''>
-                            Correct Answer?
-                          </FormLabel>
-                        </div>
-                        <FormMessage />
-                      </div>
-                    );
-                  }}
-                />
+                <div key={arrayField.id} className='space-y-2'>
+                  <Input {...form.register(`options.${index}.answer` as const)} type='text' />
+                  <div className='flex gap-2 items-center'>
+                    <Checkbox
+                      onCheckedChange={(value) => form.setValue(`options.${index}.is_correct`, value as boolean)}
+                      {...form.register(`options.${index}.is_correct` as const)}
+                      id={`is_correct_${arrayField.id}`}
+                    />
+                    <FormLabel htmlFor={`is_correct_${arrayField.id}`} className=''>
+                      Correct Answer?
+                    </FormLabel>
+                  </div>
+                  <FormMessage />
+                </div>
               );
             })}
+
+          {watchType === ""}
 
           <div className='flex justify-end gap-2'>
             <Button variant={"secondary"} className='' onClick={form.handleSubmit(onNextQuestion)}>
