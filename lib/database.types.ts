@@ -11,7 +11,6 @@ export interface Database {
     Tables: {
       activities: {
         Row: {
-          classroom_id: string | null
           content: string
           created_at: string
           date_close: string | null
@@ -25,7 +24,6 @@ export interface Database {
           title: string
         }
         Insert: {
-          classroom_id?: string | null
           content?: string
           created_at?: string
           date_close?: string | null
@@ -39,7 +37,6 @@ export interface Database {
           title?: string
         }
         Update: {
-          classroom_id?: string | null
           content?: string
           created_at?: string
           date_close?: string | null
@@ -53,13 +50,6 @@ export interface Database {
           title?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "activities_classroom_id_fkey"
-            columns: ["classroom_id"]
-            isOneToOne: false
-            referencedRelation: "classrooms"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "activities_subject_id_fkey"
             columns: ["subject_id"]
@@ -75,6 +65,27 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      answers: {
+        Row: {
+          answer: string
+          created_at: string
+          id: number
+          is_correct: boolean
+        }
+        Insert: {
+          answer?: string
+          created_at?: string
+          id?: number
+          is_correct?: boolean
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: number
+          is_correct?: boolean
+        }
+        Relationships: []
       }
       classrooms: {
         Row: {
@@ -177,20 +188,137 @@ export interface Database {
           }
         ]
       }
-      quizzes: {
+      question_answers: {
         Row: {
+          answer_id: number
           created_at: string
           id: number
+          question_id: string
+          quiz_id: string
+        }
+        Insert: {
+          answer_id: number
+          created_at?: string
+          id?: number
+          question_id: string
+          quiz_id: string
+        }
+        Update: {
+          answer_id?: number
+          created_at?: string
+          id?: number
+          question_id?: string
+          quiz_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_answers_answer_id_fkey"
+            columns: ["answer_id"]
+            isOneToOne: false
+            referencedRelation: "answers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_answers_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      questions: {
+        Row: {
+          created_at: string
+          id: string
+          points: number
+          quiz_id: string
+          title: string
+          type: Database["public"]["Enums"]["question_type_enum"]
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
+          points?: number
+          quiz_id: string
+          title?: string
+          type: Database["public"]["Enums"]["question_type_enum"]
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
+          points?: number
+          quiz_id?: string
+          title?: string
+          type?: Database["public"]["Enums"]["question_type_enum"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      quizzes: {
+        Row: {
+          created_at: string
+          date_close: string
+          date_open: string
+          description: string | null
+          duration: number
+          id: string
+          subject_id: string
+          teacher_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          date_close: string
+          date_open?: string
+          description?: string | null
+          duration?: number
+          id?: string
+          subject_id: string
+          teacher_id: string
+          title?: string
+        }
+        Update: {
+          created_at?: string
+          date_close?: string
+          date_open?: string
+          description?: string | null
+          duration?: number
+          id?: string
+          subject_id?: string
+          teacher_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quizzes_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       student_answers_activity: {
         Row: {
@@ -381,6 +509,7 @@ export interface Database {
         | "Grade 4"
         | "Grade 5"
         | "Grade 6"
+      question_type_enum: "Multiple Choice" | "True or False" | "Identification"
       roles_enum:
         | "student"
         | "teacher"

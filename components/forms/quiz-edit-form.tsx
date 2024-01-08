@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,26 @@ import { Button } from "../ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { DatePicker } from "../calendar/date-picker";
 import addQuiz from "@/actions/quiz/add-quiz";
+import { createClient } from "@/utils/supabase/client";
+import updateQuiz from "@/actions/quiz/update-quiz";
+import { QuizQuestionSchema } from "./quiz-question-form";
+
+type QuestionType = {
+  created_at: string;
+  id: string;
+  points: number;
+  quiz_id: string;
+  title: string;
+  type: "Multiple Choice" | "True or False" | "Identification";
+  question_answers: {
+    answers: {
+      answer: string;
+      created_at: string;
+      id: number;
+      is_correct: boolean;
+    } | null;
+  }[];
+};
 
 export const QuizFormSchema = z
   .object({
@@ -24,27 +44,56 @@ export const QuizFormSchema = z
     path: ["date_open"],
   });
 
-const QuizForm = ({ subjectId }: { subjectId: string }) => {
+const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string }) => {
+  const [quizFormData, setQuizFormData] = useState<z.infer<typeof QuizFormSchema>>({
+    title: "",
+    description: "",
+    date_open: new Date(),
+    date_close: new Date(new Date().setDate(new Date().getDate() + 3)),
+    duration: 60,
+  });
+
+  const [questionData, setQuestionData] = useState<QuestionType[]>();
+
   const router = useRouter();
   const path = usePathname();
   const form = useForm<z.infer<typeof QuizFormSchema>>({
     resolver: zodResolver(QuizFormSchema),
     reValidateMode: "onChange",
     defaultValues: {
-      duration: 60,
+      title: quizFormData.title,
+      description: quizFormData.description,
+      date_open: quizFormData.date_open,
+      date_close: quizFormData.date_close,
+      duration: quizFormData.duration,
     },
   });
 
+  useEffect(() => {
+    // fetch quiz through client. (try)
+    const fetchQuiz = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.from("quizzes").select("title, description, date_open, date_close, duration").eq("id", quizId).single();
+      if (error || !data) return console.log(data, error);
+      setQuizFormData({ ...data, date_close: new Date(data.date_close), date_open: new Date(data.date_open), description: data.description as string | undefined });
+    };
+
+    const fetchQuestions = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.from("questions").select("*, question_answers!inner (answers(*))").eq("quiz_id", quizId);
+      if (error || !data) return console.log(data, error);
+      setQuestionData(data);
+      console.log(data, error);
+    };
+
+    fetchQuiz();
+    fetchQuestions();
+  }, []);
+
   const onSubmit = async (values: z.infer<typeof QuizFormSchema>) => {
     console.log(values);
-    const { data, error } = await addQuiz(values, subjectId);
+    const { data, error } = await updateQuiz(values, quizId);
     if (error || !data) return console.log(error);
-
-    // Get newly created id of quiz
-    const { id } = data;
-
-    // Proceed to CreateQuizQuestionPage
-    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path}/${id}`);
   };
 
   return (
@@ -118,7 +167,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
         ></FormField>
         <div className='flex justify-end gap-2'>
           <Button className='' type='submit'>
-            Create Quiz
+            Update Quiz
           </Button>
           <Button className='' variant={"destructive"}>
             Cancel
@@ -129,4 +178,4 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
   );
 };
 
-export default QuizForm;
+export default QuizEditForm;

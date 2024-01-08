@@ -6,27 +6,28 @@ import moment from "moment";
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-const addQuiz = async (values: z.infer<typeof QuizFormSchema>, subject_id: string) => {
+const updateQuiz = async (values: z.infer<typeof QuizFormSchema>, quiz_id: string) => {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
   const dateOpen = moment(new Date(values.date_open)).format("YYYY-MM-D");
   const dateClose = moment(new Date(values.date_close)).format("YYYY-MM-D");
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  // const {
+  //   data: { user },
+  //   error,
+  // } = await supabase.auth.getUser();
 
-  if (!user || error) return { error };
+  // if (!user || error) return { error };
 
-  const { data, error: insertError } = await supabase
+  const { data, error: updateError } = await supabase
     .from("quizzes")
-    .insert([{ ...values, date_open: dateOpen, date_close: dateClose, teacher_id: user.id, subject_id }])
+    .update({ ...values, date_open: dateOpen, date_close: dateClose })
+    .eq("id", quiz_id)
     .select()
     .single();
 
-  return { data, insertError };
+  return { data, error: updateError };
 };
 
-export default addQuiz;
+export default updateQuiz;

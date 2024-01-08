@@ -5,10 +5,10 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import QuizForm from "@/components/forms/quiz-form";
 
-const CreateQuizPage = () => {
+const CreateQuizPage = ({ params: { id } }: { params: { id: string } }) => {
   return (
     <div className='w-full md:w-2/3 lg:w-2/3 '>
-      <QuizForm />
+      <QuizForm subjectId={id} />
     </div>
   );
 };
