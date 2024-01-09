@@ -9,3 +9,9 @@ export type ClassroomWithSubjects = Database["public"]["Tables"]["classrooms"]["
 export type ActivityInsert = Database["public"]["Tables"]["activities"]["Insert"];
 export type ActivityType = Database["public"]["Tables"]["activities"]["Row"];
 export type ActivityWithTeacher = Database["public"]["Tables"]["activities"]["Row"] & User;
+export type Quiz = Database["public"]["Tables"]["quizzes"]["Row"];
+export type QuestionWithAnswers = Database["public"]["Tables"]["questions"]["Row"] & {
+  question_answers: {
+    answers: Database["public"]["Tables"]["answers"]["Row"];
+  }[];
+};

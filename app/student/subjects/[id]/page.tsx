@@ -1,5 +1,5 @@
 import { fetchSubjectById } from "@/actions_student/section/fetch-subject";
-import ActivityDashboard from "@/components_student/main-ui/subject/activity-dashboard";
+import DeliverablesDashboard from "@/components_student/main-ui/subject/deliverables-dashboard";
 
 export default async function SubjectPage({ params }: { params: { id: string } }) {
   const subject = await fetchSubjectById(params.id);
@@ -10,7 +10,7 @@ export default async function SubjectPage({ params }: { params: { id: string } }
 
   return (
     <div>
-      <ActivityDashboard subjectId={params.id} gradeLevel={classroom.grade_level} section={classroom.section} subject={subject.data.name} />
+      <DeliverablesDashboard subjectId={params.id} gradeLevel={classroom.grade_level} section={classroom.section} subject={subject.data.name} />
     </div>
   );
 }

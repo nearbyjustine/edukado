@@ -21,7 +21,7 @@ const CreateActivityButton = ({ subjectId }: { subjectId: string }) => {
           <DropdownMenuLabel className='select-none'>Assessment Types</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <Link href={`${usePathname()}/activities`}>
-            <DropdownMenuItem>Activity</DropdownMenuItem>
+            <DropdownMenuItem className='cursor-pointer'>Activity</DropdownMenuItem>
           </Link>
           <Link href={`${usePathname()}/quiz`}>
             <DropdownMenuItem className='cursor-pointer'>Quiz</DropdownMenuItem>

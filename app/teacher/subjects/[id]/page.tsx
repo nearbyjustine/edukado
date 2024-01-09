@@ -3,7 +3,7 @@ import Activity from "@/components/main-ui/subject/activity";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import CreateActivityButton from "@/components/buttons/create-activity-button";
-import ActivityDashboard from "@/components/main-ui/subject/activity-dashboard";
+import DeliverablesDashboard from "@/components/main-ui/subject/deliverables-dashboard";
 import { Suspense } from "react";
 import { unstable_noStore as noStore, revalidatePath } from "next/cache";
 export const revalidate = 0;
@@ -20,7 +20,7 @@ export default async function SubjectPage({ params }: { params: { id: string } }
 
   return (
     <div>
-      <ActivityDashboard subjectId={params.id} gradeLevel={classroom.grade_level} section={classroom.section} subject={subject.data.name} />
+      <DeliverablesDashboard subjectId={params.id} gradeLevel={classroom.grade_level} section={classroom.section} subject={subject.data.name} />
     </div>
   );
 }

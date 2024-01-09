@@ -13,22 +13,25 @@ import { usePathname, useRouter } from "next/navigation";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
 import addQuestion from "@/actions/question/add-question";
+import updateQuestion from "@/actions/question/update-question";
 import addAnswers from "@/actions/answers/add-answers";
 import { fetchQuestionsCount } from "@/actions/question/fetch-all-questions";
+import { createClient } from "@/utils/supabase/client";
 
-const QuestionTypeSchema = z.enum(["Multiple Choice", "Identification", "True or False"], { required_error: "Question Type is required" });
-export const OptionsTypeSchema = z.array(
+const QuestionEditTypeSchema = z.enum(["Multiple Choice", "Identification", "True or False"], { required_error: "Question Type is required" });
+export const OptionsEditTypeSchema = z.array(
   z.object({
     answer: z.string().refine((val) => val !== "", { message: "Answer must be provided for each option" }),
     is_correct: z.boolean(),
   }),
   { required_error: "Every option must be filled with answers" }
 );
-export const QuizQuestionSchema = z.object({
+export const QuizQuestionEditSchema = z.object({
   title: z.string({ required_error: "Quiz Title is required" }),
-  type: QuestionTypeSchema,
-  options: OptionsTypeSchema,
+  type: QuestionEditTypeSchema,
+  options: OptionsEditTypeSchema,
   points: z.coerce.number({ required_error: "Points is required" }).min(0),
+  option_count: z.coerce.number().optional(),
 });
 // .refine(
 //   (data) => {
@@ -41,12 +44,14 @@ export const QuizQuestionSchema = z.object({
 //   { message: "There should at least be one correct answer", path: ["options"] }
 // );
 
-const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
+const QuizQuestionEditForms = ({ quizId, questionId }: { quizId: string; questionId: string }) => {
   const [questionNumber, setQuestionNumber] = useState(1);
+  const [optionCount, setOptionCount] = useState(1);
   const path = usePathname();
+  const quizEditPath = path.split("/").slice(0, -2).join("/");
   const router = useRouter();
-  const form = useForm<z.infer<typeof QuizQuestionSchema>>({
-    resolver: zodResolver(QuizQuestionSchema),
+  const form = useForm<z.infer<typeof QuizQuestionEditSchema>>({
+    resolver: zodResolver(QuizQuestionEditSchema),
     reValidateMode: "onChange",
     defaultValues: {
       type: "Multiple Choice",
@@ -80,49 +85,84 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
 
   useEffect(() => {
     // fetch all questions,
-    const fetchAllQuestion = async () => {
-      const { count, error } = await fetchQuestionsCount(quizId);
-      if (!error && count) return setQuestionNumber(count + 1);
+    const fetchQuestion = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.from("questions").select("*, question_answers!inner (answers(*))").eq("id", questionId).single();
+      if (error || !data) return console.log("fetch question start error", data, error);
+      const answersArray = data.question_answers.map((value) => {
+        if (value.answers) {
+          return {
+            answer: value.answers.answer,
+            is_correct: value.answers.is_correct,
+          };
+        }
+
+        return {
+          answer: "",
+          is_correct: false,
+        };
+      });
+      if (!answersArray) return console.log(answersArray);
+      replace([...answersArray]);
+
+      form.setValue("title", data.title);
+      form.setValue("points", data.points);
+      form.setValue("type", data.type);
+      form.setValue("option_count", answersArray.length);
     };
 
-    fetchAllQuestion();
+    remove();
+    fetchQuestion();
     // set the state on question number as the next question
   }, []);
 
-  const watchType = useWatch<z.infer<typeof QuizQuestionSchema>>({ control: form.control, name: "type" });
+  const watchType = useWatch<z.infer<typeof QuizQuestionEditSchema>>({ control: form.control, name: "type" });
 
-  const submitAnswer = async (options: z.infer<typeof OptionsTypeSchema>, questionId: string) => {
+  const submitAnswer = async (options: z.infer<typeof OptionsEditTypeSchema>, questionId: string) => {
     // insert mo ung kada option sa db
     // insert mo ung id ng bawat option sa question_answers kasama ung questionId
     const { data, error } = await addAnswers(options, questionId);
-    console.log("insert answer", data, error);
+    if (!data || error) {
+      console.log("insert answer", data, error);
+      return { data, error };
+    }
 
     return { data, error };
   };
 
-  const createQuestion = async (values: z.infer<typeof QuizQuestionSchema>) => {
-    // after mong maginsert ng quiz, get mo ung id tapos return
-    const { data, error } = await addQuestion(values, quizId);
-    console.log("insert question", data, error);
-    if (error || !data) return console.log(error);
-    const { id } = data;
-    return id;
-  };
-
-  const onNextQuestion = async (values: z.infer<typeof QuizQuestionSchema>) => {
+  const onUpdateQuestion = async (values: z.infer<typeof QuizQuestionEditSchema>) => {
     console.log("RESULT: ", values);
-    // unahin mong maginsert ng question
-    const questionId = await createQuestion(values);
-    const { data, error } = await submitAnswer(values.options, questionId as string);
-    if (error) return console.log(error);
 
-    form.reset();
-    router.refresh();
-    setQuestionNumber((prev) => prev++);
+    // update question using values
+    const { data, error } = await updateQuestion(values, questionId);
+    if (!data || error) return console.log("update question error", data, error);
+
+    // fetch answer ids
+    const supabase = createClient();
+    const { data: answerData, error: answerError } = await supabase.from("questions").select("question_answers!inner (answers(id))").eq("id", questionId).single();
+    if (!answerData || answerError) return console.log("fetch answer error", answerData, answerError);
+
+    const answerIdArray = answerData.question_answers.map((value) => {
+      return value.answers?.id as number;
+    });
+
+    console.log("answeridarray", answerIdArray);
+
+    // delete answer
+    answerIdArray.forEach(async (id) => {
+      const { data: deleteAnswerData, error: deleteAnswerError } = await supabase.from("answers").delete().eq("id", id).select().single();
+      if (!deleteAnswerData || deleteAnswerError) return console.log("delete answer error", deleteAnswerData, deleteAnswerError);
+    });
+
+    // // insert answer
+    const { data: insertAnswerData, error: insertAnswerError } = await submitAnswer(values.options, questionId);
+    if (!insertAnswerData || insertAnswerError) return console.log("insert answer error", insertAnswerData, insertAnswerError);
+
+    return router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${quizEditPath}`);
   };
 
   const onExit = async () => {
-    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path.split("/").slice(0, -1).join("/")}/edit`);
+    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${quizEditPath}`);
   };
 
   const showMultipleChoice = (): React.ReactNode => {
@@ -135,6 +175,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
           <Input {...form.register(`options.${index}.answer` as const)} id={`option_${arrayField.id}`} type='text' />
           <div className='flex gap-2 items-center'>
             <Checkbox
+              defaultChecked={arrayField.is_correct}
               onCheckedChange={(value) => form.setValue(`options.${index}.is_correct`, value as boolean)}
               {...form.register(`options.${index}.is_correct` as const)}
               id={`is_correct_${arrayField.id}`}
@@ -176,7 +217,11 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
           </p>
           <div className='flex gap-2 items-center'>
             <Checkbox
-              onCheckedChange={(value) => form.setValue(`options.${index}.is_correct`, value as boolean)}
+              defaultChecked={arrayField.is_correct}
+              onCheckedChange={(value) => {
+                form.setValue(`options.${index}.is_correct`, value as boolean);
+                return;
+              }}
               {...form.register(`options.${index}.is_correct` as const)}
               id={`is_correct_${arrayField.id}`}
             />
@@ -191,6 +236,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
 
   const handleOptionNumberChange = (value: number) => {
     // create an "empty" array for each number of options
+    remove();
     for (let i = 0; i < value; i++) {
       append({
         answer: "",
@@ -273,27 +319,35 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
           {/* NUMBER OF OPTIONS FOR MULTIPLE CHOICE */}
 
           {watchType === "Multiple Choice" && (
-            <FormItem>
-              <FormLabel>Number of Choices</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={(value) => {
-                    fields && remove();
-                    handleOptionNumberChange(parseInt(value));
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={"..."} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='2'>2</SelectItem>
-                    <SelectItem value='3'>3</SelectItem>
-                    <SelectItem value='4'>4</SelectItem>
-                    <SelectItem value='5'>5</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-            </FormItem>
+            <FormField
+              control={form.control}
+              name='option_count'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Number of Choices</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => {
+                        fields && remove();
+                        handleOptionNumberChange(parseInt(value));
+                        form.setValue("option_count", parseInt(value));
+                      }}
+                      value={String(field.value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={"..."} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='2'>2</SelectItem>
+                        <SelectItem value='3'>3</SelectItem>
+                        <SelectItem value='4'>4</SelectItem>
+                        <SelectItem value='5'>5</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            ></FormField>
           )}
 
           {/* MULTIPLE CHOICE */}
@@ -305,8 +359,8 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
           {watchType === "True or False" && showTrueOrFalse()}
 
           <div className='flex justify-end gap-2'>
-            <Button variant={"default"} className='' onClick={form.handleSubmit(onNextQuestion)}>
-              Add Question
+            <Button variant={"default"} className='' onClick={form.handleSubmit(onUpdateQuestion)}>
+              Update Question
             </Button>
             <Button variant={"destructive"} className='' type='button' onClick={onExit}>
               Exit
@@ -318,4 +372,4 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
   );
 };
 
-export default QuizQuestionForm;
+export default QuizQuestionEditForms;

@@ -1,11 +1,11 @@
 "use server";
 
-import { OptionsTypeSchema } from "@/components/forms/quiz-question-form";
+import { OptionsEditTypeSchema } from "@/components/forms/quiz-question-edit-form";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-const addAnswers = async (values: z.infer<typeof OptionsTypeSchema>, question_id: string) => {
+const addAnswers = async (values: z.infer<typeof OptionsEditTypeSchema>, question_id: string) => {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
@@ -26,7 +26,7 @@ const addAnswers = async (values: z.infer<typeof OptionsTypeSchema>, question_id
     };
   });
 
-  const { data, error } = await supabase.from("question_answers").insert(insertedOptionsArray).select();
+  const { data, error } = await supabase.from("question_answers").insert(insertedOptionsArray);
 
   return { data, error };
 };

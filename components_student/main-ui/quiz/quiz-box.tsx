@@ -1,5 +1,7 @@
 "use client";
+
 import { deleteActivity } from "@/actions/activity/delete-activity-client";
+import { QuizFormSchema } from "@/components/forms/quiz-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -7,31 +9,38 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { ClipboardList, Pencil, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { z } from "zod";
 
-const Activity = ({ name, activity, date, activityId, subjectId, grade }: { name: string; activity: string; date: string; activityId: string; subjectId: string; grade: number }) => {
-  const [hidden, setHidden] = useState(false);
-  const handleDeleteActivity = async () => {
-    const response = await deleteActivity(activityId);
-    if (response.error) console.log(response.error);
-    setHidden(true);
-  };
+const QuizBox = ({
+  title,
+  date_open,
+  date_close,
+  quizId,
+  totalPoints,
+  subjectId,
+}: {
+  title: string;
+  date_open: string;
+  date_close: string;
+  quizId: string;
+  totalPoints: number;
+  subjectId: string;
+}) => {
   return (
-    <div className={cn("gap-4 items-center group", hidden ? "hidden" : "flex")}>
-      <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/student/subjects/${subjectId}/activities/${activityId}`}>
+    <div className={cn("gap-4 items-center group flex")}>
+      <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/student/subjects/${subjectId}/quiz/${quizId}`}>
         <div className='flex justify-between py-2 pl-6 pr-2 border hover:bg-primary/10 transition-colors rounded-md '>
           <div className='flex gap-4 items-center'>
             <div className='bg-green-500 rounded-3xl h-auto w-auto p-2 text-white'>
               <ClipboardList width={25} height={25} className='' />
             </div>
             <div className='flex flex-col'>
-              <p className='font-semibold'>
-                {name} posted: <span className='italic'>{activity}</span>
-              </p>
-              <p>{date}</p>
+              <p className='font-semibold'>{title}</p>
+              <p>{`${date_open} - ${date_close}`}</p>
             </div>
           </div>
           <div>
-            <p className='py-1 px-2 bg-primary text-sm text-primary-foreground rounded-md'>0/{grade}</p>
+            <p className='py-1 px-2 bg-primary text-sm text-primary-foreground rounded-md'>Total points: {totalPoints}</p>
           </div>
         </div>
       </Link>
@@ -39,4 +48,4 @@ const Activity = ({ name, activity, date, activityId, subjectId, grade }: { name
   );
 };
 
-export default Activity;
+export default QuizBox;

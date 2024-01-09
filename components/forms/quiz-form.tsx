@@ -44,7 +44,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
     const { id } = data;
 
     // Proceed to CreateQuizQuestionPage
-    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path}/${id}`);
+    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path}/${id}/add-question`);
   };
 
   return (

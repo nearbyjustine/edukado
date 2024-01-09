@@ -51,10 +51,10 @@ const ProfileBar = ({ firstName, lastName, role, avatarUrl }: { firstName: strin
   return (
     <div className='absolute z-10 top-0 right-0 px-2 py-2'>
       <div className='flex flex-1 justify-end gap-1 md:gap-5 items-center'>
-        <div className='relative'>
+        {/* <div className='relative'>
           <Bell className='hover:cursor-pointer' size={25} />
           <span className='absolute bg-red-500 w-3 right-0 top-0 h-3 rounded-full'></span>
-        </div>
+        </div> */}
         <ThemeSwitch />
         <div className='flex items-center'>
           <div ref={dropdownRef} className='relative flex gap-2 items-center'>

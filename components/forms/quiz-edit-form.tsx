@@ -13,8 +13,12 @@ import addQuiz from "@/actions/quiz/add-quiz";
 import { createClient } from "@/utils/supabase/client";
 import updateQuiz from "@/actions/quiz/update-quiz";
 import { QuizQuestionSchema } from "./quiz-question-form";
+import questionListBox from "../main-ui/quiz/question-list-box";
+import QuestionListBox from "../main-ui/quiz/question-list-box";
+import { PlusCircle } from "lucide-react";
+import Link from "next/link";
 
-type QuestionType = {
+export type QuestionType = {
   created_at: string;
   id: string;
   points: number;
@@ -45,27 +49,21 @@ export const QuizFormSchema = z
   });
 
 const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string }) => {
-  const [quizFormData, setQuizFormData] = useState<z.infer<typeof QuizFormSchema>>({
-    title: "",
-    description: "",
-    date_open: new Date(),
-    date_close: new Date(new Date().setDate(new Date().getDate() + 3)),
-    duration: 60,
-  });
-
   const [questionData, setQuestionData] = useState<QuestionType[]>();
-
   const router = useRouter();
   const path = usePathname();
+
+  const questionCreationPath = path.split("/").slice(0, -1).join("/");
+
   const form = useForm<z.infer<typeof QuizFormSchema>>({
     resolver: zodResolver(QuizFormSchema),
     reValidateMode: "onChange",
     defaultValues: {
-      title: quizFormData.title,
-      description: quizFormData.description,
-      date_open: quizFormData.date_open,
-      date_close: quizFormData.date_close,
-      duration: quizFormData.duration,
+      title: "",
+      description: "",
+      date_open: new Date(),
+      date_close: new Date(new Date().setDate(new Date().getDate() + 3)),
+      duration: 60,
     },
   });
 
@@ -75,7 +73,11 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
       const supabase = createClient();
       const { data, error } = await supabase.from("quizzes").select("title, description, date_open, date_close, duration").eq("id", quizId).single();
       if (error || !data) return console.log(data, error);
-      setQuizFormData({ ...data, date_close: new Date(data.date_close), date_open: new Date(data.date_open), description: data.description as string | undefined });
+      form.setValue("title", data.title);
+      form.setValue("description", data.description as string | undefined);
+      form.setValue("date_open", new Date(data.date_open));
+      form.setValue("date_close", new Date(data.date_close));
+      form.setValue("duration", data.duration);
     };
 
     const fetchQuestions = async () => {
@@ -83,7 +85,6 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
       const { data, error } = await supabase.from("questions").select("*, question_answers!inner (answers(*))").eq("quiz_id", quizId);
       if (error || !data) return console.log(data, error);
       setQuestionData(data);
-      console.log(data, error);
     };
 
     fetchQuiz();
@@ -94,87 +95,97 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
     console.log(values);
     const { data, error } = await updateQuiz(values, quizId);
     if (error || !data) return console.log(error);
+    console.log(data, error);
   };
 
   return (
-    <Form {...form}>
-      <form className='flex flex-col w-full gap-6' onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name='title'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Quiz Title</FormLabel>
-              <FormControl>
-                <Input type='text' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='description'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Quiz Description</FormLabel>
-              <FormControl>
-                <Input type='text' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='date_open'
-          render={({ field }) => (
-            <FormItem className='flex flex-col gap-1'>
-              <FormLabel>Date Open</FormLabel>
-              <FormControl>
-                <DatePicker field={field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        ></FormField>
-        <FormField
-          control={form.control}
-          name='date_close'
-          render={({ field }) => (
-            <FormItem className='flex flex-col gap-1'>
-              <FormLabel>Date Due</FormLabel>
-              <FormControl>
-                <DatePicker field={field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        ></FormField>
-        <FormField
-          control={form.control}
-          name='duration'
-          render={({ field }) => (
-            <FormItem className='flex flex-col gap-1'>
-              <FormLabel>Duration (in minutes)</FormLabel>
-              <FormControl>
-                <Input {...field} type='number' min={0} />
-              </FormControl>
-              <FormDescription>Set duration of quiz in minutes. 0 means no duration.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        ></FormField>
-        <div className='flex justify-end gap-2'>
-          <Button className='' type='submit'>
-            Update Quiz
-          </Button>
-          <Button className='' variant={"destructive"}>
-            Cancel
-          </Button>
-        </div>
-      </form>
-    </Form>
+    <>
+      <Form {...form}>
+        <form className='flex flex-col w-full gap-6' onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name='title'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quiz Title</FormLabel>
+                <FormControl>
+                  <Input type='text' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='description'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quiz Description</FormLabel>
+                <FormControl>
+                  <Input type='text' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='date_open'
+            render={({ field }) => (
+              <FormItem className='flex flex-col gap-1'>
+                <FormLabel>Date Open</FormLabel>
+                <FormControl>
+                  <DatePicker field={field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          ></FormField>
+          <FormField
+            control={form.control}
+            name='date_close'
+            render={({ field }) => (
+              <FormItem className='flex flex-col gap-1'>
+                <FormLabel>Date Due</FormLabel>
+                <FormControl>
+                  <DatePicker field={field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          ></FormField>
+          <FormField
+            control={form.control}
+            name='duration'
+            render={({ field }) => (
+              <FormItem className='flex flex-col gap-1'>
+                <FormLabel>Duration (in minutes)</FormLabel>
+                <FormControl>
+                  <Input {...field} type='number' min={0} />
+                </FormControl>
+                <FormDescription>Set duration of quiz in minutes. 0 means no duration.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          ></FormField>
+          <div className='flex justify-end gap-2'>
+            <Button className='' type='submit'>
+              Update Quiz
+            </Button>
+            <Button type='button' className='' variant={"secondary"}>
+              Proceed to Subject
+            </Button>
+          </div>
+        </form>
+      </Form>
+      <div className='mt-5 flex flex-col gap-2'>
+        {questionData && questionData.map((question, index) => <QuestionListBox key={question.id} question={question} index={index} path={path} />)}
+        <Link href={`${questionCreationPath}/add-question`} className='flex gap-2 px-2 py-4 rounded-md border-2 border-foreground/20 text-foreground/30 hover:text-foreground/50 transition-colors'>
+          <PlusCircle width={25} height={25} />
+          <span>Add Question</span>
+        </Link>
+      </div>
+    </>
   );
 };
 

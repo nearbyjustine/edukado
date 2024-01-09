@@ -194,21 +194,18 @@ export interface Database {
           created_at: string
           id: number
           question_id: string
-          quiz_id: string
         }
         Insert: {
           answer_id: number
           created_at?: string
           id?: number
           question_id: string
-          quiz_id: string
         }
         Update: {
           answer_id?: number
           created_at?: string
           id?: number
           question_id?: string
-          quiz_id?: string
         }
         Relationships: [
           {
@@ -223,13 +220,6 @@ export interface Database {
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "questions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "question_answers_quiz_id_fkey"
-            columns: ["quiz_id"]
-            isOneToOne: false
-            referencedRelation: "quizzes"
             referencedColumns: ["id"]
           }
         ]
