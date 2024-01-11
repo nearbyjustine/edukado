@@ -13,9 +13,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import answerQuiz from "@/actions_student/quiz/answer-quiz";
 import { Button } from "@/components/ui/button";
 
-const QuizStudentAnswerSchema = z.object({
-  answers: z.array(
+export const QuizStudentAnswerSchema = z.object({
+  questions: z.array(
     z.object({
+      question_id: z.string(),
       answer: z.string(),
     })
   ),
@@ -30,16 +31,21 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
     resolver: zodResolver(QuizStudentAnswerSchema),
     reValidateMode: "onChange",
   });
+
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
     control: form.control,
-    name: "answers",
+    name: "questions",
   });
+
+  const addAnswerToQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>) => {
+    await answerQuiz(values);
+  };
 
   useEffect(() => {
     const fetchQuiz = async () => {
       const supabase = createClient();
       const { data, error } = await supabase.from("quizzes").select().eq("id", quizId).single();
-      console.log("error fetchquiz", data, error);
+      if (!data || error) return { data, error };
       setQuiz(data as Quiz);
       return { data, error };
     };
@@ -47,13 +53,9 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
     const fetchQuestionWithAnswers = async () => {
       const supabase = createClient();
       const { data, error } = await supabase.from("questions").select("*, question_answers!inner (answers(*))").eq("quiz_id", quizId);
-      console.log("error fetch question", data, error);
+      if (!data || error) return { data, error };
       setQuestionAndAnswers(data as QuestionWithAnswers[]);
-      questionsAndAnswers?.map((value) => {
-        append({
-          answer: value.title,
-        });
-      });
+
       return { data, error };
     };
 
@@ -62,11 +64,13 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
   }, []);
 
   useEffect(() => {
-    console.log("state quiz: ", quiz);
-  }, [quiz]); // Log the updated quiz state
-
-  useEffect(() => {
-    console.log("state question: ", questionsAndAnswers);
+    remove();
+    questionsAndAnswers?.map((value) => {
+      append({
+        question_id: value.id,
+        answer: value.title,
+      });
+    });
   }, [questionsAndAnswers]);
 
   return (
@@ -78,20 +82,31 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
         </h1>
       </div>
       <div>{quiz?.description}</div>
-      <form action={answerQuiz}>
+      <form onSubmit={form.handleSubmit(addAnswerToQuiz)}>
         <div className='flex flex-col gap-2'>
-          {questionsAndAnswers?.map((question, index) => {
+          {fields.map((field, index) => {
+            if (!questionsAndAnswers) return <div>...Loading</div>;
+            const question = questionsAndAnswers[index];
+
             if (question.type !== "Identification") {
               return (
-                <div className='flex flex-col gap-4 p-4 border rounded-md border-primary/30'>
+                <div key={field.id} className='flex flex-col gap-4 p-4 border rounded-md border-primary/30'>
                   <p className='font-semibold'>
                     Question #{index + 1}: {question.title}
                   </p>
+                  <input type='hidden' name={`answers_${index}_[question-id]`} value={question.id} />
                   <div className='flex flex-col'>
                     {question.question_answers.map(({ answers }) => {
                       return (
-                        <div className='flex items-center justify-start gap-2'>
-                          <input className='w-8 h-8 p-2' type='radio' name={`answer-for-${index}`} value={answers.answer} id={String(answers.id)} />
+                        <div key={answers.id} className='flex items-center justify-start gap-2'>
+                          <input
+                            className='w-8 h-8 p-2'
+                            type='radio'
+                            {...form.register(`questions.${index}.answer`)}
+                            name={`answers_${index}_[answer]`}
+                            value={answers.answer}
+                            id={String(answers.id)}
+                          />
                           <Label className='flex-1' htmlFor={String(answers.id)}>
                             {answers.answer}
                           </Label>
@@ -103,12 +118,13 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
               );
             }
             return (
-              <div className='flex flex-col gap-4 p-4 border rounded-md border-primary/30'>
+              <div key={field.id} className='flex flex-col gap-4 p-4 border rounded-md border-primary/30'>
                 <p className='font-semibold'>
                   Question #{index + 1}: {question.title}
                 </p>
                 <div>
-                  <Input type='text'></Input>
+                  <input type='hidden' name={`answers_${index}_[question-id]`} value={question.id} />
+                  <Input {...form.register(`questions.${index}.answer`)} name={`answers_${index}_[answer]`} type='text'></Input>
                 </div>
               </div>
             );
@@ -126,10 +142,11 @@ export default AnswerQuizForm;
 
 /* 
 
-  1. Create a QuizStudentAnswerSchema
+// may data na manggagaling sa form
+question id tsaka answer, tapos ung quiz id manggagaling nalang sa params quizid
+
+// gawa ka na ng server action na ichcheck ung bawat answer, tapos kung yung kaakibat na isCorrect property is true,
+// pag true, edi sa database ng student, correct din siya.
 
 
-
-  // after fetching, iappend mo ung bawat answer, 
-  
 */
