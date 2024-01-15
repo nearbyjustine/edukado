@@ -355,6 +355,93 @@ export interface Database {
           }
         ]
       }
+      student_answers_quiz: {
+        Row: {
+          created_at: string
+          has_finished: boolean
+          has_started: boolean
+          id: number
+          quiz_id: string
+          student_id: string
+          total_points: number | null
+        }
+        Insert: {
+          created_at?: string
+          has_finished?: boolean
+          has_started?: boolean
+          id?: number
+          quiz_id: string
+          student_id?: string
+          total_points?: number | null
+        }
+        Update: {
+          created_at?: string
+          has_finished?: boolean
+          has_started?: boolean
+          id?: number
+          quiz_id?: string
+          student_id?: string
+          total_points?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_answers_quiz_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_answers_quiz_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      student_questions_answers: {
+        Row: {
+          answer: string
+          created_at: string
+          id: number
+          is_correct: boolean
+          question_id: string
+          quiz_id: string
+        }
+        Insert: {
+          answer?: string
+          created_at?: string
+          id?: number
+          is_correct?: boolean
+          question_id: string
+          quiz_id: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: number
+          is_correct?: boolean
+          question_id?: string
+          quiz_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_questions_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_questions_answers_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       students: {
         Row: {
           classroom_id: string

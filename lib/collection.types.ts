@@ -15,3 +15,5 @@ export type QuestionWithAnswers = Database["public"]["Tables"]["questions"]["Row
     answers: Database["public"]["Tables"]["answers"]["Row"];
   }[];
 };
+
+export type StudentAnswerQuiz = Database["public"]["Tables"]["student_answers_quiz"]["Row"];

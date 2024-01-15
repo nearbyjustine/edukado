@@ -25,5 +25,14 @@ export const signUp = async (formData: SignUpSchemaType) => {
     },
   });
 
+  // add to teachers table
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (!user || userError) return userError;
+
+  const { data: insertData, error: insertError } = await supabase.from("teachers").insert({ user_id: user.id });
+
   return error;
 };

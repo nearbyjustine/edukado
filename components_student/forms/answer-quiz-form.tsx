@@ -22,7 +22,7 @@ export const QuizStudentAnswerSchema = z.object({
   ),
 });
 
-const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: string }) => {
+const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: string; quizId: string; startedQuizId: number }) => {
   // fetch mo lahat
   const [quiz, setQuiz] = useState<Quiz>();
   const [questionsAndAnswers, setQuestionAndAnswers] = useState<QuestionWithAnswers[]>();
@@ -38,7 +38,8 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
   });
 
   const addAnswerToQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>) => {
-    await answerQuiz(values);
+    console.log(values);
+    await answerQuiz(values, quizId);
   };
 
   useEffect(() => {
@@ -65,12 +66,12 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
 
   useEffect(() => {
     remove();
-    questionsAndAnswers?.map((value) => {
+    questionsAndAnswers?.map((value) =>
       append({
         question_id: value.id,
-        answer: value.title,
-      });
-    });
+        answer: "",
+      })
+    );
   }, [questionsAndAnswers]);
 
   return (
@@ -94,19 +95,12 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
                   <p className='font-semibold'>
                     Question #{index + 1}: {question.title}
                   </p>
-                  <input type='hidden' name={`answers_${index}_[question-id]`} value={question.id} />
+                  {/* <input type='hidden' name={`answers_${index}_[question-id]`} value={question.id} /> */}
                   <div className='flex flex-col'>
                     {question.question_answers.map(({ answers }) => {
                       return (
                         <div key={answers.id} className='flex items-center justify-start gap-2'>
-                          <input
-                            className='w-8 h-8 p-2'
-                            type='radio'
-                            {...form.register(`questions.${index}.answer`)}
-                            name={`answers_${index}_[answer]`}
-                            value={answers.answer}
-                            id={String(answers.id)}
-                          />
+                          <input className='w-8 h-8 p-2' type='radio' {...form.register(`questions.${index}.answer`)} value={answers.answer} id={String(answers.id)} />
                           <Label className='flex-1' htmlFor={String(answers.id)}>
                             {answers.answer}
                           </Label>
@@ -123,8 +117,8 @@ const AnswerQuizForm = ({ subjectId, quizId }: { subjectId: string; quizId: stri
                   Question #{index + 1}: {question.title}
                 </p>
                 <div>
-                  <input type='hidden' name={`answers_${index}_[question-id]`} value={question.id} />
-                  <Input {...form.register(`questions.${index}.answer`)} name={`answers_${index}_[answer]`} type='text'></Input>
+                  {/* <input type='hidden' name={`answers_${index}_[question-id]`} value={question.id} /> */}
+                  <Input {...form.register(`questions.${index}.answer`)} type='text'></Input>
                 </div>
               </div>
             );
