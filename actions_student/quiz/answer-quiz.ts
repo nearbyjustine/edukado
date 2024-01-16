@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-const answerQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>, quiz_id: string) => {
+const answerQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>, quiz_id: string, student_answers_quiz_id: number) => {
   const { questions } = values;
 
   const cookieServer = cookies();
@@ -18,12 +18,13 @@ const answerQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>, quiz_
     const answer = data.find((value) => value.answer === question.answer);
     const { data: insertData, error: insertError } = await supabase
       .from("student_questions_answers")
-      .insert({ question_id: question.question_id, answer: question.answer, is_correct: (answer?.is_correct && answer.is_correct) || false, quiz_id });
+      .insert({ question_id: question.question_id, answer: question.answer, is_correct: (answer?.is_correct && answer.is_correct) || false, student_answers_quiz_id });
 
     console.log(insertError);
   });
 
   // calculate points
+
   // change to has submitted
 };
 

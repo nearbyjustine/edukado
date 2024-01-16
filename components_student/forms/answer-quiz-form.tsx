@@ -12,6 +12,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import answerQuiz from "@/actions_student/quiz/answer-quiz";
 import { Button } from "@/components/ui/button";
+import Countdown from "react-countdown";
 
 export const QuizStudentAnswerSchema = z.object({
   questions: z.array(
@@ -21,6 +22,60 @@ export const QuizStudentAnswerSchema = z.object({
     })
   ),
 });
+
+const CountdownAnswerQuizFormRenderer = ({
+  minutes,
+  seconds,
+  completed,
+  subjectId,
+  quizId,
+  startedQuizId,
+}: {
+  minutes: number;
+  seconds: number;
+  completed: boolean;
+  subjectId: string;
+  quizId: string;
+  startedQuizId: number;
+}) => {
+  if (completed) return <div>Form has already been due</div>;
+
+  return (
+    <>
+      <span className='block mb-10'>
+        Time left:{" "}
+        <span className='text-destructive'>
+          {minutes}:{seconds}
+        </span>
+      </span>
+      <AnswerQuizForm subjectId={subjectId} quizId={quizId} startedQuizId={startedQuizId} />
+    </>
+  );
+};
+
+const CountdownAnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: string; quizId: string; startedQuizId: number }) => {
+  const [countdownDate, setCountdownDate] = useState<Date>();
+
+  useEffect(() => {
+    const fetchQuizData = async () => {
+      // fetch ung student_answer_quiz
+      const supabase = createClient();
+
+      const { data, error } = await supabase.from("student_answers_quiz").select("*, quizzes(duration)").eq("id", startedQuizId).single();
+      if (!data || error || !data.quizzes) return;
+      const dateCreated = new Date(new Date(data.created_at).getTime() + data.quizzes.duration * 60 * 1000);
+      setCountdownDate(dateCreated);
+    };
+
+    fetchQuizData();
+  }, []);
+
+  useEffect(() => {
+    console.log(countdownDate);
+  }, [countdownDate]);
+
+  if (countdownDate) return <Countdown date={countdownDate} renderer={(props) => <CountdownAnswerQuizFormRenderer {...props} subjectId={subjectId} quizId={quizId} startedQuizId={startedQuizId} />} />;
+};
 
 const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: string; quizId: string; startedQuizId: number }) => {
   // fetch mo lahat
@@ -39,7 +94,7 @@ const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: strin
 
   const addAnswerToQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>) => {
     console.log(values);
-    await answerQuiz(values, quizId);
+    await answerQuiz(values, quizId, startedQuizId);
   };
 
   useEffect(() => {
@@ -132,7 +187,7 @@ const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: strin
   );
 };
 
-export default AnswerQuizForm;
+export default CountdownAnswerQuizForm;
 
 /* 
 

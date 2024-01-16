@@ -1,4 +1,4 @@
-import AnswerQuizForm from "@/components_student/forms/answer-quiz-form";
+import CountdownAnswerQuizForm from "@/components_student/forms/answer-quiz-form";
 import { StudentAnswerQuiz } from "@/lib/collection.types";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
@@ -27,7 +27,7 @@ const QuizAnswerPage = async ({ params: { id, quizId } }: { params: { id: string
   if (startedQuiz.has_finished) return <div>Already finished... *redirect to score*</div>;
   return (
     <div>
-      <AnswerQuizForm subjectId={id} quizId={quizId} startedQuizId={startedQuiz.id} />
+      <CountdownAnswerQuizForm subjectId={id} quizId={quizId} startedQuizId={startedQuiz.id} />
     </div>
   );
 };

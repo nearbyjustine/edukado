@@ -407,7 +407,7 @@ export interface Database {
           id: number
           is_correct: boolean
           question_id: string
-          quiz_id: string
+          student_answers_quiz_id: number
         }
         Insert: {
           answer?: string
@@ -415,7 +415,7 @@ export interface Database {
           id?: number
           is_correct?: boolean
           question_id: string
-          quiz_id: string
+          student_answers_quiz_id: number
         }
         Update: {
           answer?: string
@@ -423,7 +423,7 @@ export interface Database {
           id?: number
           is_correct?: boolean
           question_id?: string
-          quiz_id?: string
+          student_answers_quiz_id?: number
         }
         Relationships: [
           {
@@ -434,10 +434,10 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "student_questions_answers_quiz_id_fkey"
-            columns: ["quiz_id"]
+            foreignKeyName: "student_questions_answers_student_answers_quiz_id_fkey"
+            columns: ["student_answers_quiz_id"]
             isOneToOne: false
-            referencedRelation: "quizzes"
+            referencedRelation: "student_answers_quiz"
             referencedColumns: ["id"]
           }
         ]
