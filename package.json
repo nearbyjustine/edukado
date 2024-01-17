@@ -7,6 +7,7 @@
     "update-types": "npx supabase gen types typescript --project-id \"htphhkuqmmcufgexzfqi\" > lib/database.types.ts"
   },
   "dependencies": {
+    "@david.kucsai/react-pdf-table": "^0.4.1",
     "@faker-js/faker": "^8.3.1",
     "@fullcalendar/daygrid": "^6.1.10",
     "@fullcalendar/react": "^6.1.10",
@@ -25,6 +26,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-toggle": "^1.0.3",
+    "@react-pdf/renderer": "^3.1.17",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
@@ -55,6 +57,7 @@
     "react-day-picker": "^8.9.1",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.49.2",
+    "react-pdf-tailwind": "^2.2.1",
     "sharp": "^0.33.1",
     "tailwind-merge": "^2.1.0",
     "tailwindcss": "3.3.3",
