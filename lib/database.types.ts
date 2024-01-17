@@ -576,7 +576,12 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      total_points: {
+        Args: {
+          self_student_quiz_id: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       grade_level_enum:
