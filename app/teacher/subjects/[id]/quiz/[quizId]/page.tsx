@@ -7,8 +7,7 @@ const fetchQuizResponses = async (quizId: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data, error } = await supabase.from("student_answers_quiz").select().eq("quiz_id", quizId);
-
+  const { data, error } = await supabase.from("student_answers_quiz").select("*, students(*, profiles!students_user_id_fkey(*))").eq("quiz_id", quizId);
   return data;
 };
 
@@ -19,7 +18,9 @@ const QuizResponsesPage = async ({ params: { quizId } }: { params: { quizId: str
   return (
     <>
       {quizResponseData.map((response) => (
-        <div></div>
+        <div key={response.id}>
+          {response.students?.profiles?.first_name} {response.students?.profiles?.last_name} score: {response.total_points}
+        </div>
       ))}
     </>
   );

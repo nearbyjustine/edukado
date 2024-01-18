@@ -374,7 +374,7 @@ export interface Database {
           has_started?: boolean
           id?: number
           quiz_id: string
-          student_id?: string
+          student_id: string
           total_points?: number | null
         }
         Update: {
@@ -398,7 +398,7 @@ export interface Database {
             foreignKeyName: "student_answers_quiz_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "students"
             referencedColumns: ["id"]
           }
         ]
@@ -579,16 +579,16 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      compute_total_points_student_quiz: {
+        Args: {
+          self_student_quiz_id: number
+        }
+        Returns: number
+      }
       question_add_to_quiz_total_points: {
         Args: {
           points: number
           quiz_id: string
-        }
-        Returns: undefined
-      }
-      total_points: {
-        Args: {
-          self_student_quiz_id: number
         }
         Returns: undefined
       }

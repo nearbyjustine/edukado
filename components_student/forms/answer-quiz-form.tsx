@@ -142,10 +142,10 @@ const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: strin
       <div className='max-w-fit'>
         <h1 className='text-2xl font-bold relative'>
           {quiz?.title}
-          <span className='absolute text-sm font-normal top-0 -right-20 rounded-md bg-primary text-primary-foreground px-2'>100 pts</span>
+          <span className='absolute text-sm font-normal top-0 -right-20 rounded-md bg-primary text-primary-foreground px-2'>{quiz?.total_points} pts</span>
         </h1>
       </div>
-      <div>{quiz?.description}</div>
+      <div className='italic'>Quiz Description: {quiz?.description}</div>
       <form onSubmit={form.handleSubmit(addAnswerToQuiz)}>
         <div className='flex flex-col gap-2'>
           {fields.map((field, index) => {

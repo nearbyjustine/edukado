@@ -19,15 +19,13 @@ const answerQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>, quiz_
     const { data: insertData, error: insertError } = await supabase
       .from("student_questions_answers")
       .insert({ question_id: question.question_id, answer: question.answer, is_correct: (answer?.is_correct && answer.is_correct) || false, student_answers_quiz_id });
-
-    console.log(insertError);
   });
 
-  // calculate and insert points
-  await supabase.rpc("total_points", { self_student_quiz_id: student_answers_quiz_id });
+  // calculate points
+  const { data: totalPoints } = await supabase.rpc("compute_total_points_student_quiz", { self_student_quiz_id: student_answers_quiz_id });
 
-  // change to has finished to true
-  const { error: updateError } = await supabase.from("student_answers_quiz").update({ has_finished: true }).eq("id", student_answers_quiz_id);
+  // change to has finished to true, update total_points
+  const { error: updateError } = await supabase.from("student_answers_quiz").update({ has_finished: true, total_points: totalPoints }).eq("id", student_answers_quiz_id);
 
   if (updateError) return;
 };
