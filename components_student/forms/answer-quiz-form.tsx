@@ -38,7 +38,9 @@ const CountdownAnswerQuizFormRenderer = ({
   quizId: string;
   startedQuizId: number;
 }) => {
-  if (completed) return <div>Form has already been due</div>;
+  if (completed) {
+    return <div>Form has already been due</div>;
+  }
 
   return (
     <>
@@ -55,7 +57,7 @@ const CountdownAnswerQuizFormRenderer = ({
 
 const CountdownAnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: string; quizId: string; startedQuizId: number }) => {
   const [countdownDate, setCountdownDate] = useState<Date>();
-
+  const [duration, setDuration] = useState<number>();
   useEffect(() => {
     const fetchQuizData = async () => {
       // fetch ung student_answer_quiz
@@ -65,6 +67,7 @@ const CountdownAnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subject
       if (!data || error || !data.quizzes) return;
       const dateCreated = new Date(new Date(data.created_at).getTime() + data.quizzes.duration * 60 * 1000);
       setCountdownDate(dateCreated);
+      setDuration(data.quizzes.duration);
     };
 
     fetchQuizData();
@@ -74,6 +77,7 @@ const CountdownAnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subject
     console.log(countdownDate);
   }, [countdownDate]);
 
+  if (duration === 0) return <AnswerQuizForm subjectId={subjectId} quizId={quizId} startedQuizId={startedQuizId} />;
   if (countdownDate) return <Countdown date={countdownDate} renderer={(props) => <CountdownAnswerQuizFormRenderer {...props} subjectId={subjectId} quizId={quizId} startedQuizId={startedQuizId} />} />;
 };
 

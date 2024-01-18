@@ -11,17 +11,17 @@ const answerQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>, quiz_
   const cookieServer = cookies();
   const supabase = createClient(cookieServer);
 
-  // questions.map(async (question, index) => {
-  //   const { data, error } = await supabase.from("answers").select("*, question_answers!inner (questions(*))").eq("question_answers.question_id", question.question_id);
-  //   if (!data || error) return;
+  questions.map(async (question, index) => {
+    const { data, error } = await supabase.from("answers").select("*, question_answers!inner (questions(*))").eq("question_answers.question_id", question.question_id);
+    if (!data || error) return;
 
-  //   const answer = data.find((value) => value.answer === question.answer);
-  //   const { data: insertData, error: insertError } = await supabase
-  //     .from("student_questions_answers")
-  //     .insert({ question_id: question.question_id, answer: question.answer, is_correct: (answer?.is_correct && answer.is_correct) || false, student_answers_quiz_id });
+    const answer = data.find((value) => value.answer === question.answer);
+    const { data: insertData, error: insertError } = await supabase
+      .from("student_questions_answers")
+      .insert({ question_id: question.question_id, answer: question.answer, is_correct: (answer?.is_correct && answer.is_correct) || false, student_answers_quiz_id });
 
-  //   console.log(insertError);
-  // });
+    console.log(insertError);
+  });
 
   // calculate and insert points
   await supabase.rpc("total_points", { self_student_quiz_id: student_answers_quiz_id });
