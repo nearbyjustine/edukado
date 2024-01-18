@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { unstable_noStore as noStore, revalidatePath } from "next/cache";
 
 export async function fetchActivityById(id: string) {
   const cookieStore = cookies();
@@ -13,6 +14,7 @@ export async function fetchActivityById(id: string) {
 }
 
 export async function fetchAllActivitiesBySubject(subjectId: string) {
+  noStore();
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 

@@ -44,11 +44,10 @@ export const QuizQuestionEditSchema = z.object({
 //   { message: "There should at least be one correct answer", path: ["options"] }
 // );
 
-const QuizQuestionEditForms = ({ quizId, questionId }: { quizId: string; questionId: string }) => {
-  const [questionNumber, setQuestionNumber] = useState(1);
+const QuizQuestionEditForms = ({ quizId, questionId, questionNumber }: { quizId: string; questionId: string; questionNumber: number }) => {
   const [optionCount, setOptionCount] = useState(1);
   const path = usePathname();
-  const quizEditPath = path.split("/").slice(0, -2).join("/");
+  const quizEditPath = path.split("/").slice(0, -3).join("/");
   const router = useRouter();
   const form = useForm<z.infer<typeof QuizQuestionEditSchema>>({
     resolver: zodResolver(QuizQuestionEditSchema),
@@ -87,6 +86,7 @@ const QuizQuestionEditForms = ({ quizId, questionId }: { quizId: string; questio
     // fetch all questions,
     const fetchQuestion = async () => {
       const supabase = createClient();
+
       const { data, error } = await supabase.from("questions").select("*, question_answers!inner (answers(*))").eq("id", questionId).single();
       if (error || !data) return console.log("fetch question start error", data, error);
       const answersArray = data.question_answers.map((value) => {
@@ -245,6 +245,8 @@ const QuizQuestionEditForms = ({ quizId, questionId }: { quizId: string; questio
     }
   };
 
+  if (form.formState.isLoading) return <div>Values are loading. Please wait.</div>;
+
   return (
     <>
       <Form {...form}>
@@ -274,6 +276,7 @@ const QuizQuestionEditForms = ({ quizId, questionId }: { quizId: string; questio
                       field.onChange(value);
                     }}
                     defaultValue={String(field.value)}
+                    value={String(field.value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder='...' defaultValue={field.value} />
@@ -301,6 +304,7 @@ const QuizQuestionEditForms = ({ quizId, questionId }: { quizId: string; questio
                       field.onChange(value);
                     }}
                     defaultValue={field.value}
+                    value={field.value}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder='Points' defaultValue={field.value} />

@@ -48,7 +48,7 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
               quizzes.map((quiz) => {
                 const dateOpen = moment(new Date(quiz.date_open)).format("MMMM DD, YYYY");
                 const dateClose = moment(new Date(quiz.date_close)).format("MMMM DD, YYYY");
-                return <QuizBox title={quiz.title} date_open={dateOpen} date_close={dateClose} quizId={quiz.id} subjectId={subjectId} key={quiz.id} totalPoints={100} />;
+                return <QuizBox title={quiz.title} date_open={dateOpen} date_close={dateClose} quizId={quiz.id} subjectId={subjectId} key={quiz.id} totalPoints={quiz.total_points} />;
               })}
           </div>
         </TabsContent>

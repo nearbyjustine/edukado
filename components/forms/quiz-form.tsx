@@ -117,7 +117,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
           )}
         ></FormField>
         <div className='flex justify-end gap-2'>
-          <Button className='' type='submit'>
+          <Button disabled={form.formState.isSubmitting} className='' type='submit'>
             Create Quiz
           </Button>
           <Button className='' variant={"destructive"}>

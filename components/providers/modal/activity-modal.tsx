@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { headers } from "next/headers";
 import { DatePicker } from "@/components/calendar/date-picker";
 import { Separator } from "@/components/ui/separator";
+import redirectToSubjectPageAction from "@/actions/redirect-to-subject-page";
 
 const MAX_FILE_SIZE = 20_971_520;
 
@@ -85,7 +86,7 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
         }
       }
 
-      router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}`);
+      redirectToSubjectPageAction(subjectId);
     });
   };
 

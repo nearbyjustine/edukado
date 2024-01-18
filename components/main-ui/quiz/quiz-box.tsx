@@ -5,6 +5,7 @@ import { QuizFormSchema } from "@/components/forms/quiz-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { ClipboardList, Pencil, X } from "lucide-react";
 import Link from "next/link";
@@ -28,13 +29,15 @@ const QuizBox = ({
 }) => {
   const [hidden, setHidden] = useState(false);
   const handleDeleteActivity = async () => {
+    const supabase = createClient();
+    await supabase.from("quizzes").delete().eq("id", quizId);
     // const response = await deleteActivity(activityId);
     // if (response.error) console.log(response.error);
     setHidden(true);
   };
   return (
     <div className={cn("gap-4 items-center group", hidden ? "hidden" : "flex")}>
-      <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}/quiz/${quizId}/edit`}>
+      <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}/quiz/${quizId}`}>
         <div className='flex justify-between py-2 pl-6 pr-2 border hover:bg-primary/10 transition-colors rounded-md '>
           <div className='flex gap-4 items-center'>
             <div className='bg-green-500 rounded-3xl h-auto w-auto p-2 text-white'>
@@ -63,7 +66,7 @@ const QuizBox = ({
           <DialogHeader>
             <DialogTitle>Are you sure you want to delete this </DialogTitle>
           </DialogHeader>
-          <DialogDescription>This action cannot be undone. This will permanently delete your activity.</DialogDescription>
+          <DialogDescription>This action cannot be undone. This will permanently delete your quiz.</DialogDescription>
           <DialogFooter>
             <DialogClose>
               <Button onClick={handleDeleteActivity} variant={"destructive"}>

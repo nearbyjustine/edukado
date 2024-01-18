@@ -7,7 +7,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 
-const QuestionListBox = ({ question, index, path }: { question: QuestionType; index: number; path: string }) => {
+const QuestionListBox = ({ question, index, path, points }: { question: QuestionType; index: number; path: string; points: number }) => {
   const [hidden, setHidden] = useState(false);
 
   const handleDeleteQuestion = async () => {
@@ -18,12 +18,13 @@ const QuestionListBox = ({ question, index, path }: { question: QuestionType; in
     console.log(data, error);
   };
   return (
-    <div className={cn("px-2 py-4 h-fit justify-between border-primary/50 border-2 rounded-md text-foreground transition-colors group", hidden ? "hidden" : "flex")}>
+    <div className={cn("relative px-2 py-4 h-fit justify-between border-primary/50 border-2 rounded-md text-foreground transition-colors group", hidden ? "hidden" : "flex")}>
+      <div className='absolute right-0 -top-3 text-sm bg-primary rounded-md px-2 py-1 text-primary-foreground select-none'>{points} pt(s)</div>
       <div className='select-none'>
         <span className='font-semibold'>Question #{index + 1}</span>: {question.title}
       </div>
       <div className='flex items-center gap-2'>
-        <Link className='cursor-pointer hidden group-hover:flex hover:text-primary' href={`${path}/${question.id}/edit`}>
+        <Link className='cursor-pointer hidden group-hover:flex hover:text-primary' href={`${path}/${question.id}/${index + 1}/edit`}>
           <Pencil width={20} height={20} />
         </Link>
         <Dialog>

@@ -270,6 +270,7 @@ export interface Database {
           subject_id: string
           teacher_id: string
           title: string
+          total_points: number
         }
         Insert: {
           created_at?: string
@@ -281,6 +282,7 @@ export interface Database {
           subject_id: string
           teacher_id: string
           title?: string
+          total_points?: number
         }
         Update: {
           created_at?: string
@@ -292,6 +294,7 @@ export interface Database {
           subject_id?: string
           teacher_id?: string
           title?: string
+          total_points?: number
         }
         Relationships: [
           {
@@ -576,6 +579,13 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      question_add_to_quiz_total_points: {
+        Args: {
+          points: number
+          quiz_id: string
+        }
+        Returns: undefined
+      }
       total_points: {
         Args: {
           self_student_quiz_id: number

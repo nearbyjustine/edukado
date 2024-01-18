@@ -19,6 +19,8 @@ const addQuestion = async (values: z.infer<typeof QuizQuestionSchema>, quiz_id: 
     .select()
     .single();
 
+  await supabase.rpc("question_add_to_quiz_total_points", { points: values.points, quiz_id });
+
   return { data, error: insertError };
 };
 

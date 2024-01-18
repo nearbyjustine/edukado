@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import answerQuiz from "@/actions_student/quiz/answer-quiz";
 import { Button } from "@/components/ui/button";
 import Countdown from "react-countdown";
+import { useRouter } from "next/navigation";
 
 export const QuizStudentAnswerSchema = z.object({
   questions: z.array(
@@ -39,6 +40,8 @@ const CountdownAnswerQuizFormRenderer = ({
   startedQuizId: number;
 }) => {
   if (completed) {
+    const supabase = createClient();
+    supabase.from("student_answers_quiz").update({ has_finished: true }).eq("id", startedQuizId);
     return <div>Form has already been due</div>;
   }
 
@@ -85,7 +88,7 @@ const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: strin
   // fetch mo lahat
   const [quiz, setQuiz] = useState<Quiz>();
   const [questionsAndAnswers, setQuestionAndAnswers] = useState<QuestionWithAnswers[]>();
-
+  const router = useRouter();
   const form = useForm<z.infer<typeof QuizStudentAnswerSchema>>({
     resolver: zodResolver(QuizStudentAnswerSchema),
     reValidateMode: "onChange",
@@ -99,6 +102,7 @@ const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: strin
   const addAnswerToQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>) => {
     console.log(values);
     await answerQuiz(values, quizId, startedQuizId);
+    router.refresh();
   };
 
   useEffect(() => {

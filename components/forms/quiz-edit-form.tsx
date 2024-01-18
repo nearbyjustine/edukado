@@ -17,6 +17,7 @@ import questionListBox from "../main-ui/quiz/question-list-box";
 import QuestionListBox from "../main-ui/quiz/question-list-box";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
+import redirectToSubjectPageAction from "@/actions/redirect-to-subject-page";
 
 export type QuestionType = {
   created_at: string;
@@ -50,6 +51,7 @@ export const QuizFormSchema = z
 
 const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string }) => {
   const [questionData, setQuestionData] = useState<QuestionType[]>();
+  const [quizPoints, setQuizPoints] = useState<number>();
   const router = useRouter();
   const path = usePathname();
 
@@ -71,13 +73,14 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
     // fetch quiz through client. (try)
     const fetchQuiz = async () => {
       const supabase = createClient();
-      const { data, error } = await supabase.from("quizzes").select("title, description, date_open, date_close, duration").eq("id", quizId).single();
+      const { data, error } = await supabase.from("quizzes").select("*").eq("id", quizId).single();
       if (error || !data) return console.log(data, error);
       form.setValue("title", data.title);
       form.setValue("description", data.description as string | undefined);
       form.setValue("date_open", new Date(data.date_open));
       form.setValue("date_close", new Date(data.date_close));
       form.setValue("duration", data.duration);
+      setQuizPoints(data.total_points);
     };
 
     const fetchQuestions = async () => {
@@ -97,6 +100,13 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
     if (error || !data) return console.log(error);
     console.log(data, error);
   };
+
+  const redirectToSubjectPage = async () => {
+    //server action to revalidate and redirect to subject page
+    redirectToSubjectPageAction(subjectId);
+  };
+
+  if (form.formState.isLoading) return <div>Values are loading. Please wait.</div>;
 
   return (
     <>
@@ -172,14 +182,15 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
             <Button className='' type='submit'>
               Update Quiz
             </Button>
-            <Button type='button' className='' variant={"secondary"}>
+            <Button onClick={redirectToSubjectPage} type='button' className='' variant={"secondary"}>
               Proceed to Subject
             </Button>
           </div>
         </form>
       </Form>
+      <div>Total Points: {quizPoints && quizPoints} pt(s)</div>
       <div className='mt-5 flex flex-col gap-2'>
-        {questionData && questionData.map((question, index) => <QuestionListBox key={question.id} question={question} index={index} path={path} />)}
+        {questionData && questionData.map((question, index) => <QuestionListBox points={question.points} key={question.id} question={question} index={index} path={path} />)}
         <Link href={`${questionCreationPath}/add-question`} className='flex gap-2 px-2 py-4 rounded-md border-2 border-foreground/20 text-foreground/30 hover:text-foreground/50 transition-colors'>
           <PlusCircle width={25} height={25} />
           <span>Add Question</span>

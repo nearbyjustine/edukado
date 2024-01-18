@@ -110,13 +110,25 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
   };
 
   const onNextQuestion = async (values: z.infer<typeof QuizQuestionSchema>) => {
-    console.log("RESULT: ", values);
-    // unahin mong maginsert ng question
+    let isCorrectCount = 0;
+    if (values.options.length === 0) form.setError("root", { message: "Choices must not be empty" });
+
+    values.options.forEach((val, index) => {
+      if (val.is_correct === true) isCorrectCount++;
+      if (val.answer === "") form.setError(`options.${index}.answer`, { message: "Answer must not be empty" });
+    });
+
+    if (isCorrectCount === 0 || isCorrectCount > 1) form.setError("root", { message: "There must be one correct answer" });
+    if (form.formState.errors.root || form.formState.errors.options) return console.log(form.formState.errors.root, form.formState.errors.options);
+
     const questionId = await createQuestion(values);
     const { data, error } = await submitAnswer(values.options, questionId as string);
     if (error) return console.log(error);
 
     form.reset();
+    form.setValue("type", "Multiple Choice");
+    form.setValue("title", "");
+
     router.refresh();
     setQuestionNumber((prev) => prev++);
   };
@@ -255,6 +267,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
                       field.onChange(value);
                     }}
                     defaultValue={field.value}
+                    value={field.value}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder='Points' defaultValue={field.value} />
@@ -266,6 +279,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
                     </SelectContent>
                   </Select>
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -304,8 +318,9 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
 
           {watchType === "True or False" && showTrueOrFalse()}
 
+          <div>{form.formState.errors.root && <div className='text-destructive'>{form.formState.errors.root.message}</div>}</div>
           <div className='flex justify-end gap-2'>
-            <Button variant={"default"} className='' onClick={form.handleSubmit(onNextQuestion)}>
+            <Button disabled={form.formState.isSubmitting} variant={"default"} className='' onClick={form.handleSubmit(onNextQuestion)}>
               Add Question
             </Button>
             <Button variant={"destructive"} className='' type='button' onClick={onExit}>
