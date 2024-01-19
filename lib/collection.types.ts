@@ -21,5 +21,5 @@ export type StudentAnswerQuiz = Database["public"]["Tables"]["student_answers_qu
 };
 
 export type StudentAnswerActivity = Database["public"]["Tables"]["student_answers_activity"]["Row"] & {
-  profiles: User;
+  profiles: User | null;
 };

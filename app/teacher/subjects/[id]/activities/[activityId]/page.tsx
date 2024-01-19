@@ -5,7 +5,7 @@ import parse from "html-react-parser";
 import { ArrowDownToLine, Link2 } from "lucide-react";
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
-import ActivityBox from "@/components_student/activity-box";
+import ActivityBox from "@/components/main-ui/activity/activity-box";
 export const revalidate = 0;
 
 export default async function ActivityPage({ params }: { params: { id: string; activityId: string } }) {
@@ -45,7 +45,7 @@ export default async function ActivityPage({ params }: { params: { id: string; a
       <div className='flex flex-col gap-4 w-[35rem]'>
         {answers && answers.length > 0 ? (
           answers.map((answer) => {
-            return <ActivityBox key={answer.id} answer={answer} />;
+            return <ActivityBox key={answer.id} answer={answer} maxPoints={activity.grade} />;
           })
         ) : (
           <div>No one has answered yet</div>
