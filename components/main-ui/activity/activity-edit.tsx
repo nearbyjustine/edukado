@@ -16,6 +16,7 @@ import { useCollapseContext } from "@/components/providers/collapseProvider";
 import { updateActivity } from "@/actions/activity/update-activity";
 import { Separator } from "@/components/ui/separator";
 import { DatePicker } from "@/components/calendar/date-picker";
+import redirectToSubjectPageAction from "@/actions/redirect-to-subject-page";
 
 const MAX_FILE_SIZE = 20_971_520;
 
@@ -115,8 +116,7 @@ const ActivityEdit = ({
           return;
         }
       }
-
-      router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${subjectId}`);
+      await redirectToSubjectPageAction(subjectId);
     });
   };
 
