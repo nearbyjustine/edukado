@@ -36,7 +36,7 @@ const QuizResponsesPage = async ({ params: { quizId } }: { params: { quizId: str
         <div className='absolute -top-4 font-bold text-lg bg-background text-primary px-2'>Quiz Responses</div>
         <div className='flex flex-col gap-2'>
           {quizResponseData.map((response) => (
-            <Link href={`${pathname}/student_response/${response.id}`}>
+            <Link key={response.id} href={`${pathname}/student_response/${response.id}`}>
               <div className='bg-primary text-primary-foreground rounded-md px-4 py-4 w-96 select-none cursor-pointer flex justify-center items-center' key={response.id}>
                 {response.students?.profiles?.first_name} {response.students?.profiles?.last_name} Quiz Score:
                 <span className='text-lg font-bold ml-3'>
