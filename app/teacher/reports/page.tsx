@@ -8,6 +8,7 @@ import { TableHeader } from "@david.kucsai/react-pdf-table/lib/TableHeader";
 import { TableCell } from "@david.kucsai/react-pdf-table/lib/TableCell";
 import { DataTableCell } from "@david.kucsai/react-pdf-table/lib/DataTableCell";
 import { TableBody } from "@david.kucsai/react-pdf-table/lib/TableBody";
+import { fakeData } from "@/utils/fakeData";
 
 Font.register({
   family: "Arial Narrow",
@@ -23,6 +24,7 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: "#fff",
     fontFamily: "Arial Narrow",
+    paddingBottom: 33,
   },
   logo: {
     width: 75,
@@ -34,7 +36,7 @@ const styles = StyleSheet.create({
   },
   marginPage: {
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 40,
     paddingLeft: 20,
     paddingRight: 20,
   },
@@ -77,6 +79,9 @@ const styles = StyleSheet.create({
   },
   tableCellBottomText: {
     fontSize: 7,
+  },
+  dataTableCell: {
+    padding: 2,
   },
 });
 
@@ -136,7 +141,7 @@ const MyDocument = () => (
         </View>
         {/* body */}
         {/* Table */}
-        <MyTable>
+        <MyTable data={fakeData}>
           <MyTableHeader>
             <MyTableCell style={styles.tableCell}>LRN</MyTableCell>
             <MyTableCell style={styles.tableCell}>
@@ -175,13 +180,23 @@ const MyDocument = () => (
             <MyTableCell style={styles.tableCell}>Contact Number of Parent or Guardian</MyTableCell>
             <MyTableCell style={styles.tableCell}>Remarks</MyTableCell>
           </MyTableHeader>
-          {/* <MyTableBody>
-            <DataTableCell getContent={(r) => r.firstName} />
-            <DataTableCell getContent={(r) => r.lastName} />
-            <DataTableCell getContent={(r) => r.dob.toLocaleString()} />
-            <DataTableCell getContent={(r) => r.country} />
-            <DataTableCell getContent={(r) => r.phoneNumber} />
-          </MyTableBody> */}
+          <MyTableBody>
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.LRN} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.Name} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.Sex} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.BirthDate} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.AgeAsOfJune} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.MotherTongue} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.IP} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.Religion} />
+            <DataTableCell style={[styles.dataTableCell, { fontSize: 8 }]} getContent={(r: (typeof fakeData)[0]) => r.Address} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.FatherName} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.MotherMaidenName} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.GuardianName} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.RelationshipWithGuardian} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.ContactNumber} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.Remarks} />
+          </MyTableBody>
         </MyTable>
       </View>
     </Page>
