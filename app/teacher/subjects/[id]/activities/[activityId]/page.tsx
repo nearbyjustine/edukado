@@ -5,6 +5,7 @@ import parse from "html-react-parser";
 import { ArrowDownToLine, Link2 } from "lucide-react";
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
+import ActivityBox from "@/components_student/activity-box";
 export const revalidate = 0;
 
 export default async function ActivityPage({ params }: { params: { id: string; activityId: string } }) {
@@ -17,7 +18,7 @@ export default async function ActivityPage({ params }: { params: { id: string; a
   }
 
   return (
-    <div className='flex flex-col gap-12 justify-start'>
+    <div className='flex flex-col justify-start'>
       <div className='flex flex-col gap-4'>
         <div className='max-w-fit'>
           <h1 className='text-2xl font-bold relative'>
@@ -40,33 +41,11 @@ export default async function ActivityPage({ params }: { params: { id: string; a
           </Link>
         )}
       </div>
-      <div className='flex flex-col gap-4'>
+      <div className='font-bold text-3xl my-5'>Student Response(s)</div>
+      <div className='flex flex-col gap-4 w-[35rem]'>
         {answers && answers.length > 0 ? (
           answers.map((answer) => {
-            if (answer.profiles) {
-              return (
-                <div key={answer.id} className='flex flex-col gap-4 p-4 border rounded-lg'>
-                  <h1 className='text-2xl underline font-bold'>{`${answer.profiles.first_name} ${answer.profiles.last_name}'s Answer`}</h1>
-                  <div>{parse(answer.content)}</div>
-                  <div>
-                    {answer.file_url && (
-                      <Link className='text-blue-400 hover:underline flex gap-2 items-center' href={answer.file_url}>
-                        <ArrowDownToLine width={20} height={20} />
-                        {`File that ${answer.profiles.first_name} sent`}
-                      </Link>
-                    )}
-                  </div>
-                  <div>
-                    {answer.link_url && (
-                      <Link className='text-blue-400 hover:underline flex gap-2 items-center' href={answer.link_url}>
-                        <Link2 width={20} height={20} />
-                        {`Link that ${answer.profiles.first_name} sent`}
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              );
-            }
+            return <ActivityBox key={answer.id} answer={answer} />;
           })
         ) : (
           <div>No one has answered yet</div>

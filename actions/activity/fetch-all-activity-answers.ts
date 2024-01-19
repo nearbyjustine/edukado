@@ -10,12 +10,8 @@ export async function fetchAllActivityAnswers(id: string) {
   const { data, error } = await supabase
     .from("student_answers_activity")
     .select(
-      `
-    id,
-    content,
-    file_url,
-    link_url,
-    profiles (first_name, last_name)
+      `*,
+    profiles (*)
   `
     )
     .eq("activity_id", id);

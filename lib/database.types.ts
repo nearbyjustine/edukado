@@ -320,7 +320,9 @@ export interface Database {
           created_at: string
           file_url: string
           id: number
+          isScored: boolean
           link_url: string
+          points: number
           student_id: string
         }
         Insert: {
@@ -329,7 +331,9 @@ export interface Database {
           created_at?: string
           file_url?: string
           id?: number
+          isScored?: boolean
           link_url?: string
+          points?: number
           student_id?: string
         }
         Update: {
@@ -338,7 +342,9 @@ export interface Database {
           created_at?: string
           file_url?: string
           id?: number
+          isScored?: boolean
           link_url?: string
+          points?: number
           student_id?: string
         }
         Relationships: [

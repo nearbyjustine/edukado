@@ -88,6 +88,7 @@ const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: strin
   // fetch mo lahat
   const [quiz, setQuiz] = useState<Quiz>();
   const [questionsAndAnswers, setQuestionAndAnswers] = useState<QuestionWithAnswers[]>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof QuizStudentAnswerSchema>>({
     resolver: zodResolver(QuizStudentAnswerSchema),
@@ -100,9 +101,13 @@ const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: strin
   });
 
   const addAnswerToQuiz = async (values: z.infer<typeof QuizStudentAnswerSchema>) => {
+    setIsSubmitting(true);
     console.log(values);
     await answerQuiz(values, quizId, startedQuizId);
-    router.refresh();
+    setTimeout(() => {
+      setIsSubmitting(false);
+      router.refresh();
+    }, 1500);
   };
 
   useEffect(() => {
@@ -187,7 +192,7 @@ const AnswerQuizForm = ({ subjectId, quizId, startedQuizId }: { subjectId: strin
             );
           })}
         </div>
-        <Button className='mt-4' type='submit'>
+        <Button disabled={isSubmitting} className='mt-4' type='submit'>
           Submit Answers
         </Button>
       </form>

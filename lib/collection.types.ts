@@ -19,3 +19,7 @@ export type QuestionWithAnswers = Database["public"]["Tables"]["questions"]["Row
 export type StudentAnswerQuiz = Database["public"]["Tables"]["student_answers_quiz"]["Row"] & {
   quizzes: Quiz | null;
 };
+
+export type StudentAnswerActivity = Database["public"]["Tables"]["student_answers_activity"]["Row"] & {
+  profiles: User;
+};
