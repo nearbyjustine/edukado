@@ -27,3 +27,23 @@ export type StudentAnswerActivity = Database["public"]["Tables"]["student_answer
 export type StudentInformation = Database["public"]["Tables"]["student_information"]["Row"] & {
   profiles: User | null;
 };
+
+export type ActivitiesAndQuizzes = ActivityWithSubjectAndClassroom | QuizWithSubjectAndClassroom;
+
+export type Subjects = Database["public"]["Tables"]["subjects"]["Row"];
+
+export type ActivityWithSubjectAndClassroom = ActivityType & {
+  subjects:
+    | (Subjects & {
+        classrooms: Classroom | null;
+      })
+    | null;
+};
+
+export type QuizWithSubjectAndClassroom = Quiz & {
+  subjects:
+    | (Subjects & {
+        classrooms: Classroom | null;
+      })
+    | null;
+};

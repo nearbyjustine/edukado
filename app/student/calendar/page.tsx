@@ -1,4 +1,4 @@
-import FullCalendarComponent from "@/components/ui/full-calendar";
+import FullCalendarComponent from "@/components_student/full-calendar";
 import React from "react";
 
 const CalendarPage = () => {

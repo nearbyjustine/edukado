@@ -19,8 +19,14 @@ const FullCalendarComponent = () => {
           data: { user },
         } = await supabase.auth.getUser();
         if (!user) throw Error("No user");
-        const { data: activities } = await supabase.from("activities").select("*, subjects(*, classrooms(*))").eq("teacher_id", user.id);
-        const { data: quizzes } = await supabase.from("quizzes").select("*, subjects(*, classrooms(*))").eq("teacher_id", user.id);
+
+        // get classroom
+        const { data: classroom } = await supabase.from("students").select("*, classrooms(*)").eq("user_id", user.id).single();
+        console.log(classroom);
+        if (!classroom) throw Error("No classroom");
+
+        const { data: activities } = await supabase.from("activities").select("*, subjects(*, classrooms(*))").eq("subjects.classroom_id", classroom.classroom_id);
+        const { data: quizzes } = await supabase.from("quizzes").select("*, subjects(*, classrooms(*))").eq("subjects.classroom_id", classroom.classroom_id);
         if (!activities || !quizzes) throw Error("No fetched data");
         setData([...activities, ...quizzes]);
       } catch (e) {
