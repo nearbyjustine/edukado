@@ -28,6 +28,10 @@ export type StudentInformation = Database["public"]["Tables"]["student_informati
   profiles: User | null;
 };
 
+export type Student = Database["public"]["Tables"]["students"]["Row"] & {
+  profiles: User | null;
+};
+
 export type ActivitiesAndQuizzes = ActivityWithSubjectAndClassroom | QuizWithSubjectAndClassroom;
 
 export type Subjects = Database["public"]["Tables"]["subjects"]["Row"];

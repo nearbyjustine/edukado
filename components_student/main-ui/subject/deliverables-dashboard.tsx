@@ -24,7 +24,6 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
   const QRInfoJSON = JSON.stringify({
     subjectId,
     userId: user?.id,
-    message: "WELCOME ATE NICELLE",
   });
 
   if (error || !activities) return <div>Error: Something must have happened...</div>;
