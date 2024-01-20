@@ -6,6 +6,12 @@ import { fetchAllActivitiesBySubject } from "@/actions/activity/fetch-activity";
 import { unstable_noStore as noStore, revalidatePath } from "next/cache";
 import fetchAllQuizBySubject from "@/actions/quiz/fetch-all-quiz-by-subject";
 import QuizBox from "../quiz/quiz-box";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { fetchAuthUser } from "@/actions/fetch-auth-user";
+
+import QRCode from "react-qr-code";
+
 export const revalidate = 0;
 const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }: { subject: string; gradeLevel: string; section: string; subjectId: string }) => {
   noStore();
@@ -13,13 +19,32 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
 
   const { data: activities, error } = await fetchAllActivitiesBySubject(subjectId);
   const { data: quizzes, error: quizzesError } = await fetchAllQuizBySubject(subjectId);
+  const { user, error: userError } = await fetchAuthUser();
+
+  const QRInfoJSON = JSON.stringify({
+    subjectId,
+    userId: user?.id,
+    message: "WELCOME ATE NICELLE",
+  });
 
   if (error || !activities) return <div>Error: Something must have happened...</div>;
   return (
     <div className='flex flex-col gap-4 mt-9 w-[50rem]'>
-      <div className='relative bg-green-500 text-white dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col justify-end h-32 py-2 px-4'>
-        <div className='font-bold text-2xl'>{subject}</div>
-        <div className='font-medium '>{`${gradeLevel} - ${section}`}</div>
+      <div className='bg-green-500 text-white dark:bg-green-600 dark:text-white rounded-md transition-colors flex justify-between items-end gap-4 h-32 py-2 px-4'>
+        <div className='flex flex-col justify-end'>
+          <div className='font-bold text-2xl'>{subject}</div>
+          <div className='font-medium '>{`${gradeLevel} - ${section}`}</div>
+        </div>
+        <div className='flex flex-col'>
+          <Dialog>
+            <DialogTrigger>
+              <Button className='text-xl font-bold'>QR Code</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <div>{user && <QRCode value={QRInfoJSON} />}</div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
       <Tabs defaultValue='activities'>
         <TabsList>

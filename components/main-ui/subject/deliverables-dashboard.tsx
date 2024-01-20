@@ -6,6 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import fetchAllQuizBySubject from "@/actions/quiz/fetch-all-quiz-by-subject";
 import { unstable_noStore as noStore, revalidatePath } from "next/cache";
 import QuizBox from "../quiz/quiz-box";
+import { Button } from "@/components/ui/button";
+import { ScanQRButton } from "@/components/buttons/scan-qr-button";
+
 export const revalidate = 0;
 
 const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }: { subject: string; gradeLevel: string; section: string; subjectId: string }) => {
@@ -20,7 +23,8 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
       <div className='relative bg-green-500 text-white dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col justify-end h-32 py-2 px-4'>
         <div className='font-bold text-2xl'>{subject}</div>
         <div className='font-medium '>{`${gradeLevel} - ${section}`}</div>
-        <div className='absolute bottom-2 right-2'>
+        <div className='absolute bottom-2 right-2 flex gap-2'>
+          <ScanQRButton />
           <CreateActivityButton subjectId={subjectId} />
         </div>
       </div>
