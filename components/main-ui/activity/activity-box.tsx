@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import parse from "html-react-parser";
 import Link from "next/link";
 import { ArrowDownToLine, Link2 } from "lucide-react";
@@ -12,8 +12,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 const ActivityBox = ({ answer, maxPoints }: { answer: StudentAnswerActivity; maxPoints: number }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
   const scoreSchema = z.object({
     points: z.coerce
       .number({ required_error: "Points is required" })
@@ -30,6 +33,8 @@ const ActivityBox = ({ answer, maxPoints }: { answer: StudentAnswerActivity; max
     // update score of student activity
     const supabase = createClient();
     console.log(await supabase.from("student_answers_activity").update({ points: values.points, isScored: true }).eq("id", answer.id).select().single());
+    setIsOpen(false);
+    router.refresh();
   };
 
   if (answer.profiles) {
@@ -58,7 +63,7 @@ const ActivityBox = ({ answer, maxPoints }: { answer: StudentAnswerActivity; max
             )}
           </div>
           {(answer.isScored && (
-            <Dialog>
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger className=''>
                 <div className='bg-primary p-2 w-56 flex-none text-primary-foreground rounded-md'>Update Score</div>
               </DialogTrigger>
@@ -84,7 +89,7 @@ const ActivityBox = ({ answer, maxPoints }: { answer: StudentAnswerActivity; max
               </DialogContent>
             </Dialog>
           )) || (
-            <Dialog>
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger className=''>
                 <div className='bg-primary p-2 w-56 flex-none text-primary-foreground rounded-md'>Score this activity</div>
               </DialogTrigger>

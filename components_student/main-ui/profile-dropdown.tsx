@@ -69,8 +69,8 @@ const ProfileBar = ({ firstName, lastName, role, avatarUrl }: { firstName: strin
               <ArrowUp className={`${isDropDownActive ? "rotate-180" : "rotate-0"} transition-transform hidden lg:inline`} size={25} />
             </div>
             <div
-              className={`absolute top-16 right-1 bg-white text-black outline outline-1 outline-green-600 p-2 w-52 rounded flex flex-col ${
-                isDropDownActive ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+              className={`absolute top-16 right-1 bg-white text-black outline outline-1 outline-green-600 p-2 w-52 rounded  ${
+                isDropDownActive ? "opacity-100 translate-y-0 flex flex-col" : "opacity-0 -translate-y-2 hidden"
               } transition-all`}
             >
               <ul className=''>

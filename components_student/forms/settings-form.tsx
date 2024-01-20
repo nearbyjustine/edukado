@@ -17,6 +17,10 @@ import { updateUser } from "@/actions/update-user-details";
 import { fetchUserDetails } from "@/actions/fetch-user-details";
 import { User } from "@/lib/collection.types";
 
+export const Required = () => {
+  return <span className='align-top text-destructive font-semibold'>*</span>;
+};
+
 export const SettingsForm = ({ className }: { className?: string }) => {
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState("");
@@ -91,10 +95,6 @@ export const SettingsForm = ({ className }: { className?: string }) => {
       birth_date: new Date(),
     },
   });
-
-  const Required = () => {
-    return <span className='align-top text-destructive font-semibold'>*</span>;
-  };
 
   return (
     <Form {...form}>

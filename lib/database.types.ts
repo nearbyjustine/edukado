@@ -409,6 +409,68 @@ export interface Database {
           }
         ]
       }
+      student_information: {
+        Row: {
+          address: string | null
+          contact_number_parent_guardian: string | null
+          created_at: string
+          father_name: string | null
+          guardian_name: string | null
+          guardian_relationship: string | null
+          id: number
+          ip: Database["public"]["Enums"]["ip_enum"] | null
+          lrn: number | null
+          mother_name: string | null
+          mother_tongue:
+            | Database["public"]["Enums"]["mother_tongue_enum"]
+            | null
+          religion: Database["public"]["Enums"]["religion_enum"] | null
+          student_id: string
+        }
+        Insert: {
+          address?: string | null
+          contact_number_parent_guardian?: string | null
+          created_at?: string
+          father_name?: string | null
+          guardian_name?: string | null
+          guardian_relationship?: string | null
+          id?: number
+          ip?: Database["public"]["Enums"]["ip_enum"] | null
+          lrn?: number | null
+          mother_name?: string | null
+          mother_tongue?:
+            | Database["public"]["Enums"]["mother_tongue_enum"]
+            | null
+          religion?: Database["public"]["Enums"]["religion_enum"] | null
+          student_id: string
+        }
+        Update: {
+          address?: string | null
+          contact_number_parent_guardian?: string | null
+          created_at?: string
+          father_name?: string | null
+          guardian_name?: string | null
+          guardian_relationship?: string | null
+          id?: number
+          ip?: Database["public"]["Enums"]["ip_enum"] | null
+          lrn?: number | null
+          mother_name?: string | null
+          mother_tongue?:
+            | Database["public"]["Enums"]["mother_tongue_enum"]
+            | null
+          religion?: Database["public"]["Enums"]["religion_enum"] | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_information_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       student_questions_answers: {
         Row: {
           answer: string
@@ -607,7 +669,70 @@ export interface Database {
         | "Grade 4"
         | "Grade 5"
         | "Grade 6"
+      guardian_relationship_enum:
+        | "Step-parent"
+        | "Foster parent"
+        | "Legal guardian"
+        | "Grandparent"
+        | "Aunt"
+        | "Uncle"
+        | "Sister"
+        | "Brother"
+        | "Cousin"
+        | "Other family member"
+        | "Close family friend"
+        | "Custodian"
+        | "Godparent"
+        | "Legal custodian"
+      ip_enum:
+        | "Tagalog"
+        | "Cebuano"
+        | "Ilocano"
+        | "Bisaya"
+        | "Hiligaynon (Ilonggo)"
+        | "Waray"
+        | "Bicolano"
+        | "Kapampangan"
+        | "Pangasinense"
+        | "Maranao"
+        | "Maguindanao"
+        | "Tausug"
+        | "Kalinga"
+        | "Ibanag"
+        | "Ivatan"
+        | "Mangyan"
+        | "Lumad"
+      mother_tongue_enum:
+        | "Tagalog (Filipino)"
+        | "Cebuano"
+        | "Ilocano"
+        | "Hiligaynon (Ilonggo)"
+        | "Waray"
+        | "Bikol"
+        | "Kapampangan"
+        | "Pangasinan"
+        | "Maguindanao"
+        | "Tausug"
+        | "Maranao"
+        | "Chavacano"
+        | "Kinaray-a"
+        | "Aklanon"
+        | "Ivatan"
+        | "Yakan"
+        | "Surigaonon"
+        | "Ibanag"
+        | "Itawis"
+        | "Kankanaey"
       question_type_enum: "Multiple Choice" | "True or False" | "Identification"
+      religion_enum:
+        | "Roman Catholic"
+        | "Islam"
+        | "Born-Again Christian"
+        | "Iglesia ni Cristo"
+        | "Aglipayan"
+        | "Buddhism"
+        | "Hinduism"
+        | "Judaism"
       roles_enum:
         | "student"
         | "teacher"

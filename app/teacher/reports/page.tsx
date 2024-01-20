@@ -9,6 +9,8 @@ import { TableCell } from "@david.kucsai/react-pdf-table/lib/TableCell";
 import { DataTableCell } from "@david.kucsai/react-pdf-table/lib/DataTableCell";
 import { TableBody } from "@david.kucsai/react-pdf-table/lib/TableBody";
 import { fakeData } from "@/utils/fakeData";
+import { createClient } from "@/utils/supabase/client";
+import { StudentInformation } from "@/lib/collection.types";
 
 Font.register({
   family: "Arial Narrow",
@@ -92,7 +94,7 @@ const MyTableCell: any = TableCell;
 const MyTableBody: any = TableBody;
 
 // Create Document Component
-const MyDocument = () => (
+const MyDocument = ({ data }: { data: StudentInformation[] }) => (
   <Document>
     <Page size='LEGAL' orientation='landscape' style={styles.page}>
       {/* BUONG PAGE */}
@@ -141,7 +143,7 @@ const MyDocument = () => (
         </View>
         {/* body */}
         {/* Table */}
-        <MyTable data={fakeData}>
+        <MyTable data={[...data]}>
           <MyTableHeader>
             <MyTableCell style={styles.tableCell}>LRN</MyTableCell>
             <MyTableCell style={styles.tableCell}>
@@ -178,24 +180,24 @@ const MyDocument = () => (
               <Text style={styles.tableCellBottomText}>(if not parent)</Text>
             </MyTableCell>
             <MyTableCell style={styles.tableCell}>Contact Number of Parent or Guardian</MyTableCell>
-            <MyTableCell style={styles.tableCell}>Remarks</MyTableCell>
+            {/* <MyTableCell style={styles.tableCell}>Remarks</MyTableCell> */}
           </MyTableHeader>
           <MyTableBody>
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.LRN} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.Name} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.Sex} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.BirthDate} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.AgeAsOfJune} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.MotherTongue} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.IP} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.Religion} />
-            <DataTableCell style={[styles.dataTableCell, { fontSize: 8 }]} getContent={(r: (typeof fakeData)[0]) => r.Address} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.FatherName} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.MotherMaidenName} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.GuardianName} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.RelationshipWithGuardian} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.ContactNumber} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: (typeof fakeData)[0]) => r.Remarks} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.lrn} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => `${r.profiles?.last_name}, ${r.profiles?.first_name}, ${r.profiles?.middle_name}`} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.profiles?.gender} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.profiles?.birth_date} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => new Date("06-01-2024").getFullYear() - new Date(r.profiles?.birth_date as string).getFullYear()} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.mother_tongue} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.ip} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.religion} />
+            <DataTableCell style={[styles.dataTableCell, { fontSize: 8 }]} getContent={(r: StudentInformation) => r.address} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.father_name} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.mother_name} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.guardian_name} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.guardian_relationship} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.contact_number_parent_guardian} />
+            {/* <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.Remarks} /> */}
           </MyTableBody>
         </MyTable>
       </View>
@@ -203,17 +205,32 @@ const MyDocument = () => (
   </Document>
 );
 
-const ReportsPage = () => {
-  return (
-    <div className='mt-20'>
-      <PDFViewer className='w-full' height={900}>
-        <MyDocument />
-      </PDFViewer>
-      <PDFDownloadLink document={<MyDocument />} fileName='document.pdf'>
-        {({ blob, url, loading, error }) => (loading ? "Loading document..." : "Download now!")}
-      </PDFDownloadLink>
-    </div>
-  );
+const fetchStudentInformation = async () => {
+  try {
+    const supabase = createClient();
+    // depend on grade and section -- to do
+    const { data, error } = await supabase.from("student_information").select("*, profiles(*)");
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const ReportsPage = async () => {
+  const data = await fetchStudentInformation();
+  console.log(data);
+  if (data) {
+    return (
+      <div className='mt-20'>
+        <PDFViewer className='w-full' height={900}>
+          <MyDocument data={data} />
+        </PDFViewer>
+        <PDFDownloadLink document={<MyDocument data={data} />} fileName='document.pdf'>
+          {({ blob, url, loading, error }) => (loading ? "Loading document..." : "Download now!")}
+        </PDFDownloadLink>
+      </div>
+    );
+  }
 };
 
 export default ReportsPage;

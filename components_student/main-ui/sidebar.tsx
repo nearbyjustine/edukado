@@ -27,7 +27,7 @@ const Sidebar = () => {
       <SidebarItem href='/student/lessons' text='Lessons' Icon={'sticky-note}' />
       <SidebarItem href='/student/activities' text='Activities' Icon={'clipboard'} /> */}
       <SidebarItem href='/student/calendar' text='Calendar' Icon={Calendar} />
-      <SidebarItem href='/student/reports' text='Reports' Icon={LineChart} />
+      {/* <SidebarItem href='/student/reports' text='Reports' Icon={LineChart} /> */}
       <SidebarItem href='/student/settings' text='Settings' Icon={Settings} />
     </div>
   );

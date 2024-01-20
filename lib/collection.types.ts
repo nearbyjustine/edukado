@@ -23,3 +23,7 @@ export type StudentAnswerQuiz = Database["public"]["Tables"]["student_answers_qu
 export type StudentAnswerActivity = Database["public"]["Tables"]["student_answers_activity"]["Row"] & {
   profiles: User | null;
 };
+
+export type StudentInformation = Database["public"]["Tables"]["student_information"]["Row"] & {
+  profiles: User | null;
+};
