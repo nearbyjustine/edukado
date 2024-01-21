@@ -87,6 +87,42 @@ export interface Database {
         }
         Relationships: []
       }
+      attendance: {
+        Row: {
+          created_at: string
+          id: number
+          student_id: string | null
+          subject_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          student_id?: string | null
+          subject_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          student_id?: string | null
+          subject_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       classrooms: {
         Row: {
           created_at: string
@@ -641,6 +677,24 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      topic: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
     }
     Views: {
