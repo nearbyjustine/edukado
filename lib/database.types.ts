@@ -559,8 +559,8 @@ export interface Database {
         Insert: {
           classroom_id: string
           created_at?: string
-          id?: string
-          user_id?: string
+          id: string
+          user_id: string
         }
         Update: {
           classroom_id?: string
@@ -605,7 +605,7 @@ export interface Database {
           created_at?: string
           id?: string
           name?: string
-          teacher_id?: string
+          teacher_id: string
         }
         Update: {
           classroom_id?: string
@@ -655,20 +655,27 @@ export interface Database {
       teachers: {
         Row: {
           created_at: string
-          id: number
+          id: string
           user_id: string
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           user_id: string
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "teachers_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "teachers_user_id_fkey"
             columns: ["user_id"]

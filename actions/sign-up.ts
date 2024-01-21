@@ -30,9 +30,10 @@ export const signUp = async (formData: SignUpSchemaType) => {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
+  console.log(userError, user);
   if (!user || userError) return userError;
 
-  const { data: insertData, error: insertError } = await supabase.from("teachers").insert({ user_id: user.id });
-
+  const { error: insertError } = await supabase.from("teachers").insert({ user_id: user.id });
+  if (insertError) return insertError;
   return error;
 };

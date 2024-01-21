@@ -9,6 +9,7 @@ import { setConstantValue } from "typescript";
 import { createClient } from "@/utils/supabase/client";
 import { Student } from "@/lib/collection.types";
 import Image from "next/image";
+import { format } from "date-fns";
 
 type QRResponse = {
   subjectId: string;
@@ -26,7 +27,6 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
       const devices = await Html5Qrcode.getCameras();
       if (devices.length === 0) throw Error("No camera found");
       setCameras(devices);
-      console.log(devices);
     } catch (e) {
       console.error(e);
     }
@@ -57,16 +57,36 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
       }
 
       // check mo kung nakapag attendance na
-      // await supabase.from('attendance').select().eq('student_id', student.userId).eq('subject_id', subjectId)
+      const dateTodayFirst = format(new Date(), "yyyy-MM-dd") + " 00:00:00";
+      const dateTodayLast = format(new Date(), "yyyy-MM-dd") + " 23:59:59";
+
+      console.log(dateTodayFirst, dateTodayLast, new Date());
+      const { data: attendedData, error: attendedError } = await supabase
+        .from("attendance")
+        .select()
+        .eq("student_id", student.userId)
+        .eq("subject_id", subjectId)
+        .lt("created_at", dateTodayLast)
+        .gt("created_at", dateTodayFirst);
+
+      if (attendedError) throw Error(attendedError.message);
+
+      if (attendedData.length > 0) {
+        throw Error("Already had attendance to this subject");
+      } else {
+        // insert data to attendance
+        const { error: insertError } = await supabase.from("attendance").insert({ student_id: student.userId, subject_id: subjectId });
+        if (insertError) {
+          throw Error(insertError.message);
+        }
+      }
 
       setStudent(data);
     } catch (e) {
       if (e instanceof Error) {
         setErrorMessage(e.message);
       }
-      console.error(e);
-    } finally {
-      scanner.pause(true);
+      // console.error(e);
     }
   };
 
@@ -80,7 +100,10 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
           fps: 10,
           qrbox: { width: 250, height: 250 },
         },
-        (decodedText, result) => handleQRread(decodedText, result, html5QrCode),
+        (decodedText, result) => {
+          handleQRread(decodedText, result, html5QrCode);
+          html5QrCode.pause(true);
+        },
         (errorMessage) => {
           // parse error, ignore it.
         }
@@ -96,6 +119,7 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
         onOpenChange={() => {
           setSelectedCamera("");
           setStudent(undefined);
+          setErrorMessage(undefined);
         }}
       >
         <DialogTrigger>
@@ -116,7 +140,9 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
                 </SelectTrigger>
                 <SelectContent>
                   {cameras.map((cam) => (
-                    <SelectItem value={cam.id}>{cam.label}</SelectItem>
+                    <SelectItem key={cam.id} value={cam.id}>
+                      {cam.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>

@@ -7,18 +7,6 @@ import { headers } from "next/headers";
 import EmptySubjectBox from "./empty-subject-box";
 import { fetchSubject } from "@/actions/subjects/fetch-subjects";
 
-type ClassroomWithSubjectType = {
-  id: string;
-  grade_level: GradeLevelEnum;
-  section: string;
-  subjects:
-    | {
-        id: string;
-        name: string;
-      }[]
-    | null;
-};
-
 const SubjectsDisplay = async () => {
   const response = await fetchSubject();
 
@@ -33,7 +21,7 @@ const SubjectsDisplay = async () => {
       <div className='flex flex-col gap-4'>
         <div className='flex gap-2'>
           <h1 className='text-lg md:text-3xl font-bold '>Grade Levels and Section</h1>
-          <CreateClassroomButton />
+          {/* <CreateClassroomButton /> */}
         </div>
         {classrooms &&
           classrooms.map((classroom) => {
