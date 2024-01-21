@@ -24,7 +24,7 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
         <div className='font-bold text-2xl'>{subject}</div>
         <div className='font-medium '>{`${gradeLevel} - ${section}`}</div>
         <div className='absolute bottom-2 right-2 flex gap-2'>
-          <ScanQRButton />
+          <ScanQRButton subjectId={subjectId} />
           <CreateActivityButton subjectId={subjectId} />
         </div>
       </div>

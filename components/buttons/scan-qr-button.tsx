@@ -15,10 +15,11 @@ type QRResponse = {
   userId: string;
 };
 
-export const ScanQRButton = () => {
+export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
   const [cameras, setCameras] = useState<CameraDevice[]>();
   const [selectedCamera, setSelectedCamera] = useState<string>("");
   const [student, setStudent] = useState<Student>();
+  const [errorMessage, setErrorMessage] = useState<string>();
 
   const requestCameraPermission = async () => {
     try {
@@ -37,21 +38,35 @@ export const ScanQRButton = () => {
 
   const handleQRread = async (text: string, result: Html5QrcodeResult, scanner: Html5Qrcode) => {
     try {
+      setErrorMessage(undefined);
       // console.log(text, result);
 
       // parse mo ung result/text
       const student: QRResponse = await JSON.parse(text);
-      console.log(student);
+
+      if (student.subjectId !== subjectId) {
+        throw Error("Wrong QR Code use for subject");
+      }
 
       //fetch mo ung student
       const supabase = createClient();
       const { data, error } = await supabase.from("students").select("*, profiles!students_id_fkey(*)").eq("id", student.userId).single();
-      console.log(error);
-      if (error || !data) throw Error(error.message);
+
+      if (error || !data) {
+        throw Error(error.message);
+      }
+
+      // check mo kung nakapag attendance na
+      // await supabase.from('attendance').select().eq('student_id', student.userId).eq('subject_id', subjectId)
+
       setStudent(data);
-      scanner.pause(true);
     } catch (e) {
+      if (e instanceof Error) {
+        setErrorMessage(e.message);
+      }
       console.error(e);
+    } finally {
+      scanner.pause(true);
     }
   };
 
@@ -119,6 +134,7 @@ export const ScanQRButton = () => {
                 <Image width={100} height={100} alt={`${student.profiles.first_name}'s profile picture`} src={student.profiles?.avatar_url} />
               </div>
             )}
+            {errorMessage && <div className='text-destructive font-bold'>{errorMessage}</div>}
           </div>
         </DialogContent>
       </Dialog>
