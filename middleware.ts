@@ -8,6 +8,7 @@ import { Database } from "./lib/database.types";
 const protectedRoutes = ["/teacher", "/teacher/:path*", "/student", "/student/:path*", "/admin", "/admin/*"];
 const teacherProtectedRoutes = ["/teacher", "/teacher/:path*", "/admin", "/admin/*"];
 const studentProtectedRoutes = ["/student", "/student/:path*", "/admin", "/admin/*"];
+const adminProtectedRoutes = ["/student", "/student/:path*", "/teacher", "/teacher/:path*"];
 const loginRoutes = ["/teacher-login", "/student-login", "/", "/admin-login"];
 
 export async function middleware(request: NextRequest) {
@@ -42,7 +43,7 @@ export async function middleware(request: NextRequest) {
       const hasOnboarded = session.user.user_metadata["hasOnboarded"];
 
       // if there is a session, check if user has onboarded, otherwise redirect them to onboarding page
-      if (!hasOnboarded) {
+      if (hasOnboarded === false) {
         if (role === "student" && request.nextUrl.pathname !== "/onboarding_student") return NextResponse.redirect(new URL("/onboarding_student", originUrl));
         if (role === "teacher" && request.nextUrl.pathname !== "/onboarding") return NextResponse.redirect(new URL("/onboarding", originUrl));
       } else {
@@ -50,9 +51,16 @@ export async function middleware(request: NextRequest) {
         if (role === "teacher" && studentProtectedRoutes.includes(request.nextUrl.pathname)) return NextResponse.redirect(new URL("/teacher", originUrl));
         // if there is a session and user is a student, dont allow to go to teacher routes
         if (role === "student" && teacherProtectedRoutes.includes(request.nextUrl.pathname)) return NextResponse.redirect(new URL("/student", originUrl));
+        // if user is admin
+        if (!role && adminProtectedRoutes.includes(request.nextUrl.pathname)) return NextResponse.redirect(new URL("/admin", originUrl));
       }
       // if there is a session, dont allow them to go to login page.
-      if (loginRoutes.includes(request.nextUrl.pathname)) return role === "teacher" ? NextResponse.redirect(new URL("/teacher", originUrl)) : NextResponse.redirect(new URL("/student", originUrl));
+      if (loginRoutes.includes(request.nextUrl.pathname)) {
+        if (role === "teacher") return NextResponse.redirect(new URL("/teacher", originUrl));
+        if (role === "student") return NextResponse.redirect(new URL("/student", originUrl));
+        if (!role) return NextResponse.redirect(new URL("/admin", originUrl));
+      }
+      // if (loginRoutes.includes(request.nextUrl.pathname)) return role === "teacher" ? NextResponse.redirect(new URL("/teacher", originUrl)) : NextResponse.redirect(new URL("/student", originUrl));
     }
 
     await supabase.auth.getSession();
