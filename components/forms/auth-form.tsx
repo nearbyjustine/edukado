@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp } from "@/actions/sign-up";
 import { logIn } from "@/actions/login";
 import { SignUpSchema, SignUpSchemaType } from "@/schema/auth-form.schema";
-import { AuthError } from "@supabase/supabase-js";
+import { AuthError, PostgrestError } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
 interface AuthFormProps extends HTMLAttributes<HTMLDivElement> {
@@ -32,7 +32,7 @@ export function AuthForm({ className, auth, ...props }: AuthFormProps) {
 
   const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
     startTransition(async () => {
-      let response: AuthError | null;
+      let response: AuthError | PostgrestError | null;
       if (auth == "sign-up") {
         response = await signUp(data);
       } else {

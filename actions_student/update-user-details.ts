@@ -57,7 +57,7 @@ export const updateStudentUser = async (values: FormSchemaTypeWithoutAvatar, gra
 
   if (updateUserError) return updateUserError;
 
-  const { error: insertStudentError } = await supabase.from("students").insert({ classroom_id: classroomData.id });
+  const { error: insertStudentError } = await supabase.from("students").insert({ classroom_id: classroomData.id, user_id: user.id });
 
   if (insertStudentError) return insertStudentError;
 

@@ -1,10 +1,5 @@
-import Link from "next/link";
 import SubjectBox from "@/components/main-ui/classroom/subject-box";
-import CreateClassroomButton from "@/components/buttons/create-classroom-button";
-import { GradeLevelEnum } from "@/lib/collection.types";
 import capitalizeFirstLetter from "@/utils/capitalize";
-import { headers } from "next/headers";
-import EmptySubjectBox from "./empty-subject-box";
 import { fetchSubject } from "@/actions/subjects/fetch-subjects";
 
 const SubjectsDisplay = async () => {

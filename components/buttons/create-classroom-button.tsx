@@ -87,12 +87,12 @@ const CreateClassroomButton = () => {
       setIsNewSubjectButtonLoading((prev) => !prev);
       return;
     }
-    const { data, error: addSubjectError } = await addSubject(subject, classroom.id);
-    if (addSubjectError) {
-      setNewSubjectError(addSubjectError.message);
-      setIsNewSubjectButtonLoading((prev) => !prev);
-      return;
-    }
+    // const { data, error: addSubjectError } = await addSubject(subject, classroom.id, "");
+    // if (addSubjectError) {
+    //   setNewSubjectError(addSubjectError.message);
+    //   setIsNewSubjectButtonLoading((prev) => !prev);
+    //   return;
+    // }
 
     setIsClassroomDialogOpen((prev) => !prev);
     setSubject("");

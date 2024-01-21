@@ -559,7 +559,7 @@ export interface Database {
         Insert: {
           classroom_id: string
           created_at?: string
-          id: string
+          id?: string
           user_id: string
         }
         Update: {
