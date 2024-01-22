@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 const AdminLoginPage = () => {
   return (
     <div className='h-screen bg-primary flex justify-center items-center'>
-      <Card className='w-2/3'>
+      <Card className='sm:w-[500px] w-2/3'>
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
           <CardDescription>Enter your email and password here.</CardDescription>
