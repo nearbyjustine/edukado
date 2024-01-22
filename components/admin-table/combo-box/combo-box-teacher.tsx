@@ -16,7 +16,21 @@ type TeachersList = {
   id: string;
 };
 
-const TeacherComboBox = ({ name, id, sectionId, setCurrentAdviser }: { name: string; id: string; sectionId: string; setCurrentAdviser: React.Dispatch<React.SetStateAction<string>> }) => {
+const TeacherComboBox = ({
+  name,
+  id,
+  sectionId,
+  setCurrentAdviser,
+  setIsEditing,
+  setCurrentAdviserId,
+}: {
+  name: string;
+  id: string;
+  sectionId: string;
+  setCurrentAdviser: React.Dispatch<React.SetStateAction<string>>;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentAdviserId: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(name);
   const [selectedTeacherId, setSelectedTeacherId] = useState(id);
@@ -37,14 +51,19 @@ const TeacherComboBox = ({ name, id, sectionId, setCurrentAdviser }: { name: str
   const updateCurrentAdviser = async (id: string) => {
     const supabase = createClient();
     const { data, error } = await supabase.from("classrooms").update({ adviser_id: id }).eq("id", sectionId);
+    setIsEditing(false);
   };
 
   return (
     <div className='flex gap-4 items-center'>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover
+        open={open}
+        onOpenChange={(value) => {
+          setOpen(value);
+        }}
+      >
         <PopoverTrigger asChild>
           <div>
-            <span>Adviser</span>
             <Button variant='outline' role='combobox' aria-expanded={open} className='w-[200px] justify-between'>
               {value && teachers ? teachers.find((teacher) => teacher.name === value)?.name : "Select teacher..."}
               <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
@@ -66,6 +85,7 @@ const TeacherComboBox = ({ name, id, sectionId, setCurrentAdviser }: { name: str
                       setValue(teacher.name);
                       setSelectedTeacherId(teacher.id);
                       setCurrentAdviser(teacher.name);
+                      setCurrentAdviserId(teacher.id);
                       setOpen(false);
                     }}
                   >

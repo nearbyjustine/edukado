@@ -63,3 +63,7 @@ export type ClassroomWithAdviser = Classroom & {
       })
     | null;
 };
+
+export type StudentWithClassroom = Student & {
+  classrooms: Classroom;
+};

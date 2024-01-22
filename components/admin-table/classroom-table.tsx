@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { fetchAllClassrooms } from "@/actions/section/fetch-classroom";
 import { Classroom } from "@/lib/collection.types";
 import React, { useEffect, useState } from "react";
-import { DataTable } from "./datatable";
+import { DataTable } from "./classroom-datatable";
 import { classroomColumns } from "./classroom-column";
 
 const ClassroomsTable = async () => {

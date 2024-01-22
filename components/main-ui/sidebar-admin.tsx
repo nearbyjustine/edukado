@@ -22,11 +22,11 @@ const Sidebar = () => {
       </Link>
       <SidebarItem href='/admin' text='Dashboard' Icon={LayoutDashboard} />
       <SidebarItem href='/admin/classrooms' text='Classrooms' Icon={BookOpen} />
-      <SidebarItem href='/admin/people' text='People' Icon={UserCircle2} />
+      <SidebarItem href='/admin/people' text='People (pending)' Icon={UserCircle2} />
       {/* // <SidebarItem href='/admin/lessons' text='Lessons' Icon={'sticky-note}' /> */}
       {/* // <SidebarItem href='/admin/activities' text='Activities' Icon={"clipboard"} /> */}
       {/* <SidebarItem href='/admin/reports' text='Reports' Icon={LineChart} /> */}
-      <SidebarItem href='/admin/settings' text='Settings' Icon={Settings} />
+      <SidebarItem href='/admin/settings' text='Settings (pending)' Icon={Settings} />
     </div>
   );
 };
