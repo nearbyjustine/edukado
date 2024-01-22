@@ -61,7 +61,7 @@ export interface Database {
             foreignKeyName: "activities_teacher_id_fkey"
             columns: ["teacher_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "teachers"
             referencedColumns: ["id"]
           }
         ]
@@ -125,24 +125,35 @@ export interface Database {
       }
       classrooms: {
         Row: {
+          adviser_id: string | null
           created_at: string
           grade_level: Database["public"]["Enums"]["grade_level_enum"]
           id: string
           section: string
         }
         Insert: {
+          adviser_id?: string | null
           created_at?: string
           grade_level: Database["public"]["Enums"]["grade_level_enum"]
           id?: string
           section?: string
         }
         Update: {
+          adviser_id?: string | null
           created_at?: string
           grade_level?: Database["public"]["Enums"]["grade_level_enum"]
           id?: string
           section?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "classrooms_adviser_id_fkey"
+            columns: ["adviser_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       discussions: {
         Row: {
@@ -316,7 +327,7 @@ export interface Database {
           duration?: number
           id?: string
           subject_id: string
-          teacher_id: string
+          teacher_id?: string
           title?: string
           total_points?: number
         }
@@ -344,7 +355,7 @@ export interface Database {
             foreignKeyName: "quizzes_teacher_id_fkey"
             columns: ["teacher_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "teachers"
             referencedColumns: ["id"]
           }
         ]
@@ -395,7 +406,7 @@ export interface Database {
             foreignKeyName: "student_answers_activity_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "students"
             referencedColumns: ["id"]
           }
         ]
@@ -416,7 +427,7 @@ export interface Database {
           has_started?: boolean
           id?: number
           quiz_id: string
-          student_id: string
+          student_id?: string
           total_points?: number | null
         }
         Update: {
@@ -502,7 +513,7 @@ export interface Database {
             foreignKeyName: "student_information_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "students"
             referencedColumns: ["id"]
           }
         ]
@@ -598,21 +609,21 @@ export interface Database {
           created_at: string
           id: string
           name: string
-          teacher_id: string
+          teacher_id: string | null
         }
         Insert: {
           classroom_id: string
           created_at?: string
           id?: string
           name?: string
-          teacher_id: string
+          teacher_id?: string | null
         }
         Update: {
           classroom_id?: string
           created_at?: string
           id?: string
           name?: string
-          teacher_id?: string
+          teacher_id?: string | null
         }
         Relationships: [
           {
@@ -626,31 +637,10 @@ export interface Database {
             foreignKeyName: "subjects_teacher_id_fkey"
             columns: ["teacher_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "teachers"
             referencedColumns: ["id"]
           }
         ]
-      }
-      teacher_grade_student: {
-        Row: {
-          comment: string | null
-          created_at: string
-          grade: number | null
-          id: number
-        }
-        Insert: {
-          comment?: string | null
-          created_at?: string
-          grade?: number | null
-          id?: number
-        }
-        Update: {
-          comment?: string | null
-          created_at?: string
-          grade?: number | null
-          id?: number
-        }
-        Relationships: []
       }
       teachers: {
         Row: {

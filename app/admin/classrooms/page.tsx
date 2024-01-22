@@ -1,10 +1,14 @@
 import { fetchAllClassrooms } from "@/actions/section/fetch-classroom";
+import ClassroomsTable from "@/components/admin-table/classroom-table";
 import { Classroom } from "@/lib/collection.types";
 import React from "react";
 
 const AdminClassroomPage = async () => {
-  // const classroomData: Classroom[] = await fetchAllClassrooms;
-  return <div>AdminClassroomPage</div>;
+  return (
+    <div className='mt-10 pb-20'>
+      <ClassroomsTable />
+    </div>
+  );
 };
 
 export default AdminClassroomPage;

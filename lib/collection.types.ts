@@ -15,6 +15,10 @@ export type QuestionWithAnswers = Database["public"]["Tables"]["questions"]["Row
     answers: Database["public"]["Tables"]["answers"]["Row"];
   }[];
 };
+export type Teacher = Database["public"]["Tables"]["teachers"]["Row"];
+export type TeacherWithProfile = Database["public"]["Tables"]["teachers"]["Row"] & {
+  profiles: User | null;
+};
 
 export type StudentAnswerQuiz = Database["public"]["Tables"]["student_answers_quiz"]["Row"] & {
   quizzes: Quiz | null;
@@ -48,6 +52,14 @@ export type QuizWithSubjectAndClassroom = Quiz & {
   subjects:
     | (Subjects & {
         classrooms: Classroom | null;
+      })
+    | null;
+};
+
+export type ClassroomWithAdviser = Classroom & {
+  teachers:
+    | (Teacher & {
+        profiles: User | null;
       })
     | null;
 };
