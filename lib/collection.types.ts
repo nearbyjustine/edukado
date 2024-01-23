@@ -77,3 +77,4 @@ export type TopicsEtc = Database["public"]["Tables"]["topic"]["Row"] & {
   activities: ActivityType[] | null;
   quizzes: Quiz[] | null;
 };
+export type Topic = Database["public"]["Tables"]["topic"]["Row"];

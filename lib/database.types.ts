@@ -716,18 +716,29 @@ export interface Database {
           created_at: string
           id: string
           name: string
+          subject_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           name?: string
+          subject_id: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          subject_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "topic_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

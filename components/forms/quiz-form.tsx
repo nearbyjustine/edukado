@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,9 @@ import { Button } from "../ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { DatePicker } from "../calendar/date-picker";
 import addQuiz from "@/actions/quiz/add-quiz";
+import { createClient } from "@/utils/supabase/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Topic } from "@/lib/collection.types";
 
 export const QuizFormSchema = z
   .object({
@@ -18,6 +21,7 @@ export const QuizFormSchema = z
     date_open: z.date({ required_error: "Date to start is required" }),
     date_close: z.date({ required_error: "Date to close is required" }),
     duration: z.coerce.number({ required_error: "Duration is required" }).min(0),
+    topic_id: z.string(),
   })
   .refine((data) => data.date_open.getTime() <= data.date_close.getTime(), {
     message: "Opening date must be earlier than closing date",
@@ -25,6 +29,7 @@ export const QuizFormSchema = z
   });
 
 const QuizForm = ({ subjectId }: { subjectId: string }) => {
+  const [topics, setTopics] = useState<Topic[]>();
   const router = useRouter();
   const path = usePathname();
   const form = useForm<z.infer<typeof QuizFormSchema>>({
@@ -47,6 +52,22 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
     router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path}/${id}/add-question`);
   };
 
+  useEffect(() => {
+    const fetchAllTopicsInThisSubject = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.from("topic").select("*").eq("subject_id", subjectId);
+      if (!data || error) return console.error(error);
+
+      setTopics(data);
+    };
+
+    fetchAllTopicsInThisSubject();
+  }, []);
+
+  const goBack = () => {
+    router.back();
+  };
+
   return (
     <Form {...form}>
       <form className='flex flex-col w-full gap-6' onSubmit={form.handleSubmit(onSubmit)}>
@@ -58,6 +79,24 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
               <FormLabel>Quiz Title</FormLabel>
               <FormControl>
                 <Input type='text' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='topic_id'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Topic</FormLabel>
+              <FormControl>
+                <Select onValueChange={field.onChange}>
+                  <SelectTrigger className='w-[180px]'>
+                    <SelectValue placeholder='Set topic' />
+                  </SelectTrigger>
+                  <SelectContent>{topics && topics.map((topic) => <SelectItem value={topic.id}>{topic.name}</SelectItem>)}</SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -120,7 +159,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
           <Button disabled={form.formState.isSubmitting} className='' type='submit'>
             Create Quiz
           </Button>
-          <Button className='' variant={"destructive"}>
+          <Button onClick={goBack} type='button' className='' variant={"destructive"}>
             Cancel
           </Button>
         </div>

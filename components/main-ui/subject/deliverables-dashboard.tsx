@@ -11,7 +11,7 @@ import { ScanQRButton } from "@/components/buttons/scan-qr-button";
 import { fetchAllTopicsEtc } from "@/actions/topic/topic";
 import TopicsAccordion from "../topics-accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { fetchAllStudentsPerSubject } from "@/actions/students/students";
+import { fetchAllStudentsPerSubject, fetchAllStudentsWhoAttendedToday } from "@/actions/students/students";
 
 export const revalidate = 0;
 
@@ -22,8 +22,11 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
   const { data: quizzes, error: quizzesError } = await fetchAllQuizBySubject(subjectId);
   const { data: topics, error: topicsError } = await fetchAllTopicsEtc(subjectId);
   const { data: students, error: studentsError } = await fetchAllStudentsPerSubject(subjectId);
+  const { data: studentsWhoAttendedToday, error: studentsWhoAttendedTodayError } = await fetchAllStudentsWhoAttendedToday(subjectId);
 
-  if (error || quizzesError || topicsError || studentsError) return <div>Error: Something must have happened...</div>;
+  if (error || quizzesError || topicsError || studentsError || studentsWhoAttendedTodayError) {
+    return <div>Error: Something must have happened...</div>;
+  }
   return (
     <div className='flex flex-col gap-4 mt-9 w-[50rem]'>
       <div className='relative bg-green-500 text-white dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col justify-end h-32 py-2 px-4'>
@@ -40,6 +43,7 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
           <TabsTrigger value='activities'>Activities</TabsTrigger>
           <TabsTrigger value='quizzes'>Quizzes</TabsTrigger>
           <TabsTrigger value='students'>Students</TabsTrigger>
+          <TabsTrigger value='attendance'>Attended Today</TabsTrigger>
         </TabsList>
         <TabsContent className='' value='activities'>
           <div className='flex flex-col gap-4'>
@@ -82,6 +86,21 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
                     {student.profiles?.first_name} {student.profiles?.last_name}
                   </div>
                 ))}
+            </div>
+          </ScrollArea>
+        </TabsContent>
+        <TabsContent value='attendance'>
+          <ScrollArea className='h-[500px]'>
+            <div className='flex flex-col gap-4 p-2'>
+              {studentsWhoAttendedToday &&
+                studentsWhoAttendedToday.map(
+                  ({ students }) =>
+                    students && (
+                      <div key={students.id}>
+                        {students.profiles?.first_name} {students.profiles?.last_name}
+                      </div>
+                    )
+                )}
             </div>
           </ScrollArea>
         </TabsContent>

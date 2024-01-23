@@ -1,5 +1,5 @@
 "use client";
-import React, { Dispatch, SetStateAction, useTransition } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState, useTransition } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "../../ui/button";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,9 @@ import { headers } from "next/headers";
 import { DatePicker } from "@/components/calendar/date-picker";
 import { Separator } from "@/components/ui/separator";
 import redirectToSubjectPageAction from "@/actions/redirect-to-subject-page";
+import { createClient } from "@/utils/supabase/client";
+import { Topic } from "@/lib/collection.types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const MAX_FILE_SIZE = 20_971_520;
 
@@ -37,6 +40,7 @@ const ActivityFormSchema = z
     grade: z.coerce.number({ required_error: "Grade should be initialized" }).gte(0, { message: "Grade must not be less than 0" }),
     date_open: z.date({ required_error: "Date to start is required" }),
     date_close: z.date({ required_error: "Date to close is required" }),
+    topic_id: z.string(),
   })
   .refine((data) => data.date_open.getTime() <= data.date_close.getTime(), {
     message: "Opening date must be earlier than closing date",
@@ -44,6 +48,8 @@ const ActivityFormSchema = z
   });
 
 const ActivityModal = ({ subjectId }: { subjectId: string }) => {
+  const [topics, setTopics] = useState<Topic[]>();
+
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof ActivityFormSchema>>({
@@ -73,13 +79,13 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
       if (IMFile) {
         const response = await uploadFile(IMFile);
         const fileUrl = (await response.json()) as { url: string };
-        const { error } = await addActivity(title, content, subjectId, fileUrl.url, linkUrl || "", grade, date_open, date_close);
+        const { error } = await addActivity(title, content, subjectId, fileUrl.url, linkUrl || "", grade, date_open, date_close, values.topic_id);
         if (error) {
           console.log(error);
           return;
         }
       } else {
-        const { error } = await addActivity(title, content, subjectId, "", linkUrl || "", grade, date_open, date_close);
+        const { error } = await addActivity(title, content, subjectId, "", linkUrl || "", grade, date_open, date_close, values.topic_id);
         if (error) {
           console.log(error);
           return;
@@ -89,6 +95,18 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
       redirectToSubjectPageAction(subjectId);
     });
   };
+
+  useEffect(() => {
+    const fetchAllTopicsInThisSubject = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.from("topic").select("*").eq("subject_id", subjectId);
+      if (!data || error) return console.error(error);
+
+      setTopics(data);
+    };
+
+    fetchAllTopicsInThisSubject();
+  }, []);
 
   return (
     <div className={cn("flex w-[35rem] flex-col gap-4 bg-background text-foreground h-screen")}>
@@ -163,6 +181,24 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
             <div>
               <Separator className='my-8' />
             </div>
+            <FormField
+              control={form.control}
+              name='topic_id'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Topic</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger className='w-[180px]'>
+                        <SelectValue placeholder='Set topic' />
+                      </SelectTrigger>
+                      <SelectContent>{topics && topics.map((topic) => <SelectItem value={topic.id}>{topic.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className='space-y-4'>
               <FormField
                 control={form.control}

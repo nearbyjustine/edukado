@@ -20,7 +20,7 @@ const TopicForm = ({ subjectId }: { subjectId: string }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof TopicSchema>) => {
-    const { data, error } = await addTopic(values.name);
+    const { data, error } = await addTopic(values.name, subjectId);
 
     if (error || !data) return console.log(error);
 
