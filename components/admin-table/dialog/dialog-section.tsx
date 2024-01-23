@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Classroom, ClassroomWithAdviser, Student, StudentWithClassroom } from "@/lib/collection.types";
+import { Classroom, ClassroomWithAdviser, ClassroomWithStudents, Student, StudentWithClassroom } from "@/lib/collection.types";
 import { Row } from "@tanstack/react-table";
 import { createClient } from "@/utils/supabase/client";
 import { Check, Edit } from "lucide-react";
@@ -14,7 +14,7 @@ import Link from "next/link";
 import AddStudentToClassroomButtonDialogButton from "./dialog-add-student";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const DialogSection = ({ row, classroomId }: { row: Row<Classroom>; classroomId: string }) => {
+const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; classroomId: string }) => {
   const [sectionDetails, setSectionDetails] = useState<ClassroomWithAdviser>();
   const [students, setStudents] = useState<Student[] | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);

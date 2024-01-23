@@ -1,12 +1,12 @@
 "use client";
 
-import { Classroom } from "@/lib/collection.types";
+import { Classroom, ClassroomWithStudents, StudentsNoProfile } from "@/lib/collection.types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 import DialogSection from "./dialog/dialog-section";
 
-export const classroomColumns: ColumnDef<Classroom>[] = [
+export const classroomColumns: ColumnDef<ClassroomWithStudents>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -34,6 +34,21 @@ export const classroomColumns: ColumnDef<Classroom>[] = [
     },
     cell: ({ row }) => {
       return <DialogSection row={row} classroomId={row.getValue("id")} />;
+    },
+  },
+  {
+    accessorKey: "students",
+    header: ({ column }) => {
+      return (
+        <Button variant='ghost' onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          No. of Students
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const students: StudentsNoProfile[] = row.getValue("students");
+      return <div>{students.length}</div>;
     },
   },
 ];
