@@ -23,7 +23,7 @@ const SubjectsDisplay = async () => {
             return (
               <div key={classroom.id} className='min-h-[216px] p-4 bg-green-300 text-green-900 dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col gap-4'>
                 <p className='font-bold select-none'>{`${classroom.grade_level.toUpperCase()} - ${classroom.section.toUpperCase()}`}</p>
-                <div className='grid grid-cols-3 gap-2 auto-cols-max'>
+                <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-2 auto-cols-max'>
                   {classroom.subjects && classroom.subjects.length > 0 ? (
                     classroom.subjects.map((subject, index) => <SubjectBox key={subject.id} subject={capitalizeFirstLetter(subject.name)} subjectLink={`/teacher/subjects/${subject.id}`} />)
                   ) : (
