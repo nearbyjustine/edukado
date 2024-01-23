@@ -182,25 +182,184 @@ export interface Database {
         Row: {
           content: string
           created_at: string
-          description: string | null
           id: number
+          is_published: boolean
+          subject_id: string
+          teacher_id: string
           title: string
+          topic_id: string | null
         }
         Insert: {
           content?: string
           created_at?: string
-          description?: string | null
           id?: number
+          is_published?: boolean
+          subject_id: string
+          teacher_id?: string
           title?: string
+          topic_id?: string | null
         }
         Update: {
           content?: string
           created_at?: string
-          description?: string | null
           id?: number
+          is_published?: boolean
+          subject_id?: string
+          teacher_id?: string
           title?: string
+          topic_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "discussions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discussions_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discussions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      exams: {
+        Row: {
+          created_at: string
+          date_close: string
+          date_open: string
+          description: string | null
+          duration: number
+          id: string
+          is_published: boolean
+          subject_id: string
+          teacher_id: string
+          title: string
+          topic_id: string | null
+          total_points: number
+        }
+        Insert: {
+          created_at?: string
+          date_close: string
+          date_open?: string
+          description?: string | null
+          duration?: number
+          id?: string
+          is_published?: boolean
+          subject_id: string
+          teacher_id?: string
+          title?: string
+          topic_id?: string | null
+          total_points?: number
+        }
+        Update: {
+          created_at?: string
+          date_close?: string
+          date_open?: string
+          description?: string | null
+          duration?: number
+          id?: string
+          is_published?: boolean
+          subject_id?: string
+          teacher_id?: string
+          title?: string
+          topic_id?: string | null
+          total_points?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exams_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exams_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exams_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      lessons: {
+        Row: {
+          content: string
+          created_at: string
+          file_url: string
+          id: number
+          is_published: boolean
+          link_url: string
+          subject_id: string
+          teacher_id: string
+          title: string
+          topic_id: string | null
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          file_url?: string
+          id?: number
+          is_published?: boolean
+          link_url?: string
+          subject_id: string
+          teacher_id?: string
+          title?: string
+          topic_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          file_url?: string
+          id?: number
+          is_published?: boolean
+          link_url?: string
+          subject_id?: string
+          teacher_id?: string
+          title?: string
+          topic_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       notes: {
         Row: {

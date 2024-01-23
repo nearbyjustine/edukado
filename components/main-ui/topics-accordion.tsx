@@ -26,6 +26,13 @@ const TopicsAccordion = ({ topics }: { topics: TopicsEtc[] }) => {
                 </Link>
               </AccordionContent>
             ))}
+            {topic.lessons?.map((q) => (
+              <AccordionContent>
+                <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${q.subject_id}/lesson/${q.id}`}>
+                  <span className='font-bold'>Lesson</span> {q.title}
+                </Link>
+              </AccordionContent>
+            ))}
           </AccordionItem>
         ))}
     </Accordion>

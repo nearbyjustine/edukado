@@ -73,8 +73,11 @@ export type StudentWithClassroom = Student & {
   classrooms: Classroom;
 };
 
+export type Lesson = Database["public"]["Tables"]["lessons"]["Row"];
+
 export type TopicsEtc = Database["public"]["Tables"]["topic"]["Row"] & {
   activities: ActivityType[] | null;
   quizzes: Quiz[] | null;
+  lessons: Lesson[] | null;
 };
 export type Topic = Database["public"]["Tables"]["topic"]["Row"];
