@@ -66,6 +66,7 @@ export type ClassroomWithAdviser = Classroom & {
         profiles: User | null;
       })
     | null;
+  subjects: Subjects[] | null;
 };
 
 export type StudentWithClassroom = Student & {

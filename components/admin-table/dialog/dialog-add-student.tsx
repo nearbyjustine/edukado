@@ -10,7 +10,6 @@ import { createClient } from "@/utils/supabase/client";
 const AddStudentToClassroomButtonDialogButton = ({ classroomId, fetch }: { classroomId: string; fetch: () => Promise<void> }) => {
   const [studentId, setStudentId] = useState("");
   const [open, setOpen] = useState(false);
-  console.log(classroomId);
 
   const updateClassroomStudent = async () => {
     const supabase = createClient();

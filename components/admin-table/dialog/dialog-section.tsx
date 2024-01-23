@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AddStudentToClassroomButtonDialogButton from "./dialog-add-student";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ChangeSubjectTeacherDialog from "./dialog-change-subject-teacher";
 
 const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; classroomId: string }) => {
   const [sectionDetails, setSectionDetails] = useState<ClassroomWithAdviser>();
@@ -23,7 +24,7 @@ const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; 
 
   const fetchSectionDetails = async () => {
     const supabase = createClient();
-    const { data, error } = await supabase.from("classrooms").select("*, teachers(*, profiles(*))").eq("id", classroomId).single();
+    const { data, error } = await supabase.from("classrooms").select("*, teachers(*, profiles(*)), subjects(*)").eq("id", classroomId).single();
     if (!data || error) return console.log(error);
     if (data.teachers?.profiles) {
       setCurrentAdviser(`${data.teachers.profiles.first_name} ${data.teachers.profiles.last_name}`);
@@ -103,6 +104,22 @@ const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; 
             )}
             {!students || (students.length === 0 && <div>No students as of now</div>)}
             <AddStudentToClassroomButtonDialogButton fetch={fetchSectionDetails} classroomId={sectionDetails.id} />
+            <Separator />
+            <div className='font-bold'>Subjects</div>
+            {sectionDetails.subjects && sectionDetails.subjects.length > 0 && (
+              <ScrollArea className='h-[200px] p-2'>
+                <div className='flex flex-col gap-2'>
+                  {sectionDetails.subjects.map((subject) => (
+                    <div key={subject.id} className='text-primary'>
+                      {/* <Link href={`/admin/student/${subject.id}`} className='text-primary'> */}
+                      <ChangeSubjectTeacherDialog currentTeacherId={subject.teacher_id} classroomId={sectionDetails.id} subjectId={subject.id} subjectName={subject.name} fetch={fetchSectionDetails} />
+                      {/* </Link> */}
+                      <Separator className='mt-2' />
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
           </DialogContent>
         )}
       </Dialog>
