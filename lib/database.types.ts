@@ -18,10 +18,12 @@ export interface Database {
           file_url: string | null
           grade: number
           id: string
+          is_published: boolean
           link_url: string | null
           subject_id: string
           teacher_id: string
           title: string
+          topic_id: string | null
         }
         Insert: {
           content?: string
@@ -31,10 +33,12 @@ export interface Database {
           file_url?: string | null
           grade?: number
           id?: string
+          is_published?: boolean
           link_url?: string | null
           subject_id: string
           teacher_id?: string
           title?: string
+          topic_id?: string | null
         }
         Update: {
           content?: string
@@ -44,10 +48,12 @@ export interface Database {
           file_url?: string | null
           grade?: number
           id?: string
+          is_published?: boolean
           link_url?: string | null
           subject_id?: string
           teacher_id?: string
           title?: string
+          topic_id?: string | null
         }
         Relationships: [
           {
@@ -62,6 +68,13 @@ export interface Database {
             columns: ["teacher_id"]
             isOneToOne: false
             referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic"
             referencedColumns: ["id"]
           }
         ]
@@ -89,18 +102,21 @@ export interface Database {
       }
       attendance: {
         Row: {
+          classroom_id: string
           created_at: string
           id: number
           student_id: string | null
           subject_id: string | null
         }
         Insert: {
+          classroom_id: string
           created_at?: string
           id?: number
           student_id?: string | null
           subject_id?: string | null
         }
         Update: {
+          classroom_id?: string
           created_at?: string
           id?: number
           student_id?: string | null
@@ -108,10 +124,17 @@ export interface Database {
         }
         Relationships: [
           {
+            foreignKeyName: "attendance_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "attendance_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "students"
             referencedColumns: ["id"]
           },
           {
@@ -314,9 +337,11 @@ export interface Database {
           description: string | null
           duration: number
           id: string
+          is_published: boolean
           subject_id: string
           teacher_id: string
           title: string
+          topic_id: string | null
           total_points: number
         }
         Insert: {
@@ -326,9 +351,11 @@ export interface Database {
           description?: string | null
           duration?: number
           id?: string
+          is_published?: boolean
           subject_id: string
           teacher_id?: string
           title?: string
+          topic_id?: string | null
           total_points?: number
         }
         Update: {
@@ -338,9 +365,11 @@ export interface Database {
           description?: string | null
           duration?: number
           id?: string
+          is_published?: boolean
           subject_id?: string
           teacher_id?: string
           title?: string
+          topic_id?: string | null
           total_points?: number
         }
         Relationships: [
@@ -356,6 +385,13 @@ export interface Database {
             columns: ["teacher_id"]
             isOneToOne: false
             referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topic"
             referencedColumns: ["id"]
           }
         ]

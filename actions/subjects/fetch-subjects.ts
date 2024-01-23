@@ -26,5 +26,7 @@ export const fetchSubject = async () => {
     .eq("subjects.teacher_id", user.id)
     .order("grade_level");
 
+  console.log(classroomData);
+
   return { classroomData, classroomError };
 };

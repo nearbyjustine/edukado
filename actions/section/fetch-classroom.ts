@@ -11,6 +11,14 @@ export const fetchAllClassrooms = async () => {
   return { data, error };
 };
 
+export const fetchAllSubjectsClassrooms = async () => {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  const { data, error } = await supabase.from("classrooms").select("*, subjects(*))").order("grade_level");
+  return { data, error };
+};
+
 export const fetchClassroomsOnGradeLevel = async (gradeLevel: GradeLevelEnum) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);

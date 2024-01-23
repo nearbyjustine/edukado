@@ -18,7 +18,7 @@ export async function fetchAllActivitiesBySubject(subjectId: string) {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
-  const { data, error } = await supabase.from("activities").select(`*, profiles (first_name, last_name)`).eq("subject_id", subjectId).order("created_at", { ascending: false });
+  const { data, error } = await supabase.from("activities").select(`*, teachers(profiles(first_name, last_name))`).eq("subject_id", subjectId).order("created_at", { ascending: false });
 
   return { data, error };
 }

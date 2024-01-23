@@ -9,19 +9,18 @@ export async function fetchSubjectById(id: string, path: string) {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
-  const { data, error } = await supabase
-    .from("subjects")
-    .select(
-      `
-    id,
-    name,
-    classroom_id,
-    classrooms (id, section, grade_level)`
-    )
-    .eq("id", id)
-    .single();
-
+  const { data, error } = await supabase.from("subjects").select(`*, classrooms(*)`).eq("id", id).single();
   revalidatePath(path);
+
+  return { data, error };
+}
+
+export async function fetchSubjectByIdWithoutPath(id: string) {
+  noStore();
+  const cookieStore = cookies();
+  const supabase = await createClient(cookieStore);
+
+  const { data, error } = await supabase.from("subjects").select(`*, classrooms(*)`).eq("id", id).single();
 
   return { data, error };
 }

@@ -2,7 +2,7 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { fetchAllClassrooms } from "@/actions/section/fetch-classroom";
+import { fetchAllClassrooms, fetchAllSubjectsClassrooms } from "@/actions/section/fetch-classroom";
 import { Classroom } from "@/lib/collection.types";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./classroom-datatable";

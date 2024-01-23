@@ -67,3 +67,8 @@ export type ClassroomWithAdviser = Classroom & {
 export type StudentWithClassroom = Student & {
   classrooms: Classroom;
 };
+
+export type TopicsEtc = Database["public"]["Tables"]["topic"]["Row"] & {
+  activities: ActivityType[] | null;
+  quizzes: Quiz[] | null;
+};

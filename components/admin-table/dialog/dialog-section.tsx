@@ -29,6 +29,9 @@ const DialogSection = ({ row, classroomId }: { row: Row<Classroom>; classroomId:
       setCurrentAdviser(`${data.teachers.profiles.first_name} ${data.teachers.profiles.last_name}`);
       setCurrentAdviserId(data.teachers.id);
     }
+
+    const { data: subjects, error: subjectsError } = await supabase.from("subjects").select("*, ");
+
     setSectionDetails(data);
 
     // also fetch all students belonging to the classroom

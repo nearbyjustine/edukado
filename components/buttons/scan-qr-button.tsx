@@ -14,6 +14,7 @@ import { format } from "date-fns";
 type QRResponse = {
   subjectId: string;
   userId: string;
+  classroomId: string;
 };
 
 export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
@@ -75,7 +76,7 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
         throw Error("Already had attendance to this subject");
       } else {
         // insert data to attendance
-        const { error: insertError } = await supabase.from("attendance").insert({ student_id: student.userId, subject_id: subjectId });
+        const { error: insertError } = await supabase.from("attendance").insert({ student_id: student.userId, subject_id: subjectId, classroom_id: student.classroomId });
         if (insertError) {
           throw Error(insertError.message);
         }
