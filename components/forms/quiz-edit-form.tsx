@@ -18,7 +18,8 @@ import QuestionListBox from "../main-ui/quiz/question-list-box";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Topic } from "@/lib/collection.types";
 export type QuestionType = {
   created_at: string;
   id: string;
@@ -43,6 +44,7 @@ export const QuizFormSchema = z
     date_open: z.date({ required_error: "Date to start is required" }),
     date_close: z.date({ required_error: "Date to close is required" }),
     duration: z.coerce.number({ required_error: "Duration is required" }).min(0),
+    topic_id: z.string(),
   })
   .refine((data) => data.date_open.getTime() <= data.date_close.getTime(), {
     message: "Opening date must be earlier than closing date",
@@ -50,6 +52,7 @@ export const QuizFormSchema = z
   });
 
 const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string }) => {
+  const [topics, setTopics] = useState<Topic[]>();
   const [questionData, setQuestionData] = useState<QuestionType[]>();
   const [quizPoints, setQuizPoints] = useState<number>();
   const router = useRouter();
@@ -101,6 +104,18 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
     console.log(data, error);
   };
 
+  useEffect(() => {
+    const fetchAllTopicsInThisSubject = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.from("topic").select("*").eq("subject_id", subjectId);
+      if (!data || error) return console.error(error);
+
+      setTopics(data);
+    };
+
+    fetchAllTopicsInThisSubject();
+  }, []);
+
   const redirectToSubjectPage = async () => {
     //server action to revalidate and redirect to subject page
     redirectToSubjectPageAction(subjectId);
@@ -133,6 +148,24 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
                 <FormLabel>Quiz Description</FormLabel>
                 <FormControl>
                   <Input type='text' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='topic_id'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Topic</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange}>
+                    <SelectTrigger className='w-[180px]'>
+                      <SelectValue placeholder='Set topic' />
+                    </SelectTrigger>
+                    <SelectContent>{topics && topics.map((topic) => <SelectItem value={topic.id}>{topic.name}</SelectItem>)}</SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
