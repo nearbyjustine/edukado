@@ -5,10 +5,10 @@ import { headers } from "next/headers";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "./lib/database.types";
 
-const protectedRoutes = ["/teacher", "/teacher/:path*", "/student", "/student/:path*", "/admin", "/admin/*"];
-const teacherProtectedRoutes = ["/teacher", "/teacher/:path*", "/admin", "/admin/*"];
-const studentProtectedRoutes = ["/student", "/student/:path*", "/admin", "/admin/*"];
-const adminProtectedRoutes = ["/student", "/student/:path*", "/teacher", "/teacher/:path*"];
+const protectedRoutes = ["/teacher", "/teacher/:path*", "/teacher/*", "/student", "/student/:path*", "/student/*", "/admin", "/admin/*"];
+const teacherProtectedRoutes = ["/teacher", "/teacher/:path*", "/teacher/*", "/admin", "/admin/:path*"];
+const studentProtectedRoutes = ["/student", "/student/:path*", "/student/*", "/admin", "/admin/:path*"];
+const adminProtectedRoutes = ["/student", "/student/:path*", "/student/*", "/teacher", "/teacher/:path*", "/teacher/*"];
 const loginRoutes = ["/teacher-login", "/student-login", "/", "/admin-login"];
 
 export async function middleware(request: NextRequest) {

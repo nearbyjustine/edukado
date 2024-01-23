@@ -10,6 +10,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Student } from "@/lib/collection.types";
 import Image from "next/image";
 import { format } from "date-fns";
+import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
 
 type QRResponse = {
   subjectId: string;
@@ -121,6 +122,7 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
           setSelectedCamera("");
           setStudent(undefined);
           setErrorMessage(undefined);
+          redirectToSubjectPageAction(subjectId);
         }}
       >
         <DialogTrigger>

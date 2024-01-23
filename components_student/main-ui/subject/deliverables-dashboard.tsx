@@ -6,12 +6,15 @@ import { fetchAllActivitiesBySubject } from "@/actions/activity/fetch-activity";
 import { unstable_noStore as noStore, revalidatePath } from "next/cache";
 import fetchAllQuizBySubject from "@/actions/quiz/fetch-all-quiz-by-subject";
 import QuizBox from "../quiz/quiz-box";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { fetchAuthUser } from "@/actions/fetch-auth-user";
 
 import QRCode from "react-qr-code";
 import { fetchSubjectById, fetchSubjectByIdWithoutPath } from "@/actions/section/fetch-subject";
+import { fetchAllStudentsPerSubject, fetchAllStudentsWhoAttendedToday } from "@/actions/students/students";
+import { fetchAllTopicsEtc } from "@/actions/topic/topic";
+import TopicsAccordion from "@/components_student/main-ui/topics-accordion";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import StudentQRDialog from "@/components_student/student-qr-dialog";
 
 export const revalidate = 0;
 const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }: { subject: string; gradeLevel: string; section: string; subjectId: string }) => {
@@ -20,14 +23,15 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
 
   const { data: subjectData, error: subjectError } = await fetchSubjectByIdWithoutPath(subjectId);
   const { data: activities, error } = await fetchAllActivitiesBySubject(subjectId);
+  const { data: topics, error: topicsError } = await fetchAllTopicsEtc(subjectId);
   const { data: quizzes, error: quizzesError } = await fetchAllQuizBySubject(subjectId);
+  const { data: students, error: studentsError } = await fetchAllStudentsPerSubject(subjectId);
+  const { data: studentsWhoAttendedToday, error: studentsWhoAttendedTodayError } = await fetchAllStudentsWhoAttendedToday(subjectId);
   const { user, error: userError } = await fetchAuthUser();
 
-  const QRInfoJSON = JSON.stringify({
-    subjectId,
-    userId: user?.id,
-    classroomId: subjectData?.classroom_id,
-  });
+  if (error || quizzesError || topicsError || studentsError || studentsWhoAttendedTodayError) {
+    return <div>Error: Something must have happened...</div>;
+  }
 
   if (error || quizzesError || userError || subjectError) return <div>Error: Something must have happened...</div>;
   return (
@@ -37,21 +41,15 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
           <div className='font-bold text-2xl'>{subject}</div>
           <div className='font-medium '>{`${gradeLevel} - ${section}`}</div>
         </div>
-        <div className='flex flex-col'>
-          <Dialog>
-            <DialogTrigger>
-              <Button className='text-xl font-bold'>QR Code</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <div>{user && <QRCode value={QRInfoJSON} />}</div>
-            </DialogContent>
-          </Dialog>
-        </div>
+        <div className='flex flex-col'>{user && subjectData && <StudentQRDialog userId={user.id} subjectId={subjectData.id} classroomId={subjectData.classroom_id} />}</div>
       </div>
-      <Tabs defaultValue='activities'>
+      <Tabs defaultValue='all'>
         <TabsList>
+          <TabsTrigger value='all'>All</TabsTrigger>
           <TabsTrigger value='activities'>Activities</TabsTrigger>
           <TabsTrigger value='quizzes'>Quizzes</TabsTrigger>
+          <TabsTrigger value='students'>Students</TabsTrigger>
+          <TabsTrigger value='attendance'>Attended Today</TabsTrigger>
         </TabsList>
         <TabsContent className='' value='activities'>
           <div className='flex flex-col gap-4'>
@@ -82,6 +80,36 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
                 return <QuizBox title={quiz.title} date_open={dateOpen} date_close={dateClose} quizId={quiz.id} subjectId={subjectId} key={quiz.id} totalPoints={quiz.total_points} />;
               })}
           </div>
+        </TabsContent>
+        <TabsContent value='all'>
+          <div className='flex flex-col gap-4'>{topics && <TopicsAccordion topics={topics} />}</div>
+        </TabsContent>
+        <TabsContent value='students'>
+          <ScrollArea className='h-[500px]'>
+            <div className='flex flex-col gap-4 p-2'>
+              {students &&
+                students.map((student) => (
+                  <div key={student.id}>
+                    {student.profiles?.first_name} {student.profiles?.last_name}
+                  </div>
+                ))}
+            </div>
+          </ScrollArea>
+        </TabsContent>
+        <TabsContent value='attendance'>
+          <ScrollArea className='h-[500px]'>
+            <div className='flex flex-col gap-4 p-2'>
+              {studentsWhoAttendedToday &&
+                studentsWhoAttendedToday.map(
+                  ({ students }) =>
+                    students && (
+                      <div key={students.id}>
+                        {students.profiles?.first_name} {students.profiles?.last_name}
+                      </div>
+                    )
+                )}
+            </div>
+          </ScrollArea>
         </TabsContent>
       </Tabs>
       {/* <ActivityModal subjectId={subjectId} /> */}
