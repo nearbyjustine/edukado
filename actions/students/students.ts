@@ -2,8 +2,11 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { unstable_noStore as noStore, revalidatePath } from "next/cache";
 
 export const fetchAllStudentsPerSubject = async (subjectId: string) => {
+  noStore();
+
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -14,6 +17,8 @@ export const fetchAllStudentsPerSubject = async (subjectId: string) => {
 };
 
 export const fetchAllStudentsWhoAttendedToday = async (subjectId: string) => {
+  noStore();
+
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
