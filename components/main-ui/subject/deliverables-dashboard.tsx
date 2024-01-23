@@ -12,6 +12,8 @@ import { fetchAllTopicsEtc } from "@/actions/topic/topic";
 import TopicsAccordion from "../topics-accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchAllStudentsPerSubject, fetchAllStudentsWhoAttendedToday } from "@/actions/students/students";
+import { fetchLessonsPerSubject } from "@/actions/lessons/lesson";
+import { fetchDiscussionsPerSubject } from "@/actions/discussions/discussions";
 
 export const revalidate = 0;
 
@@ -22,9 +24,11 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
   const { data: quizzes, error: quizzesError } = await fetchAllQuizBySubject(subjectId);
   const { data: topics, error: topicsError } = await fetchAllTopicsEtc(subjectId);
   const { data: students, error: studentsError } = await fetchAllStudentsPerSubject(subjectId);
+  const { data: lessons, error: lessonsError } = await fetchLessonsPerSubject(subjectId);
+  const { data: discussions, error: discussionsError } = await fetchDiscussionsPerSubject(subjectId);
   const { data: studentsWhoAttendedToday, error: studentsWhoAttendedTodayError } = await fetchAllStudentsWhoAttendedToday(subjectId);
 
-  if (error || quizzesError || topicsError || studentsError || studentsWhoAttendedTodayError) {
+  if (error || quizzesError || topicsError || studentsError || studentsWhoAttendedTodayError || lessonsError || discussionsError) {
     return <div>Error: Something must have happened...</div>;
   }
   return (
@@ -40,11 +44,16 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
       <Tabs defaultValue='all'>
         <TabsList>
           <TabsTrigger value='all'>All</TabsTrigger>
+          <TabsTrigger value='lessons'>Lessons</TabsTrigger>
+          <TabsTrigger value='discussions'>Discussions</TabsTrigger>
           <TabsTrigger value='activities'>Activities</TabsTrigger>
           <TabsTrigger value='quizzes'>Quizzes</TabsTrigger>
           <TabsTrigger value='students'>Students</TabsTrigger>
           <TabsTrigger value='attendance'>Attended Today</TabsTrigger>
         </TabsList>
+        <TabsContent value='all'>
+          <div className='flex flex-col gap-4'>{topics && <TopicsAccordion topics={topics} />}</div>
+        </TabsContent>
         <TabsContent className='' value='activities'>
           <div className='flex flex-col gap-4'>
             {activities &&
@@ -73,9 +82,6 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
                 return <QuizBox title={quiz.title} date_open={dateOpen} date_close={dateClose} quizId={quiz.id} subjectId={subjectId} key={quiz.id} totalPoints={quiz.total_points} />;
               })}
           </div>
-        </TabsContent>
-        <TabsContent value='all'>
-          <div className='flex flex-col gap-4'>{topics && <TopicsAccordion topics={topics} />}</div>
         </TabsContent>
         <TabsContent value='students'>
           <ScrollArea className='h-[500px]'>

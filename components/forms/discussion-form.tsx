@@ -84,7 +84,6 @@ const DiscussionForm = ({ subjectId }: { subjectId: string }) => {
       const supabase = createClient();
       const { data, error } = await supabase.from("topic").select("*").eq("subject_id", subjectId);
       if (!data || error) return console.error(error);
-      console.log(data);
       setTopics(data);
     };
 

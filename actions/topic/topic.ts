@@ -18,7 +18,6 @@ export const fetchAllTopicsEtc = async (subjectId: string) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data, error } = await supabase.from("topic").select("*, activities(*), quizzes(*), lessons(*)").eq("subject_id", subjectId);
-
+  const { data, error } = await supabase.from("topic").select("*, activities(*), quizzes(*), lessons(*), discussions(*)").eq("subject_id", subjectId);
   return { data, error };
 };

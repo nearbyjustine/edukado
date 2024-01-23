@@ -11,25 +11,34 @@ const TopicsAccordion = ({ topics }: { topics: TopicsEtc[] }) => {
       {topics &&
         topics.map((topic) => (
           <AccordionItem value={topic.id}>
-            <AccordionTrigger>{topic.name}</AccordionTrigger>
+            <AccordionTrigger className='text-primary underline-offset-4'>
+              <div className='font-bold text-2xl text-primary'>{topic.name}</div>
+            </AccordionTrigger>
+            {topic.lessons?.map((q) => (
+              <AccordionContent key={q.id}>
+                <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${q.subject_id}/lesson/${q.id}`}>
+                  <span className='font-bold'>Lesson</span> {q.title}
+                </Link>
+              </AccordionContent>
+            ))}
+            {topic.discussions?.map((q) => (
+              <AccordionContent key={q.id}>
+                <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${q.subject_id}/discussion/${q.id}`}>
+                  <span className='font-bold'>Discussion</span> {q.title}
+                </Link>
+              </AccordionContent>
+            ))}
             {topic.quizzes?.map((q) => (
-              <AccordionContent>
+              <AccordionContent key={q.id}>
                 <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${q.subject_id}/quiz/${q.id}`}>
                   <span className='font-bold'>Quiz</span> {q.title}
                 </Link>
               </AccordionContent>
             ))}
             {topic.activities?.map((q) => (
-              <AccordionContent>
+              <AccordionContent key={q.id}>
                 <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${q.subject_id}/activities/${q.id}`}>
                   <span className='font-bold'>Activity</span> {q.title}
-                </Link>
-              </AccordionContent>
-            ))}
-            {topic.lessons?.map((q) => (
-              <AccordionContent>
-                <Link className='flex-1' href={`${process.env.NEXT_PUBLIC_SITE_URL}/teacher/subjects/${q.subject_id}/lesson/${q.id}`}>
-                  <span className='font-bold'>Lesson</span> {q.title}
                 </Link>
               </AccordionContent>
             ))}

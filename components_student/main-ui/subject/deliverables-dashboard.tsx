@@ -8,32 +8,34 @@ import fetchAllQuizBySubject from "@/actions/quiz/fetch-all-quiz-by-subject";
 import QuizBox from "../quiz/quiz-box";
 import { fetchAuthUser } from "@/actions/fetch-auth-user";
 
-import QRCode from "react-qr-code";
 import { fetchSubjectById, fetchSubjectByIdWithoutPath } from "@/actions/section/fetch-subject";
 import { fetchAllStudentsPerSubject, fetchAllStudentsWhoAttendedToday } from "@/actions/students/students";
 import { fetchAllTopicsEtc } from "@/actions/topic/topic";
 import TopicsAccordion from "@/components_student/main-ui/topics-accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import StudentQRDialog from "@/components_student/student-qr-dialog";
+import { fetchLessonsPerSubject } from "@/actions/lessons/lesson";
+import { fetchDiscussionsPerSubject } from "@/actions/discussions/discussions";
 
 export const revalidate = 0;
 const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }: { subject: string; gradeLevel: string; section: string; subjectId: string }) => {
   noStore();
-  revalidatePath(`/teacher/subjects/${subjectId}`);
 
   const { data: subjectData, error: subjectError } = await fetchSubjectByIdWithoutPath(subjectId);
   const { data: activities, error } = await fetchAllActivitiesBySubject(subjectId);
   const { data: topics, error: topicsError } = await fetchAllTopicsEtc(subjectId);
   const { data: quizzes, error: quizzesError } = await fetchAllQuizBySubject(subjectId);
   const { data: students, error: studentsError } = await fetchAllStudentsPerSubject(subjectId);
+  const { data: lessons, error: lessonsError } = await fetchLessonsPerSubject(subjectId);
+  const { data: discussions, error: discussionsError } = await fetchDiscussionsPerSubject(subjectId);
+
   const { data: studentsWhoAttendedToday, error: studentsWhoAttendedTodayError } = await fetchAllStudentsWhoAttendedToday(subjectId);
   const { user, error: userError } = await fetchAuthUser();
 
-  if (error || quizzesError || topicsError || studentsError || studentsWhoAttendedTodayError) {
+  if (error || quizzesError || topicsError || studentsError || studentsWhoAttendedTodayError || userError || lessonsError || discussionsError) {
     return <div>Error: Something must have happened...</div>;
   }
 
-  if (error || quizzesError || userError || subjectError) return <div>Error: Something must have happened...</div>;
   return (
     <div className='flex flex-col gap-4 mt-9 w-[50rem]'>
       <div className='bg-green-500 text-white dark:bg-green-600 dark:text-white rounded-md transition-colors flex justify-between items-end gap-4 h-32 py-2 px-4'>
@@ -46,6 +48,8 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
       <Tabs defaultValue='all'>
         <TabsList>
           <TabsTrigger value='all'>All</TabsTrigger>
+          <TabsTrigger value='lessons'>Lessons</TabsTrigger>
+          <TabsTrigger value='discussions'>Discussions</TabsTrigger>
           <TabsTrigger value='activities'>Activities</TabsTrigger>
           <TabsTrigger value='quizzes'>Quizzes</TabsTrigger>
           <TabsTrigger value='students'>Students</TabsTrigger>

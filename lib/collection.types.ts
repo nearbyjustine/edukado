@@ -74,10 +74,12 @@ export type StudentWithClassroom = Student & {
 };
 
 export type Lesson = Database["public"]["Tables"]["lessons"]["Row"];
+export type Discussion = Database["public"]["Tables"]["discussions"]["Row"];
+export type Topic = Database["public"]["Tables"]["topic"]["Row"];
 
 export type TopicsEtc = Database["public"]["Tables"]["topic"]["Row"] & {
   activities: ActivityType[] | null;
   quizzes: Quiz[] | null;
   lessons: Lesson[] | null;
+  discussions: Discussion[] | null;
 };
-export type Topic = Database["public"]["Tables"]["topic"]["Row"];
