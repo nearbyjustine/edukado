@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { addTopic } from "@/actions/topic/topic";
-import redirectToSubjectPageAction from "@/actions/redirect-to-subject-page";
+import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
 
 const TopicSchema = z.object({
   name: z.string({ required_error: "This is required" }),

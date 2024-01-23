@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { headers } from "next/headers";
 import { DatePicker } from "@/components/calendar/date-picker";
 import { Separator } from "@/components/ui/separator";
-import redirectToSubjectPageAction from "@/actions/redirect-to-subject-page";
+import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
 import { createClient } from "@/utils/supabase/client";
 import { Topic } from "@/lib/collection.types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

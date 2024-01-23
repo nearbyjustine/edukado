@@ -17,7 +17,7 @@ import questionListBox from "../main-ui/quiz/question-list-box";
 import QuestionListBox from "../main-ui/quiz/question-list-box";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
-import redirectToSubjectPageAction from "@/actions/redirect-to-subject-page";
+import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
 
 export type QuestionType = {
   created_at: string;

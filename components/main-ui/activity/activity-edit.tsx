@@ -16,7 +16,7 @@ import { useCollapseContext } from "@/components/providers/collapseProvider";
 import { updateActivity } from "@/actions/activity/update-activity";
 import { Separator } from "@/components/ui/separator";
 import { DatePicker } from "@/components/calendar/date-picker";
-import redirectToSubjectPageAction from "@/actions/redirect-to-subject-page";
+import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
 
 const MAX_FILE_SIZE = 20_971_520;
 
