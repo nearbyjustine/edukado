@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSchemaType, formSchema } from "@/schema/onboarding-form.schema";
 import { updateUser } from "@/actions/update-user-details";
 import { fetchUserDetails } from "@/actions/fetch-user-details";
-import { User } from "@/lib/collection.types";
+import { User, UserInformation } from "@/lib/collection.types";
 
 export const Required = () => {
   return <span className='align-top text-destructive font-semibold'>*</span>;
@@ -33,6 +33,7 @@ export const SettingsForm = ({ className }: { className?: string }) => {
     form.setValue("last_name", user.last_name, { shouldValidate: true });
     form.setValue("gender", user.gender, { shouldValidate: true });
     form.setValue("birth_date", new Date(user.birth_date), { shouldValidate: true });
+    form.setValue("avatar_image", new File([new Blob()], user.avatar_url), { shouldValidate: true });
   };
 
   useEffect(() => {
@@ -222,6 +223,7 @@ export const SettingsForm = ({ className }: { className?: string }) => {
                   id='avatar_image'
                   accept='image/jpeg, image/jpg, image/png'
                   type='file'
+                  value={(value && value.name) || "profile picture"}
                 />
               </FormControl>
               <FormMessage />

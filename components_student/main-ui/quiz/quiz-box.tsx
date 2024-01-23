@@ -1,15 +1,8 @@
 "use client";
 
-import { deleteActivity } from "@/actions/activity/delete-activity-client";
-import { QuizFormSchema } from "@/components/forms/quiz-form";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { DialogClose } from "@radix-ui/react-dialog";
 import { ClipboardList, Pencil, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { z } from "zod";
 
 const QuizBox = ({
   title,

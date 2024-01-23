@@ -100,7 +100,7 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
   const onSubmit = async (values: z.infer<typeof QuizFormSchema>) => {
     console.log(values);
     const { data, error } = await updateQuiz(values, quizId);
-    if (error || !data) return console.log(error);
+    if (error || !data) return console.error(error);
     console.log(data, error);
   };
 

@@ -17,7 +17,7 @@ const LogoutButton = ({ className }: { className?: string }) => {
         router.push("/");
       } else {
         // If error, log the error
-        console.log(error);
+        console.error(error);
       }
     });
   };

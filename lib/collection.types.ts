@@ -33,12 +33,13 @@ export type StudentAnswerActivity = Database["public"]["Tables"]["student_answer
 };
 
 export type StudentInformation = Database["public"]["Tables"]["student_information"]["Row"] & {
-  profiles: User | null;
+  students: Student | null;
 };
 
 export type Student = Database["public"]["Tables"]["students"]["Row"] & {
   profiles: User | null;
 };
+export type UserInformation = Database["public"]["Tables"]["student_information"]["Row"];
 
 export type ActivitiesAndQuizzes = ActivityWithSubjectAndClassroom | QuizWithSubjectAndClassroom;
 

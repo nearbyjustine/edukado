@@ -26,7 +26,7 @@ const TeacherSubjectComboBox = ({ className, setTeacherId, currentTeacherName }:
     const fetchAllTeachers = async () => {
       const supabase = createClient();
       const { data, error } = await supabase.from("teachers").select("*, profiles!teachers_user_id_fkey(*)");
-      if (error || !data) return console.log(error);
+      if (error || !data) return console.error(error);
       setTeachers(data.map((teacher) => ({ name: `${teacher.profiles?.first_name} ${teacher.profiles?.last_name}`, id: teacher.id })));
     };
     fetchAllTeachers();

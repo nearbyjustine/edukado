@@ -109,13 +109,13 @@ const ActivityEdit = ({
         const fileUrl = (await response.json()) as { url: string };
         const error = await updateActivity(title, content, activityId, fileUrl.url, linkUrl || "", values.grade, values.date_open, values.date_close);
         if (error.error) {
-          console.log(error);
+          console.error(error);
           return;
         }
       } else {
         const error = await updateActivity(title, content, activityId, fileUrl || "", linkUrl || "", values.grade, values.date_open, values.date_close);
         if (error.error) {
-          console.log(error);
+          console.error(error);
           return;
         }
       }

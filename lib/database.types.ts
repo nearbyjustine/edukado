@@ -106,21 +106,18 @@ export interface Database {
           created_at: string
           id: number
           student_id: string | null
-          subject_id: string | null
         }
         Insert: {
           classroom_id: string
           created_at?: string
           id?: number
           student_id?: string | null
-          subject_id?: string | null
         }
         Update: {
           classroom_id?: string
           created_at?: string
           id?: number
           student_id?: string | null
-          subject_id?: string | null
         }
         Relationships: [
           {
@@ -135,13 +132,6 @@ export interface Database {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "students"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "attendance_subject_id_fkey"
-            columns: ["subject_id"]
-            isOneToOne: false
-            referencedRelation: "subjects"
             referencedColumns: ["id"]
           }
         ]
@@ -658,7 +648,9 @@ export interface Database {
           created_at: string
           father_name: string | null
           guardian_name: string | null
-          guardian_relationship: string | null
+          guardian_relationship:
+            | Database["public"]["Enums"]["guardian_relationship_enum"]
+            | null
           id: number
           ip: Database["public"]["Enums"]["ip_enum"] | null
           lrn: number | null
@@ -675,7 +667,9 @@ export interface Database {
           created_at?: string
           father_name?: string | null
           guardian_name?: string | null
-          guardian_relationship?: string | null
+          guardian_relationship?:
+            | Database["public"]["Enums"]["guardian_relationship_enum"]
+            | null
           id?: number
           ip?: Database["public"]["Enums"]["ip_enum"] | null
           lrn?: number | null
@@ -692,7 +686,9 @@ export interface Database {
           created_at?: string
           father_name?: string | null
           guardian_name?: string | null
-          guardian_relationship?: string | null
+          guardian_relationship?:
+            | Database["public"]["Enums"]["guardian_relationship_enum"]
+            | null
           id?: number
           ip?: Database["public"]["Enums"]["ip_enum"] | null
           lrn?: number | null
@@ -909,6 +905,28 @@ export interface Database {
           self_student_quiz_id: number
         }
         Returns: number
+      }
+      get_reports_student_information: {
+        Args: {
+          arg_grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          arg_section: string
+        }
+        Returns: {
+          id: number
+          full_name: string
+          lrn: number
+          mother_tongue: Database["public"]["Enums"]["mother_tongue_enum"]
+          ip: Database["public"]["Enums"]["ip_enum"]
+          religion: Database["public"]["Enums"]["religion_enum"]
+          address: string
+          father_name: string
+          mother_name: string
+          guardian_name: string
+          guardian_relationship: Database["public"]["Enums"]["guardian_relationship_enum"]
+          contact_number_parent_guardian: string
+          birth_date: string
+          gender: string
+        }[]
       }
       question_add_to_quiz_total_points: {
         Args: {

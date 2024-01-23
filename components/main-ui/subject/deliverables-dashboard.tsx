@@ -14,10 +14,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchAllStudentsPerSubject, fetchAllStudentsWhoAttendedToday } from "@/actions/students/students";
 import { fetchLessonsPerSubject } from "@/actions/lessons/lesson";
 import { fetchDiscussionsPerSubject } from "@/actions/discussions/discussions";
+import LessonBox from "../lesson/lesson-box";
+import DiscussionBox from "../discussion/discussion-box";
 
 export const revalidate = 0;
 
-const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }: { subject: string; gradeLevel: string; section: string; subjectId: string }) => {
+const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, classroomId }: { subject: string; gradeLevel: string; section: string; subjectId: string; classroomId: string }) => {
   noStore();
 
   const { data: activities, error } = await fetchAllActivitiesBySubject(subjectId);
@@ -26,11 +28,11 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
   const { data: students, error: studentsError } = await fetchAllStudentsPerSubject(subjectId);
   const { data: lessons, error: lessonsError } = await fetchLessonsPerSubject(subjectId);
   const { data: discussions, error: discussionsError } = await fetchDiscussionsPerSubject(subjectId);
-  const { data: studentsWhoAttendedToday, error: studentsWhoAttendedTodayError } = await fetchAllStudentsWhoAttendedToday(subjectId);
+  const { data: studentsWhoAttendedToday, error: studentsWhoAttendedTodayError } = await fetchAllStudentsWhoAttendedToday(classroomId);
 
-  if (error || quizzesError || topicsError || studentsError || studentsWhoAttendedTodayError || lessonsError || discussionsError) {
-    return <div>Error: Something must have happened...</div>;
-  }
+  // if (error || quizzesError || topicsError || studentsError || studentsWhoAttendedTodayError || lessonsError || discussionsError) {
+  //   return <div>Error: Something must have happened...</div>;
+  // }
   return (
     <div className='flex flex-col gap-4 mt-9 w-[50rem]'>
       <div className='relative bg-green-500 text-white dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col justify-end h-32 py-2 px-4'>
@@ -53,6 +55,14 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId }
         </TabsList>
         <TabsContent value='all'>
           <div className='flex flex-col gap-4'>{topics && <TopicsAccordion topics={topics} />}</div>
+        </TabsContent>
+        <TabsContent value='lessons'>
+          <div className='flex flex-col gap-4'>{lessons && lessons.map((lesson) => lesson && <LessonBox key={lesson.id} lessonId={lesson.id} subjectId={subjectId} title={lesson.title} />)}</div>
+        </TabsContent>
+        <TabsContent value='discussions'>
+          <div className='flex flex-col gap-4'>
+            {discussions && discussions.map((discussion) => discussion && <DiscussionBox key={discussion.id} discussionId={discussion.id} subjectId={subjectId} title={discussion.title} />)}
+          </div>
         </TabsContent>
         <TabsContent className='' value='activities'>
           <div className='flex flex-col gap-4'>

@@ -10,7 +10,7 @@ export default async function SubjectPage({ params }: { params: { id: string } }
 
   return (
     <div>
-      <DeliverablesDashboard subjectId={params.id} gradeLevel={classroom.grade_level} section={classroom.section} subject={subject.data.name} />
+      <DeliverablesDashboard classroomId={classroom.id} subjectId={params.id} gradeLevel={classroom.grade_level} section={classroom.section} subject={subject.data.name} />
     </div>
   );
 }

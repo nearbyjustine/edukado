@@ -104,7 +104,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
     // after mong maginsert ng quiz, get mo ung id tapos return
     const { data, error } = await addQuestion(values, quizId);
     console.log("insert question", data, error);
-    if (error || !data) return console.log(error);
+    if (error || !data) return console.error(error);
     const { id } = data;
     return id;
   };
@@ -123,7 +123,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
 
     const questionId = await createQuestion(values);
     const { data, error } = await submitAnswer(values.options, questionId as string);
-    if (error) return console.log(error);
+    if (error) return console.error(error);
 
     form.reset();
     form.setValue("type", "Multiple Choice");

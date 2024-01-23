@@ -43,7 +43,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
   const onSubmit = async (values: z.infer<typeof QuizFormSchema>) => {
     console.log(values);
     const { data, error } = await addQuiz(values, subjectId);
-    if (error || !data) return console.log(error);
+    if (error || !data) return console.error(error);
 
     // Get newly created id of quiz
     const { id } = data;

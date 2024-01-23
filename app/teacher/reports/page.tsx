@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import ReactPDF, { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink, Image, Font } from "@react-pdf/renderer";
 import { Button } from "@/components/ui/button";
 import { Table } from "@david.kucsai/react-pdf-table/lib/Table";
@@ -8,9 +8,9 @@ import { TableHeader } from "@david.kucsai/react-pdf-table/lib/TableHeader";
 import { TableCell } from "@david.kucsai/react-pdf-table/lib/TableCell";
 import { DataTableCell } from "@david.kucsai/react-pdf-table/lib/DataTableCell";
 import { TableBody } from "@david.kucsai/react-pdf-table/lib/TableBody";
-import { fakeData } from "@/utils/fakeData";
 import { createClient } from "@/utils/supabase/client";
-import { StudentInformation } from "@/lib/collection.types";
+import { Classroom, GradeLevelEnum, StudentInformation } from "@/lib/collection.types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 Font.register({
   family: "Arial Narrow",
@@ -94,7 +94,7 @@ const MyTableCell: any = TableCell;
 const MyTableBody: any = TableBody;
 
 // Create Document Component
-const MyDocument = ({ data }: { data: StudentInformation[] }) => (
+const MyDocument = ({ data, gradeLevel, section }: { data: StudentInformationType[]; gradeLevel: string; section: string }) => (
   <Document>
     <Page size='LEGAL' orientation='landscape' style={styles.page}>
       {/* BUONG PAGE */}
@@ -133,10 +133,10 @@ const MyDocument = ({ data }: { data: StudentInformation[] }) => (
                 School Year <Text style={styles.normalText}>2023-2024</Text>
               </Text>
               <Text>
-                Grade Level <Text style={styles.normalText}>1</Text>
+                Grade Level <Text style={styles.normalText}>{gradeLevel}</Text>
               </Text>
               <Text>
-                Section <Text style={styles.normalText}>Mabini</Text>
+                Section <Text style={styles.normalText}>{section}</Text>
               </Text>
             </View>
           </View>
@@ -183,20 +183,20 @@ const MyDocument = ({ data }: { data: StudentInformation[] }) => (
             {/* <MyTableCell style={styles.tableCell}>Remarks</MyTableCell> */}
           </MyTableHeader>
           <MyTableBody>
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.lrn} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => `${r.profiles?.last_name}, ${r.profiles?.first_name}, ${r.profiles?.middle_name}`} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.profiles?.gender} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.profiles?.birth_date} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => new Date("06-01-2024").getFullYear() - new Date(r.profiles?.birth_date as string).getFullYear()} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.mother_tongue} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.ip} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.religion} />
-            <DataTableCell style={[styles.dataTableCell, { fontSize: 8 }]} getContent={(r: StudentInformation) => r.address} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.father_name} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.mother_name} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.guardian_name} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.guardian_relationship} />
-            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.contact_number_parent_guardian} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.lrn} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => `${r.full_name}`} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.gender} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.birth_date} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => new Date("06-01-2024").getFullYear() - new Date(r.birth_date as string).getFullYear()} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.mother_tongue} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.ip} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.religion} />
+            <DataTableCell style={[styles.dataTableCell, { fontSize: 8 }]} getContent={(r: StudentInformationType) => r.address} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.father_name} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.mother_name} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.guardian_name} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.guardian_relationship} />
+            <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformationType) => r.contact_number_parent_guardian} />
             {/* <DataTableCell style={styles.dataTableCell} getContent={(r: StudentInformation) => r.Remarks} /> */}
           </MyTableBody>
         </MyTable>
@@ -205,32 +205,139 @@ const MyDocument = ({ data }: { data: StudentInformation[] }) => (
   </Document>
 );
 
-const fetchStudentInformation = async () => {
-  try {
-    const supabase = createClient();
-    // depend on grade and section -- to do
-    const { data, error } = await supabase.from("student_information").select("*, profiles(*)");
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
+type StudentInformationType = {
+  id: number;
+  full_name: string;
+  lrn: number;
+  mother_tongue: string;
+  ip: string;
+  religion: string;
+  address: string;
+  father_name: string;
+  mother_name: string;
+  guardian_name: string;
+  guardian_relationship: string;
+  contact_number_parent_guardian: string;
+  birth_date: string;
+  gender: string;
 };
 
-const ReportsPage = async () => {
-  const data = await fetchStudentInformation();
-  console.log(data);
-  if (data) {
-    return (
-      <div className='mt-20'>
-        <PDFViewer className='w-full' height={900}>
-          <MyDocument data={data} />
-        </PDFViewer>
-        <PDFDownloadLink document={<MyDocument data={data} />} fileName='document.pdf'>
-          {({ blob, url, loading, error }) => (loading ? "Loading document..." : "Download now!")}
-        </PDFDownloadLink>
+const ReportsPage = () => {
+  const [data, setData] = useState<StudentInformationType[]>();
+  const gradeLevels = ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"];
+  const [gradeLevel, setGradeLevel] = useState<GradeLevelEnum>("Grade 1");
+  const [section, setSection] = useState<string>("");
+  const [sections, setSections] = useState<Classroom[]>();
+  const [classroomId, setClassroomId] = useState<string>("");
+
+  useEffect(() => {
+    const fetchAllSections = async () => {
+      try {
+        const supabase = createClient();
+        // depend on grade and section -- to do
+        const { data, error } = await supabase.from("classrooms").select("*").eq("grade_level", gradeLevel);
+        console.log(data, error);
+        if (data) setSections(data);
+        return data;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchAllSections();
+    setSection("");
+  }, [gradeLevel]);
+
+  useEffect(() => {
+    console.log(gradeLevel, section);
+    const fetchStudentInformation = async () => {
+      try {
+        const supabase = createClient();
+
+        // depend on grade and section
+        const { data, error } = await supabase.rpc("get_reports_student_information", { arg_grade_level: gradeLevel, arg_section: section });
+        console.log(data, error);
+        // const {data, error } = await supabase.from("classrooms").select("*, students(*)")
+        if (error) throw new Error(error.message);
+        console.log(data, error);
+        if (data) setData(data);
+        return data;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchStudentInformation();
+  }, [classroomId]);
+
+  useEffect(() => {
+    const fetchClassroomId = async () => {
+      try {
+        const supabase = createClient();
+
+        // fetch classroomId
+        const { data: classroom, error: classroomError } = await supabase.from("classrooms").select().match({ grade_level: gradeLevel, section: section }).single();
+        if (classroomError) throw new Error(classroomError.message);
+        setClassroomId(classroom.id);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    fetchClassroomId();
+  }, [section]);
+
+  // useEffect(() => {
+  //   console.log(data);
+  // }, [data]);
+
+  return (
+    <div className='mt-10'>
+      <div className='flex gap-2'>
+        <Select onValueChange={(v) => setGradeLevel(v as GradeLevelEnum)} value={gradeLevel}>
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Grade Level' />
+          </SelectTrigger>
+          <SelectContent>
+            {gradeLevels.map((g, i) => (
+              <SelectItem key={i} value={g}>
+                {g}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {sections && (
+          <Select onValueChange={(v) => setSection(v)} value={section}>
+            <SelectTrigger className='w-[180px]'>
+              <SelectValue placeholder='Section' />
+            </SelectTrigger>
+            <SelectContent>
+              {sections.map((s) => (
+                <SelectItem value={s.section}>{s.section}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
-    );
-  }
+      {data && (
+        <div className='mt-5'>
+          {section && (
+            <div>
+              <Suspense fallback={<p>Loading...</p>}>
+                {/* <PDFViewer className='w-full' height={900}>
+                  <MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />
+                </PDFViewer> */}
+                <PDFDownloadLink document={<MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />} fileName='document.pdf'>
+                  {({ blob, url, loading, error }) =>
+                    loading ? "Loading document..." : <div className='text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center'>Download SF2</div>
+                  }
+                </PDFDownloadLink>
+              </Suspense>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ReportsPage;

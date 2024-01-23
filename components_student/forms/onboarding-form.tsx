@@ -29,7 +29,7 @@ export const OnboardingForm = ({ className }: { className?: string }) => {
     startTransition(async () => {
       const { grade_level, section, ...otherValues } = values;
       const error = await updateStudentUser(otherValues, grade_level, section);
-      console.log(error);
+      console.error(error);
       if (!error) {
         const onboardingError = await updateUserHasOnboarded();
         if (!onboardingError) return redirect("/");

@@ -25,7 +25,7 @@ const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; 
   const fetchSectionDetails = async () => {
     const supabase = createClient();
     const { data, error } = await supabase.from("classrooms").select("*, teachers(*, profiles(*)), subjects(*)").eq("id", classroomId).single();
-    if (!data || error) return console.log(error);
+    if (!data || error) return console.error(error);
     if (data.teachers?.profiles) {
       setCurrentAdviser(`${data.teachers.profiles.first_name} ${data.teachers.profiles.last_name}`);
       setCurrentAdviserId(data.teachers.id);

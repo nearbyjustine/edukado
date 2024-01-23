@@ -26,7 +26,7 @@ const StudentComboBox = ({ className, setStudentId }: { className?: string; setS
     const fetchAllStudents = async () => {
       const supabase = createClient();
       const { data, error } = await supabase.from("students").select("*, profiles!students_user_id_fkey(*)");
-      if (error || !data) return console.log(error);
+      if (error || !data) return console.error(error);
       setStudents(data.map((student) => ({ name: `${student.profiles?.first_name} ${student.profiles?.last_name}`, id: student.id })));
     };
     fetchAllStudents();

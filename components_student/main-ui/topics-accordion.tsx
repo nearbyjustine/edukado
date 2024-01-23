@@ -10,7 +10,7 @@ const TopicsAccordion = ({ topics }: { topics: TopicsEtc[] }) => {
     <Accordion type='single' collapsible>
       {topics &&
         topics.map((topic) => (
-          <AccordionItem value={topic.id}>
+          <AccordionItem key={topic.id} value={topic.id}>
             <AccordionTrigger>
               <div className='font-bold text-2xl text-primary'>{topic.name}</div>
             </AccordionTrigger>

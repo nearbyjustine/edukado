@@ -29,7 +29,7 @@ const ChangeSubjectTeacherDialog = ({
     const fetchCurrentSubjectTeacher = async () => {
       const supabase = createClient();
       const { data, error } = await supabase.from("subjects").select("*, teachers(*, profiles(*))").eq("id", subjectId).single();
-      if (!data || error) return console.log(error);
+      if (!data || error) return console.error(error);
       if (data.teachers) {
         setTeacherId(data.teachers.id);
         setCurrentTeacher(data.teachers.profiles);

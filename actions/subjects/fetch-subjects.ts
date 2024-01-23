@@ -28,3 +28,25 @@ export const fetchSubject = async () => {
 
   return { classroomData, classroomError };
 };
+
+export const fetchClassroomWithSubjectsAdviserTeacher = async () => {
+  const cookieStore = cookies();
+  const supabase = await createClient(cookieStore);
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { data: null, userError };
+  }
+
+  const { data, error } = await supabase
+    .from("classrooms")
+    .select("*, teachers!classrooms_adviser_id_fkey(*,profiles(*)), subjects(*, teachers!subjects_teacher_id_fkey(*, profiles(*)))")
+    .eq("subjects.teacher_id", user.id)
+    .order("grade_level", { ascending: true });
+
+  return { data, error };
+};

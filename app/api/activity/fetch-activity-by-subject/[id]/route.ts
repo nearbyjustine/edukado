@@ -9,7 +9,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const supabase = createClient(cookieStore);
 
   const { data, error } = await supabase.from("activities").select(`*, profiles (first_name, last_name)`).eq("subject_id", params.id).order("created_at", { ascending: false });
-  console.log(error);
+  console.error(error);
 
   if (error || !data) {
     return NextResponse.json({ error: error }, { status: 401 });

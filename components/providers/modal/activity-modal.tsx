@@ -81,13 +81,13 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
         const fileUrl = (await response.json()) as { url: string };
         const { error } = await addActivity(title, content, subjectId, fileUrl.url, linkUrl || "", grade, date_open, date_close, values.topic_id);
         if (error) {
-          console.log(error);
+          console.error(error);
           return;
         }
       } else {
         const { error } = await addActivity(title, content, subjectId, "", linkUrl || "", grade, date_open, date_close, values.topic_id);
         if (error) {
-          console.log(error);
+          console.error(error);
           return;
         }
       }

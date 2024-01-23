@@ -54,10 +54,10 @@ const ActivityAnswer = ({ subjectId, activityId, className }: { subjectId: strin
         const response = await uploadFile(IMFile);
         const fileUrl = (await response.json()) as { url: string };
         const error = await answerActivity(content, activityId, fileUrl.url, linkUrl || "");
-        console.log(error);
+        console.error(error);
       } else {
         const error = await answerActivity(content, activityId, "", linkUrl || "");
-        console.log(error);
+        console.error(error);
       }
 
       router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/student/subjects/${subjectId}`);
