@@ -20,6 +20,7 @@ import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page"
 import { createClient } from "@/utils/supabase/client";
 import { Topic } from "@/lib/collection.types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Link from "next/link";
 
 const MAX_FILE_SIZE = 20_971_520;
 
@@ -188,12 +189,25 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
                 <FormItem>
                   <FormLabel>Topic</FormLabel>
                   <FormControl>
-                    <Select onValueChange={field.onChange}>
-                      <SelectTrigger className='w-[180px]'>
-                        <SelectValue placeholder='Set topic' />
-                      </SelectTrigger>
-                      <SelectContent>{topics && topics.map((topic) => <SelectItem value={topic.id}>{topic.name}</SelectItem>)}</SelectContent>
-                    </Select>
+                    <div>
+                      {topics && topics.length > 0 && (
+                        <Select onValueChange={field.onChange}>
+                          <SelectTrigger className='w-full'>
+                            <SelectValue placeholder='Set topic' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {topics.map((topic) => (
+                              <SelectItem value={topic.id}>{topic.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                      {topics?.length == 0 && (
+                        <Link className='text-primary' href={`/teacher/subjects/${subjectId}/topic`}>
+                          Add a topic?
+                        </Link>
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

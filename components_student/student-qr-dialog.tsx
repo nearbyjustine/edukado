@@ -22,7 +22,7 @@ const StudentQRDialog = ({ userId, classroomId }: { userId: string; classroomId:
         <Button className='text-xl font-bold'>QR Code</Button>
       </DialogTrigger>
       <DialogContent>
-        <div>{<QRCode value={QRInfoJSON} />}</div>
+        <div className='w-full flex justify-center items-center'>{<QRCode value={QRInfoJSON} />}</div>
       </DialogContent>
     </Dialog>
   );

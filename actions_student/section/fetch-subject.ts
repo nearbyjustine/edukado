@@ -39,7 +39,7 @@ export async function fetchSubjects() {
     .select(
       `
     id,
-    classrooms (id, grade_level, section)
+    classrooms (id, grade_level, section, teachers(*, profiles(*)))
   `
     )
     .eq("user_id", user.id)
@@ -47,7 +47,7 @@ export async function fetchSubjects() {
 
   if (classroomError || !classroomData.classrooms) return { data: null, classroomError };
 
-  const { data: subjectsData, error: subjectError } = await supabase.from("subjects").select().eq("classroom_id", classroomData.classrooms.id);
+  const { data: subjectsData, error: subjectError } = await supabase.from("subjects").select("*, teachers(*, profiles(*))").eq("classroom_id", classroomData.classrooms.id);
 
   if (subjectError || !subjectsData) return { data: null, subjectError };
 

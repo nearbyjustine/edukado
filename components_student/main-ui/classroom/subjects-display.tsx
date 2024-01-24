@@ -6,9 +6,15 @@ import { fetchAuthUser } from "@/actions/fetch-auth-user";
 
 const SubjectsDisplay = async () => {
   const { user: userData, error: userError } = await fetchAuthUser();
-  if (!userData || userError) return <div>Error. Something must have happened.</div>;
+  if (!userData || userError) {
+    console.log(userError);
+    return <div>Error. Something must have happened.</div>;
+  }
   const { data, error } = await fetchSubjects();
-  if (!data || error) return <div>Error. Something must have happened.</div>;
+  if (!data || error) {
+    console.log(error);
+    return <div>Error. Something must have happened.</div>;
+  }
   const { classroomData: classroom, subjectsData: subjects } = data;
 
   if (!classroom || !subjects) return <div>Something must have happened...</div>;
@@ -16,8 +22,11 @@ const SubjectsDisplay = async () => {
   return (
     <div>
       <div className='flex flex-col gap-4'>
-        <div className='flex gap-2'>
+        <div className='flex flex-col gap-2'>
           <h1 className='text-lg md:text-3xl font-bold '>{`${classroom.grade_level} - ${classroom.section}`}</h1>
+          <span className='font-medium italic'>
+            Adviser: {classroom.teachers?.profiles?.first_name} {classroom.teachers?.profiles?.last_name}
+          </span>
         </div>
         <div>
           <StudentQRDialog classroomId={classroom.id} userId={userData.id} />
@@ -26,7 +35,14 @@ const SubjectsDisplay = async () => {
           <div className='min-h-fit p-4 bg-green-300 text-green-900 dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col gap-4'>
             <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 auto-cols-max gap-2'>
               {subjects && subjects.length > 0 ? (
-                subjects.map((subject) => <SubjectBox key={subject.id} subject={capitalizeFirstLetter(subject.name)} subjectLink={`/student/subjects/${subject.id}`} />)
+                subjects.map((subject) => (
+                  <SubjectBox
+                    teacher={`${subject.teachers?.profiles?.first_name} ${subject.teachers?.profiles?.last_name}`}
+                    key={subject.id}
+                    subject={capitalizeFirstLetter(subject.name)}
+                    subjectLink={`/student/subjects/${subject.id}`}
+                  />
+                ))
               ) : (
                 <div>No subject</div>
               )}

@@ -15,7 +15,7 @@ export const fetchAllClassroomsStudents = async () => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
-  const { data, error } = await supabase.from("classrooms").select("*, students(*)").order("grade_level");
+  const { data, error } = await supabase.from("classrooms").select("*, students(*)").order("grade_level", { ascending: true }).order("section", { ascending: true });
 
   return { data, error };
 };

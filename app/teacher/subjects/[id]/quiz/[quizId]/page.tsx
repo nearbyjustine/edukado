@@ -1,4 +1,4 @@
-import fetchQuiz from "@/actions/quiz/fetch-quiz";
+import { fetchQuiz } from "@/actions/quiz/fetch-quiz";
 import { createClient } from "@/utils/supabase/server";
 import { format } from "date-fns";
 import { cookies } from "next/headers";

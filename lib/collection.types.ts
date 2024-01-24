@@ -5,7 +5,13 @@ export type RolesEnum = Database["public"]["Enums"]["roles_enum"];
 export type GradeLevelEnum = Database["public"]["Enums"]["grade_level_enum"];
 export type Classroom = Database["public"]["Tables"]["classrooms"]["Row"];
 export type ClassroomInsert = Database["public"]["Tables"]["classrooms"]["Insert"];
-export type ClassroomWithSubjects = Database["public"]["Tables"]["classrooms"]["Row"] & Database["public"]["Tables"]["subjects"]["Row"];
+export type ClassroomWithSubjects = Database["public"]["Tables"]["classrooms"]["Row"] & {
+  subjects: Database["public"]["Tables"]["subjects"]["Row"] | null;
+};
+
+export type SubjectsWithClassroom = Subjects & {
+  classrooms: Classroom | null;
+};
 export type ClassroomWithStudents = Database["public"]["Tables"]["classrooms"]["Row"] & {
   students: Database["public"]["Tables"]["students"]["Row"] | null;
 };

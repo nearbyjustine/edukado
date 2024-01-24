@@ -3,7 +3,7 @@ import React from "react";
 
 const RecentSubjectBox = ({ subject, subjectLink, gradeAndSection }: { subject: string; subjectLink: string; gradeAndSection: string }) => {
   return (
-    <div className='max-w-fit select-none p-4 rounded-xl overflow-hidden shadow-lg bg-white dark:bg-green-200 text-green-900'>
+    <div className='select-none p-4 rounded-xl overflow-hidden shadow-lg bg-white dark:bg-green-200 text-green-900'>
       <div className='flex flex-col gap-4 items-start'>
         <div className='flex flex-col'>
           <p className='text-xl'>{subject}</p>
