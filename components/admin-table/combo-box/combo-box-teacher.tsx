@@ -25,7 +25,7 @@ const TeacherComboBox = ({
   setCurrentAdviserId,
 }: {
   name: string;
-  id: string;
+  id: string | undefined;
   sectionId: string;
   setCurrentAdviser: React.Dispatch<React.SetStateAction<string>>;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -102,7 +102,7 @@ const TeacherComboBox = ({
           <CheckCircle2
             className='text-primary cursor-pointer'
             onClick={() => {
-              updateCurrentAdviser(selectedTeacherId);
+              updateCurrentAdviser(selectedTeacherId || "");
               setHasSaved((p) => !p);
             }}
           />

@@ -65,10 +65,10 @@ const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; 
               <span className='font-bold'>Adviser</span>
               {isEditing && (
                 <div>
-                  {sectionDetails.teachers?.profiles && currentAdviser && (
+                  {sectionDetails && (
                     <TeacherComboBox
                       sectionId={sectionDetails.id}
-                      id={sectionDetails.teachers.id}
+                      id={sectionDetails.teachers?.id}
                       name={currentAdviser}
                       setCurrentAdviser={setCurrentAdviser}
                       setCurrentAdviserId={setCurrentAdviserId}
