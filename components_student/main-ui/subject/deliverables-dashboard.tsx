@@ -19,6 +19,7 @@ import { fetchDiscussionsPerSubject } from "@/actions/discussions/discussions";
 import LessonBox from "@/components_student/main-ui/lesson/lesson-box";
 import DiscussionBox from "@/components_student/main-ui/discussion/discussion-box";
 import Image from "next/image";
+import { format } from "date-fns";
 
 export const revalidate = 0;
 const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, classroomId }: { subject: string; gradeLevel: string; section: string; subjectId: string; classroomId: string }) => {
@@ -122,7 +123,7 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
             <div className='flex flex-col gap-4 p-2'>
               {studentsWhoAttendedToday &&
                 studentsWhoAttendedToday.map(
-                  ({ students: student }) =>
+                  ({ students: student, created_at }) =>
                     student && (
                       <div className='border border-primary rounded-md px-2 py-4 font-semibold text-primary text-xl flex items-center gap-4' key={student.id}>
                         <span>
@@ -130,8 +131,9 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
                             <div className='w-16 h-16 bg-primary rounded-full'></div>
                           )}
                         </span>
-                        <span>
+                        <span className='flex flex-col gap-1'>
                           {student.profiles?.first_name} {student.profiles?.last_name}
+                          <span className='font-light text-sm text-primary-darker'>{format(new Date(created_at), "MMMM dd, Y")}</span>
                         </span>
                       </div>
                     )
