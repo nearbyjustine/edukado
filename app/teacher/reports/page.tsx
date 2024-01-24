@@ -334,7 +334,7 @@ const ReportsPage = () => {
                 </div>
                 <PDFDownloadLink className='w-fit flex' document={<MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />} fileName='document.pdf'>
                   {({ blob, url, loading, error }) =>
-                    loading ? "Loading document..." : <div className='text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center'>Download SF2 PDF</div>
+                    loading ? "Loading document..." : <div className='text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center'>Download SF1 PDF</div>
                   }
                 </PDFDownloadLink>
               </Suspense>
