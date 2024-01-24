@@ -44,7 +44,7 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
           <div className='font-bold text-2xl'>{subject}</div>
           <div className='font-medium '>{`${gradeLevel} - ${section}`}</div>
         </div>
-        <div className='flex flex-col'>{user && subjectData && <StudentQRDialog userId={user.id} subjectId={subjectData.id} classroomId={subjectData.classroom_id} />}</div>
+        {/* <div className='flex flex-col'>{user && subjectData && <StudentQRDialog userId={user.id} classroomId={subjectData.classroom_id} />}</div> */}
       </div>
       <Tabs defaultValue='all'>
         <TabsList>

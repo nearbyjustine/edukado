@@ -10,15 +10,14 @@ import { createClient } from "@/utils/supabase/client";
 import { Student } from "@/lib/collection.types";
 import Image from "next/image";
 import { format } from "date-fns";
-import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
+import { redirectToClassroomAction, redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
 
 type QRResponse = {
-  subjectId: string;
   userId: string;
   classroomId: string;
 };
 
-export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
+export const ScanQRButton = ({ classroomid }: { classroomid: string }) => {
   const [cameras, setCameras] = useState<CameraDevice[]>();
   const [selectedCamera, setSelectedCamera] = useState<string>("");
   const [student, setStudent] = useState<Student>();
@@ -46,8 +45,8 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
       // parse mo ung result/text
       const student: QRResponse = await JSON.parse(text);
 
-      if (student.subjectId !== subjectId) {
-        throw Error("Wrong QR Code use for subject");
+      if (student.classroomId !== classroomid) {
+        throw Error("Wrong QR Code use for this classroom");
       }
 
       //fetch mo ung student
@@ -115,7 +114,7 @@ export const ScanQRButton = ({ subjectId }: { subjectId: string }) => {
           setSelectedCamera("");
           setStudent(undefined);
           setErrorMessage(undefined);
-          redirectToSubjectPageAction(subjectId);
+          redirectToClassroomAction();
         }}
       >
         <DialogTrigger>
