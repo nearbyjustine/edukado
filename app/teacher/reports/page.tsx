@@ -11,6 +11,8 @@ import { TableBody } from "@david.kucsai/react-pdf-table/lib/TableBody";
 import { createClient } from "@/utils/supabase/client";
 import { Classroom, GradeLevelEnum, StudentInformation } from "@/lib/collection.types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { columns } from "./student-info-column";
+import { DataTable } from "./datatable";
 
 Font.register({
   family: "Arial Narrow",
@@ -205,7 +207,7 @@ const MyDocument = ({ data, gradeLevel, section }: { data: StudentInformationTyp
   </Document>
 );
 
-type StudentInformationType = {
+export type StudentInformationType = {
   id: number;
   full_name: string;
   lrn: number;
@@ -292,6 +294,7 @@ const ReportsPage = () => {
 
   return (
     <div className='mt-10'>
+      <div className='font-bold text-2xl mb-4'>School Form 1: School Register</div>
       <div className='flex gap-2'>
         <Select onValueChange={(v) => setGradeLevel(v as GradeLevelEnum)} value={gradeLevel}>
           <SelectTrigger className='w-[180px]'>
@@ -326,9 +329,12 @@ const ReportsPage = () => {
                 {/* <PDFViewer className='w-full' height={900}>
                   <MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />
                 </PDFViewer> */}
-                <PDFDownloadLink document={<MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />} fileName='document.pdf'>
+                <div className='mb-5'>
+                  <DataTable columns={columns} data={data as StudentInformationType[]} />
+                </div>
+                <PDFDownloadLink className='w-fit flex' document={<MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />} fileName='document.pdf'>
                   {({ blob, url, loading, error }) =>
-                    loading ? "Loading document..." : <div className='text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center'>Download SF2</div>
+                    loading ? "Loading document..." : <div className='text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center'>Download SF2 PDF</div>
                   }
                 </PDFDownloadLink>
               </Suspense>
@@ -336,6 +342,7 @@ const ReportsPage = () => {
           )}
         </div>
       )}
+      <div className='font-bold text-2xl my-4'>School Form 2: Attendance</div>
     </div>
   );
 };
