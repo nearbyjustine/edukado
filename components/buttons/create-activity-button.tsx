@@ -30,10 +30,7 @@ const CreateActivityButton = ({ subjectId }: { subjectId: string }) => {
             <DropdownMenuItem className='cursor-pointer'>Discussion</DropdownMenuItem>
           </Link>
           <Link href={`${usePathname()}/quiz`}>
-            <DropdownMenuItem className='cursor-pointer'>Quiz</DropdownMenuItem>
-          </Link>
-          <Link href={`${usePathname()}/exam`}>
-            <DropdownMenuItem className='cursor-pointer'>Exam</DropdownMenuItem>
+            <DropdownMenuItem className='cursor-pointer'>Quiz/Exam</DropdownMenuItem>
           </Link>
         </DropdownMenuContent>
       </DropdownMenu>
