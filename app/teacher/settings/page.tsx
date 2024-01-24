@@ -18,10 +18,12 @@ type UserResponse =
 
 const SettingsPage = async () => {
   return (
-    <div>
-      <h1 className='font-semibold text-xl'>Your profile information</h1>
-      <p className='text-accent-foreground text-sm'>This is where you can edit your user information. This is confidential and will not be distributed.</p>
-      <SettingsForm className='w-[20rem]' />
+    <div className='flex ml-16 flex-col mt-10'>
+      <div>
+        <h1 className='font-semibold text-xl'>Your profile information</h1>
+        <p className='text-accent-foreground text-sm max-w-sm'>This is where you can edit your user information. This is confidential and will not be distributed.</p>
+        <SettingsForm className='w-[35rem]' />
+      </div>
     </div>
   );
 };

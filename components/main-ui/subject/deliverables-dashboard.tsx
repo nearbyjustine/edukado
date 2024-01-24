@@ -16,6 +16,7 @@ import { fetchLessonsPerSubject } from "@/actions/lessons/lesson";
 import { fetchDiscussionsPerSubject } from "@/actions/discussions/discussions";
 import LessonBox from "../lesson/lesson-box";
 import DiscussionBox from "../discussion/discussion-box";
+import Image from "next/image";
 
 export const revalidate = 0;
 
@@ -94,12 +95,19 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
           </div>
         </TabsContent>
         <TabsContent value='students'>
-          <ScrollArea className='h-[500px]'>
+          <ScrollArea className='h-[650px]'>
             <div className='flex flex-col gap-4 p-2'>
               {students &&
                 students.map((student) => (
-                  <div key={student.id}>
-                    {student.profiles?.first_name} {student.profiles?.last_name}
+                  <div className='border border-primary rounded-md px-2 py-4 font-semibold text-primary text-xl flex items-center gap-4' key={student.id}>
+                    <span>
+                      {(student.profiles?.avatar_url && <Image className='w-16 h-16' src={student.profiles?.avatar_url} alt={"Profile pic"} />) || (
+                        <div className='w-16 h-16 bg-primary rounded-full'></div>
+                      )}
+                    </span>
+                    <span>
+                      {student.profiles?.first_name} {student.profiles?.last_name}
+                    </span>
                   </div>
                 ))}
             </div>
@@ -110,10 +118,17 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
             <div className='flex flex-col gap-4 p-2'>
               {studentsWhoAttendedToday &&
                 studentsWhoAttendedToday.map(
-                  ({ students }) =>
-                    students && (
-                      <div key={students.id}>
-                        {students.profiles?.first_name} {students.profiles?.last_name}
+                  ({ students: student }) =>
+                    student && (
+                      <div className='border border-primary rounded-md px-2 py-4 font-semibold text-primary text-xl flex items-center gap-4' key={student.id}>
+                        <span>
+                          {(student.profiles?.avatar_url && <Image className='w-16 h-16' src={student.profiles?.avatar_url} alt={"Profile pic"} />) || (
+                            <div className='w-16 h-16 bg-primary rounded-full'></div>
+                          )}
+                        </span>
+                        <span>
+                          {student.profiles?.first_name} {student.profiles?.last_name}
+                        </span>
                       </div>
                     )
                 )}
