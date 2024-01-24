@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
@@ -14,16 +14,17 @@ const TopicSchema = z.object({
 });
 
 const TopicForm = ({ subjectId }: { subjectId: string }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof TopicSchema>>({
     resolver: zodResolver(TopicSchema),
     reValidateMode: "onChange",
   });
 
   const onSubmit = async (values: z.infer<typeof TopicSchema>) => {
+    setIsLoading(true);
     const { data, error } = await addTopic(values.name, subjectId);
 
     if (error || !data) return console.error(error);
-
     redirectToSubjectPageAction(subjectId);
   };
 
@@ -38,13 +39,15 @@ const TopicForm = ({ subjectId }: { subjectId: string }) => {
               <FormItem>
                 <FormLabel>Topic Name</FormLabel>
                 <FormControl>
-                  <Input placeholder='Lesson 1: The skeletal system' {...field} />
+                  <Input placeholder='Topic 1: The skeletal system' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type='submit'>Submit</Button>
+          <Button disabled={isLoading} type='submit'>
+            Submit
+          </Button>
         </form>
       </Form>
     </div>

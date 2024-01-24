@@ -19,31 +19,33 @@ const SubjectsDisplay = async () => {
         </div>
         {data &&
           data.map((classroom) => {
-            return (
-              <div key={classroom.id} className='min-h-[216px] p-4 bg-green-300 text-green-900 dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col gap-4'>
-                <p className='font-bold select-none flex gap-2 items-center'>
-                  <span>{`${classroom.grade_level.toUpperCase()} - ${classroom.section.toUpperCase()}`}</span>
-                  <span className='font-medium italic'>
-                    Adviser: {classroom.teachers?.profiles?.first_name} {classroom.teachers?.profiles?.last_name}
-                  </span>
-                  <ScanQRButton classroomid={classroom.id} />
-                </p>
-                <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-2 auto-cols-max'>
-                  {classroom.subjects && classroom.subjects.length > 0 ? (
-                    classroom.subjects.map((subject, index) => (
-                      <SubjectBox
-                        teacher={`${subject.teachers?.profiles?.first_name} ${subject.teachers?.profiles?.last_name}`}
-                        key={subject.id}
-                        subject={capitalizeFirstLetter(subject.name)}
-                        subjectLink={`/teacher/subjects/${subject.id}`}
-                      />
-                    ))
-                  ) : (
-                    <div>No subject</div>
-                  )}
+            if (classroom.subjects && classroom.subjects.length > 0) {
+              return (
+                <div key={classroom.id} className='min-h-[216px] p-4 bg-green-300 text-green-900 dark:bg-green-600 dark:text-white rounded-md transition-colors flex flex-col gap-4'>
+                  <p className='font-bold select-none flex gap-2 items-center'>
+                    <span>{`${classroom.grade_level.toUpperCase()} - ${classroom.section.toUpperCase()}`}</span>
+                    <span className='font-medium italic'>
+                      Adviser: {classroom.teachers?.profiles?.first_name} {classroom.teachers?.profiles?.last_name}
+                    </span>
+                    <ScanQRButton classroomid={classroom.id} />
+                  </p>
+                  <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-2 auto-cols-max'>
+                    {classroom.subjects && classroom.subjects.length > 0 ? (
+                      classroom.subjects.map((subject, index) => (
+                        <SubjectBox
+                          teacher={`${subject.teachers?.profiles?.first_name} ${subject.teachers?.profiles?.last_name}`}
+                          key={subject.id}
+                          subject={capitalizeFirstLetter(subject.name)}
+                          subjectLink={`/teacher/subjects/${subject.id}`}
+                        />
+                      ))
+                    ) : (
+                      <div>No subject</div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
+              );
+            }
           })}
       </div>
     </div>
