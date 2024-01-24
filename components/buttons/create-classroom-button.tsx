@@ -87,12 +87,12 @@ const CreateClassroomButton = () => {
       setIsNewSubjectButtonLoading((prev) => !prev);
       return;
     }
-    // const { data, error: addSubjectError } = await addSubject(subject, classroom.id, "");
-    // if (addSubjectError) {
-    //   setNewSubjectError(addSubjectError.message);
-    //   setIsNewSubjectButtonLoading((prev) => !prev);
-    //   return;
-    // }
+    const { data, error: addSubjectError } = await addSubject(subject, classroom.id);
+    if (addSubjectError) {
+      setNewSubjectError(addSubjectError.message);
+      setIsNewSubjectButtonLoading((prev) => !prev);
+      return;
+    }
 
     setIsClassroomDialogOpen((prev) => !prev);
     setSubject("");
@@ -104,7 +104,7 @@ const CreateClassroomButton = () => {
   return (
     <Dialog open={isClassroomDialogOpen} onOpenChange={setIsClassroomDialogOpen}>
       <DialogTrigger asChild>
-        <button className='flex gap-2 justify-center items-center px-2 md:px-4 bg-green-500 hover:bg-green-600 transition-colors rounded-full text-white '>
+        <button className='flex gap-2 justify-center items-center py-2 px-2 md:px-4 bg-green-500 hover:bg-green-600 transition-colors rounded-full text-white '>
           <PlusCircle className='' width={20} height={20} />
           <p className='font-semibold hidden md:block text-xl'>Add Classroom</p>
         </button>

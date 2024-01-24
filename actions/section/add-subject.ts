@@ -1,13 +1,11 @@
 "use server";
 import { cookies } from "next/headers";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/lib/database.types";
-import { ClassroomInsert } from "@/lib/collection.types";
+import { createClient } from "@/utils/supabase/server";
 
-export const addSubject = async (subject: string, classroomId: string, teacherId: string) => {
+export const addSubject = async (subject: string, classroomId: string) => {
   const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
+  const supabase = createClient(cookieStore);
 
-  const data = await supabase.from("subjects").insert({ name: subject, classroom_id: classroomId, teacher_id: teacherId });
+  const data = await supabase.from("subjects").insert({ name: subject, classroom_id: classroomId });
   return data;
 };
