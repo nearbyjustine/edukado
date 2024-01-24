@@ -1,12 +1,22 @@
 "use client";
 
 import { ArrowRight, Clipboard, Folder, PenTool } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import RecentSubjects from "./recent-subjects";
 import { LineChartStudents } from "./line-chart";
+import { fetchSubject } from "@/actions/subjects/fetch-subjects";
 
 const QuickBits = () => {
+  const [activeSubjectsCount, setActiveSubjectsCount] = useState<number>();
+  const [activeTab, setActiveTab] = useState("subjects");
+  useEffect(() => {
+    const fetchActiveSubjects = async () => {
+      const subjectCount = await fetchSubject();
+      if (subjectCount.count) setActiveSubjectsCount(subjectCount.count);
+    };
+    fetchActiveSubjects();
+  }, []);
   return (
     <div className='flex flex-col gap-3'>
       <h1 className='text-lg md:text-3xl font-bold '>What&apos;s for today?</h1>
@@ -15,7 +25,7 @@ const QuickBits = () => {
           <div className='flex gap-2 flex-col'>
             <p className='text-xl font-semibold'>Subjects</p>
             <div className='flex gap-2 items-center'>
-              <span className='font-semibold text-3xl'>10</span>
+              <span className='font-semibold text-3xl'>{activeSubjectsCount}</span>
               <span>ACTIVE</span>
             </div>
           </div>

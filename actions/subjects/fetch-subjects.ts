@@ -1,3 +1,5 @@
+"use server";
+
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
@@ -14,19 +16,24 @@ export const fetchSubject = async () => {
     return { user: null, error };
   }
 
-  const { data: classroomData, error: classroomError } = await supabase
+  const {
+    data: classroomData,
+    error: classroomError,
+    count,
+  } = await supabase
     .from("classrooms")
     .select(
       `
     id,
     grade_level,
     section,
-    subjects (id, name)`
+    subjects (id, name)`,
+      { count: "exact" }
     )
     .eq("subjects.teacher_id", user.id)
     .order("grade_level");
 
-  return { classroomData, classroomError };
+  return { classroomData, classroomError, count };
 };
 
 export const fetchClassroomWithSubjectsAdviserTeacher = async () => {

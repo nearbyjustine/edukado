@@ -16,8 +16,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import StudentQRDialog from "@/components_student/student-qr-dialog";
 import { fetchLessonsPerSubject } from "@/actions/lessons/lesson";
 import { fetchDiscussionsPerSubject } from "@/actions/discussions/discussions";
-import LessonBox from "@/components/main-ui/lesson/lesson-box";
-import DiscussionBox from "@/components/main-ui/discussion/discussion-box";
+import LessonBox from "@/components_student/main-ui/lesson/lesson-box";
+import DiscussionBox from "@/components_student/main-ui/discussion/discussion-box";
 
 export const revalidate = 0;
 const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, classroomId }: { subject: string; gradeLevel: string; section: string; subjectId: string; classroomId: string }) => {
