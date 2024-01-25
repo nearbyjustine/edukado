@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AuthForm } from "@/components/forms/auth-form";
 import { Icons } from "@/components/ui/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import LoginPicture from "@/public/login.png";
 export const metadata: Metadata = {
   title: "Authentication",
   description: "Authentication forms built using the components.",
@@ -17,6 +17,8 @@ export default function AuthenticationPage() {
       <div className='container relative h-screen grid grid-cols-1 flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
         <div className='relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex'>
           <div className='absolute inset-0 bg-zinc-900' />
+          {LoginPicture && <Image className='absolute z-10 top-0 left-0 w-full h-full object-cover' src={LoginPicture} alt={""} />}
+
           <div className='relative z-20 flex items-center text-lg font-medium'>
             <Icons.edukado className='w-28 fill-primary' />
           </div>
@@ -26,7 +28,7 @@ export default function AuthenticationPage() {
                 &ldquo;E-dukado LMS is a game-changer! Its intuitive interface and comprehensive features make learning seamless and engaging. A top choice for organizations committed to continuous
                 growth and excellence.&rdquo;
               </p>
-              <footer className='text-sm'>Chatur Jipitah</footer>
+              <footer className='text-sm'>Tr. Chatur Jipitah</footer>
             </blockquote>
           </div>
         </div>

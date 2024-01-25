@@ -13,6 +13,8 @@ import { Classroom, GradeLevelEnum, StudentInformation } from "@/lib/collection.
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { columns } from "./student-info-column";
 import { DataTable } from "./datatable";
+import { compare } from "@/utils/sortString";
+import { cn } from "@/lib/utils";
 
 Font.register({
   family: "Arial Narrow",
@@ -231,6 +233,7 @@ const ReportsPage = () => {
   const [section, setSection] = useState<string>("");
   const [sections, setSections] = useState<Classroom[]>();
   const [classroomId, setClassroomId] = useState<string>("");
+  const [monthAttendance, setMonthAttendance] = useState("January");
 
   useEffect(() => {
     const fetchAllSections = async () => {
@@ -238,8 +241,7 @@ const ReportsPage = () => {
         const supabase = createClient();
         // depend on grade and section -- to do
         const { data, error } = await supabase.from("classrooms").select("*").eq("grade_level", gradeLevel);
-        console.log(data, error);
-        if (data) setSections(data);
+        if (data) setSections(data.sort((a, b) => compare(a.section, b.section)));
         return data;
       } catch (error) {
         console.error(error);
@@ -250,17 +252,14 @@ const ReportsPage = () => {
   }, [gradeLevel]);
 
   useEffect(() => {
-    console.log(gradeLevel, section);
     const fetchStudentInformation = async () => {
       try {
         const supabase = createClient();
 
         // depend on grade and section
         const { data, error } = await supabase.rpc("get_reports_student_information", { arg_grade_level: gradeLevel, arg_section: section });
-        console.log(data, error);
         // const {data, error } = await supabase.from("classrooms").select("*, students(*)")
         if (error) throw new Error(error.message);
-        console.log(data, error);
         if (data) setData(data);
         return data;
       } catch (error) {
@@ -288,12 +287,8 @@ const ReportsPage = () => {
     fetchClassroomId();
   }, [section]);
 
-  // useEffect(() => {
-  //   console.log(data);
-  // }, [data]);
-
   return (
-    <div className='mt-10'>
+    <div className='mt-10 pr-3'>
       <div className='font-bold text-2xl mb-4'>School Form 1: School Register</div>
       <div className='flex gap-2'>
         <Select onValueChange={(v) => setGradeLevel(v as GradeLevelEnum)} value={gradeLevel}>
@@ -333,9 +328,11 @@ const ReportsPage = () => {
                   <DataTable columns={columns} data={data as StudentInformationType[]} />
                 </div>
                 <PDFDownloadLink className='w-fit flex' document={<MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />} fileName='document.pdf'>
-                  {({ blob, url, loading, error }) =>
-                    loading ? "Loading document..." : <div className='text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center'>Download SF1 PDF</div>
-                  }
+                  {({ blob, url, loading, error }) => (
+                    <div aria-disabled={loading} className={cn("text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center", loading && "select-none bg-primary/80")}>
+                      {loading ? "Loading Document..." : "Download SF1 PDF"}
+                    </div>
+                  )}
                 </PDFDownloadLink>
               </Suspense>
             </div>
@@ -343,6 +340,30 @@ const ReportsPage = () => {
         </div>
       )}
       <div className='font-bold text-2xl my-4'>School Form 2: Attendance</div>
+      <Select
+        onValueChange={(v) => {
+          setMonthAttendance(v);
+        }}
+        value={monthAttendance}
+      >
+        <SelectTrigger className='w-[180px]'>
+          <SelectValue placeholder='Month of attendance' />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value='January'>January</SelectItem>
+          <SelectItem value='February'>February</SelectItem>
+          <SelectItem value='March'>March</SelectItem>
+          <SelectItem value='April'>April</SelectItem>
+          <SelectItem value='May'>May</SelectItem>
+          <SelectItem value='June'>June</SelectItem>
+          <SelectItem value='July'>July</SelectItem>
+          <SelectItem value='August'>August</SelectItem>
+          <SelectItem value='September'>September</SelectItem>
+          <SelectItem value='October'>October</SelectItem>
+          <SelectItem value='November'>November</SelectItem>
+          <SelectItem value='December'>December</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 };
