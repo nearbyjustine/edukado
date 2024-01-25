@@ -552,7 +552,7 @@ export interface Database {
           created_at: string
           file_url: string
           id: number
-          isScored: boolean
+          is_scored: boolean
           link_url: string
           points: number
           student_id: string
@@ -563,7 +563,7 @@ export interface Database {
           created_at?: string
           file_url?: string
           id?: number
-          isScored?: boolean
+          is_scored?: boolean
           link_url?: string
           points?: number
           student_id?: string
@@ -574,7 +574,7 @@ export interface Database {
           created_at?: string
           file_url?: string
           id?: number
-          isScored?: boolean
+          is_scored?: boolean
           link_url?: string
           points?: number
           student_id?: string
@@ -589,6 +589,45 @@ export interface Database {
           },
           {
             foreignKeyName: "student_answers_activity_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      student_answers_discussion: {
+        Row: {
+          content: string
+          created_at: string
+          discussion_id: number
+          id: number
+          student_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          discussion_id: number
+          id?: number
+          student_id?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          discussion_id?: number
+          id?: number
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_answers_discussion_discussion_id_fkey"
+            columns: ["discussion_id"]
+            isOneToOne: false
+            referencedRelation: "discussions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_answers_discussion_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "students"
@@ -926,6 +965,20 @@ export interface Database {
           contact_number_parent_guardian: string
           birth_date: string
           gender: string
+        }[]
+      }
+      get_student_attendance: {
+        Args: {
+          date_first: string
+          date_last: string
+          class_grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          class_section: string
+        }
+        Returns: {
+          attendance: Json
+          name: string
+          grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          section: string
         }[]
       }
       question_add_to_quiz_total_points: {

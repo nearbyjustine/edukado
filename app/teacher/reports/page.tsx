@@ -15,6 +15,10 @@ import { columns } from "./student-info-column";
 import { DataTable } from "./datatable";
 import { compare } from "@/utils/sortString";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getDaysInMonth } from "date-fns";
+import { Json } from "@/lib/database.types";
+import { generateColumn } from "./attendance-column";
 
 Font.register({
   family: "Arial Narrow",
@@ -98,7 +102,7 @@ const MyTableCell: any = TableCell;
 const MyTableBody: any = TableBody;
 
 // Create Document Component
-const MyDocument = ({ data, gradeLevel, section }: { data: StudentInformationType[]; gradeLevel: string; section: string }) => (
+const DocumentFirstSPF = ({ data, gradeLevel, section }: { data: StudentInformationType[]; gradeLevel: string; section: string }) => (
   <Document>
     <Page size='LEGAL' orientation='landscape' style={styles.page}>
       {/* BUONG PAGE */}
@@ -226,6 +230,22 @@ export type StudentInformationType = {
   gender: string;
 };
 
+export type AttendanceInformationType = {
+  name: string;
+  attendance: Json | null;
+  section: string;
+  grade_level: GradeLevelEnum;
+};
+
+export type AttendanceTableColumn = {
+  name: string;
+  attendance: boolean[];
+};
+
+export type AttendanceJSONType = {
+  date: string;
+};
+
 const ReportsPage = () => {
   const [data, setData] = useState<StudentInformationType[]>();
   const gradeLevels = ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"];
@@ -233,7 +253,9 @@ const ReportsPage = () => {
   const [section, setSection] = useState<string>("");
   const [sections, setSections] = useState<Classroom[]>();
   const [classroomId, setClassroomId] = useState<string>("");
-  const [monthAttendance, setMonthAttendance] = useState("January");
+  const [monthAttendance, setMonthAttendance] = useState("0");
+  const [attendance, setAttendance] = useState<AttendanceTableColumn[]>();
+  const [attendanceColumn, setAttendanceColumn] = useState<any>();
 
   useEffect(() => {
     const fetchAllSections = async () => {
@@ -287,83 +309,139 @@ const ReportsPage = () => {
     fetchClassroomId();
   }, [section]);
 
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        const supabase = createClient();
+        const yearToday = new Date().getFullYear();
+        const days = getDaysInMonth(new Date(yearToday, parseInt(monthAttendance)));
+
+        const first_date = `${parseInt(monthAttendance) + 1}-01-${yearToday}`;
+        const last_date = `${parseInt(monthAttendance) + 1}-${days}-${yearToday}`;
+
+        const { data, error } = await supabase.rpc("get_student_attendance", { date_first: first_date, date_last: last_date, class_grade_level: gradeLevel, class_section: section });
+        if (error) throw new Error(error.message);
+        console.log(data);
+        const array = data?.map((student) => {
+          const a = student.attendance as AttendanceJSONType[];
+          const studentAttendance = a.map(({ date }: { date: string }) => new Date(date).getDate() - 1);
+          const attendedDatesSet = new Set(studentAttendance);
+
+          const attendanceArray = Array.from({ length: days }, (_, index) => attendedDatesSet.has(index));
+          return {
+            name: student.name,
+            attendance: attendanceArray,
+          };
+        });
+        const columns = generateColumn(days);
+        setAttendanceColumn(columns);
+        setAttendance(array);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    fetchAttendance();
+    // getAttendancePerStudentArray(attendance);
+  }, [section, monthAttendance]);
+
   return (
     <div className='mt-10 pr-3'>
-      <div className='font-bold text-2xl mb-4'>School Form 1: School Register</div>
-      <div className='flex gap-2'>
-        <Select onValueChange={(v) => setGradeLevel(v as GradeLevelEnum)} value={gradeLevel}>
-          <SelectTrigger className='w-[180px]'>
-            <SelectValue placeholder='Grade Level' />
-          </SelectTrigger>
-          <SelectContent>
-            {gradeLevels.map((g, i) => (
-              <SelectItem key={i} value={g}>
-                {g}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {sections && (
-          <Select onValueChange={(v) => setSection(v)} value={section}>
+      <div className='flex flex-col gap-2'>
+        <div className='flex gap-2'>
+          <Select onValueChange={(v) => setGradeLevel(v as GradeLevelEnum)} value={gradeLevel}>
             <SelectTrigger className='w-[180px]'>
-              <SelectValue placeholder='Section' />
+              <SelectValue placeholder='Grade Level' />
             </SelectTrigger>
             <SelectContent>
-              {sections.map((s) => (
-                <SelectItem value={s.section}>{s.section}</SelectItem>
+              {gradeLevels.map((g, i) => (
+                <SelectItem key={i} value={g}>
+                  {g}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
-        )}
-      </div>
-      {data && (
-        <div className='mt-5'>
-          {section && (
-            <div>
-              <Suspense fallback={<p>Loading...</p>}>
-                {/* <PDFViewer className='w-full' height={900}>
-                  <MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />
-                </PDFViewer> */}
-                <div className='mb-5'>
-                  <DataTable columns={columns} data={data as StudentInformationType[]} />
-                </div>
-                <PDFDownloadLink className='w-fit flex' document={<MyDocument data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />} fileName='document.pdf'>
-                  {({ blob, url, loading, error }) => (
-                    <div aria-disabled={loading} className={cn("text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center", loading && "select-none bg-primary/80")}>
-                      {loading ? "Loading Document..." : "Download SF1 PDF"}
-                    </div>
-                  )}
-                </PDFDownloadLink>
-              </Suspense>
-            </div>
+          {sections && (
+            <Select onValueChange={(v) => setSection(v)} value={section}>
+              <SelectTrigger className='w-[180px]'>
+                <SelectValue placeholder='Section' />
+              </SelectTrigger>
+              <SelectContent>
+                {sections.map((s) => (
+                  <SelectItem key={s.id} value={s.section}>
+                    {s.section}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
         </div>
-      )}
-      <div className='font-bold text-2xl my-4'>School Form 2: Attendance</div>
-      <Select
-        onValueChange={(v) => {
-          setMonthAttendance(v);
-        }}
-        value={monthAttendance}
-      >
-        <SelectTrigger className='w-[180px]'>
-          <SelectValue placeholder='Month of attendance' />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value='January'>January</SelectItem>
-          <SelectItem value='February'>February</SelectItem>
-          <SelectItem value='March'>March</SelectItem>
-          <SelectItem value='April'>April</SelectItem>
-          <SelectItem value='May'>May</SelectItem>
-          <SelectItem value='June'>June</SelectItem>
-          <SelectItem value='July'>July</SelectItem>
-          <SelectItem value='August'>August</SelectItem>
-          <SelectItem value='September'>September</SelectItem>
-          <SelectItem value='October'>October</SelectItem>
-          <SelectItem value='November'>November</SelectItem>
-          <SelectItem value='December'>December</SelectItem>
-        </SelectContent>
-      </Select>
+        <Tabs defaultValue='account' className=''>
+          <TabsList>
+            <TabsTrigger value='sf1'>School Information</TabsTrigger>
+            <TabsTrigger value='sf2'>Attendance</TabsTrigger>
+            <TabsTrigger value='grades'>Grades</TabsTrigger>
+          </TabsList>
+          <TabsContent value='sf1'>
+            <div className='font-bold text-2xl mb-4'>School Form 1: School Register</div>
+
+            {data && (
+              <div className='mt-5'>
+                {section && (
+                  <div>
+                    <Suspense fallback={<p>Loading...</p>}>
+                      {/* <PDFViewer className='w-full' height={900}>
+          <DocumentFirstSPF data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />
+        </PDFViewer> */}
+                      <div className='mb-5'>
+                        <DataTable columns={columns} data={data as StudentInformationType[]} />
+                      </div>
+                      <PDFDownloadLink className='w-fit flex' document={<DocumentFirstSPF data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />} fileName='document.pdf'>
+                        {({ blob, url, loading, error }) => (
+                          <div aria-disabled={loading} className={cn("text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center", loading && "select-none bg-primary/80")}>
+                            {loading ? "Loading Document..." : "Download SF1 PDF"}
+                          </div>
+                        )}
+                      </PDFDownloadLink>
+                    </Suspense>
+                  </div>
+                )}
+              </div>
+            )}
+          </TabsContent>
+          <TabsContent value='sf2'>
+            <div className='font-bold text-2xl mb-4'>School Form 2: Attendance</div>
+            <Select
+              onValueChange={async (v) => {
+                setMonthAttendance(v);
+              }}
+              value={monthAttendance}
+            >
+              <SelectTrigger className='w-[180px]'>
+                <SelectValue placeholder='Month of attendance' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='0'>January</SelectItem>
+                <SelectItem value='1'>February</SelectItem>
+                <SelectItem value='2'>March</SelectItem>
+                <SelectItem value='3'>April</SelectItem>
+                <SelectItem value='4'>May</SelectItem>
+                <SelectItem value='5'>June</SelectItem>
+                <SelectItem value='6'>July</SelectItem>
+                <SelectItem value='7'>August</SelectItem>
+                <SelectItem value='8'>September</SelectItem>
+                <SelectItem value='9'>October</SelectItem>
+                <SelectItem value='10'>November</SelectItem>
+                <SelectItem value='11'>December</SelectItem>
+              </SelectContent>
+            </Select>
+            {/* Add the table for attendance here */}
+            <div className='mt-4'>{attendance && <DataTable columns={attendanceColumn} data={attendance as AttendanceTableColumn[]} />}</div>
+            {/* Add downloadable pdf */}
+          </TabsContent>
+          <TabsContent value='grades'>Change your password here.</TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
