@@ -33,10 +33,10 @@ const Navbar = () => {
             <Link href='/'>Home</Link>
           </Button>
           <Button variant='nav' asChild className='text-sm sm:text-lg font-semibold'>
-            <Link href='#'>About</Link>
+            <Link href='/about'>About</Link>
           </Button>
           <Button variant='nav' asChild className='text-sm sm:text-lg font-semibold'>
-            <Link href='#'>Contact</Link>
+            <Link href='/contact'>Contact</Link>
           </Button>
         </div>
         <div className='flex gap-1'>
