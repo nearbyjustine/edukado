@@ -32,7 +32,7 @@ const ActivityBox = ({ answer, maxPoints }: { answer: StudentAnswerActivity; max
     console.log(values);
     // update score of student activity
     const supabase = createClient();
-    console.log(await supabase.from("student_answers_activity").update({ points: values.points, isScored: true }).eq("id", answer.id).select().single());
+    console.log(await supabase.from("student_answers_activity").update({ points: values.points, is_scored: true }).eq("id", answer.id).select().single());
     setIsOpen(false);
     router.refresh();
   };
@@ -62,7 +62,7 @@ const ActivityBox = ({ answer, maxPoints }: { answer: StudentAnswerActivity; max
               </Link>
             )}
           </div>
-          {(answer.isScored && (
+          {(answer.is_scored && (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger className=''>
                 <div className='bg-primary p-2 w-56 flex-none text-primary-foreground rounded-md'>Update Score</div>
