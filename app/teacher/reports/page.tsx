@@ -16,7 +16,7 @@ import { DataTable } from "./datatable";
 import { compare } from "@/utils/sortString";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getDaysInMonth } from "date-fns";
+import { format, getDaysInMonth, getMonth } from "date-fns";
 import { Json } from "@/lib/database.types";
 import { generateColumn } from "./attendance-column";
 
@@ -87,11 +87,26 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  tableCellName: {
+    textAlign: "center",
+    fontSize: 10,
+    fontWeight: 700,
+    minWidth: 200,
+  },
   tableCellBottomText: {
     fontSize: 7,
   },
   dataTableCell: {
     padding: 2,
+  },
+  dataTableCellName: {
+    minWidth: 204,
+    padding: 2,
+  },
+  dataTableCellAttendance: {
+    padding: 2,
+    textAlign: "center",
+    fontSize: 12,
   },
 });
 
@@ -212,6 +227,76 @@ const DocumentFirstSPF = ({ data, gradeLevel, section }: { data: StudentInformat
     </Page>
   </Document>
 );
+// Create Document Component
+const DocumentSecondSPF = ({ data, gradeLevel, section, month }: { data: AttendanceTableColumn[]; gradeLevel: string; section: string; month: string }) => (
+  <Document>
+    <Page size='LEGAL' orientation='landscape' style={styles.page}>
+      {/* BUONG PAGE */}
+      <View style={styles.marginPage}>
+        {/* header */}
+        <View style={styles.header}>
+          {/* logo */}
+          <View>
+            <Image style={styles.logo} source='deped logo' src='/deped_logo.png' />
+          </View>
+          {/* school information */}
+          <View style={styles.schoolInformationView}>
+            {/* Title */}
+            <View style={styles.titleView}>
+              <Text style={styles.titleText}>School Form 2 (SF2) Daily Attendance Report of Learners</Text>
+              <Text style={styles.subtitleText}>(This replaces Form 1, Form 2 & STS Form 4)</Text>
+            </View>
+            {/* School Information bottom */}
+            <View style={styles.schoolInformationBottomView}>
+              <Text>
+                School ID <Text style={styles.normalText}>SR-10045-DV-01</Text>
+              </Text>
+              <Text>
+                Region <Text style={styles.normalText}>IV-A</Text>
+              </Text>
+              <Text>
+                Division <Text style={styles.normalText}>4A</Text>
+              </Text>
+              <Text>
+                District <Text style={styles.normalText}>1</Text>
+              </Text>
+              <Text>
+                School Name <Text style={styles.normalText}>Santa Rosa Elementary School Central I</Text>
+              </Text>
+              <Text>
+                School Year <Text style={styles.normalText}>2023-2024</Text>
+              </Text>
+              <Text>
+                Grade Level <Text style={styles.normalText}>{gradeLevel}</Text>
+              </Text>
+              <Text>
+                Section <Text style={styles.normalText}>{section}</Text>
+              </Text>
+              <Text>
+                Report for the month of <Text style={styles.normalText}>{month}</Text>
+              </Text>
+            </View>
+          </View>
+        </View>
+        {/* body */}
+        {/* Table */}
+        <MyTable data={[...data]}>
+          <MyTableHeader>
+            <MyTableCell style={styles.tableCellName}>
+              <Text>Learner's Name</Text>
+              <Text>(Last Name, First Name, Middle Name)</Text>
+            </MyTableCell>
+            {data.map((student) => student.attendance?.map((v, index) => <MyTableCell style={styles.tableCell}>{index + 1}</MyTableCell>))}
+          </MyTableHeader>
+          <MyTableBody>
+            <DataTableCell style={styles.dataTableCellName} getContent={(r: AttendanceTableColumn) => r.name} />
+            {data.map((student) => student.attendance?.map((v, index) => <DataTableCell style={styles.dataTableCellAttendance} getContent={(r: AttendanceTableColumn) => (v ? "" : "X")} />))}
+          </MyTableBody>
+        </MyTable>
+      </View>
+    </Page>
+  </Document>
+);
 
 export type StudentInformationType = {
   id: number;
@@ -255,7 +340,7 @@ const ReportsPage = () => {
   const [classroomId, setClassroomId] = useState<string>("");
   const [monthAttendance, setMonthAttendance] = useState("0");
   const [attendance, setAttendance] = useState<AttendanceTableColumn[]>();
-  const [attendanceColumn, setAttendanceColumn] = useState<any>();
+  const [attendanceColumn, setAttendanceColumn] = useState<any | undefined>();
 
   useEffect(() => {
     const fetchAllSections = async () => {
@@ -322,18 +407,24 @@ const ReportsPage = () => {
         const { data, error } = await supabase.rpc("get_student_attendance", { date_first: first_date, date_last: last_date, class_grade_level: gradeLevel, class_section: section });
         if (error) throw new Error(error.message);
         console.log(data);
+
+        const totalAttendanceArray = new Array(days).fill(0);
+
         const array = data?.map((student) => {
           const a = student.attendance as AttendanceJSONType[];
           const studentAttendance = a.map(({ date }: { date: string }) => new Date(date).getDate() - 1);
           const attendedDatesSet = new Set(studentAttendance);
 
           const attendanceArray = Array.from({ length: days }, (_, index) => attendedDatesSet.has(index));
+          attendanceArray.forEach((a, index) => (a ? (totalAttendanceArray[index] += 1) : null));
+
           return {
             name: student.name,
             attendance: attendanceArray,
           };
         });
         const columns = generateColumn(days);
+        console.log(totalAttendanceArray);
         setAttendanceColumn(columns);
         setAttendance(array);
       } catch (e) {
@@ -396,7 +487,11 @@ const ReportsPage = () => {
                       <div className='mb-5'>
                         <DataTable columns={columns} data={data as StudentInformationType[]} />
                       </div>
-                      <PDFDownloadLink className='w-fit flex' document={<DocumentFirstSPF data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />} fileName='document.pdf'>
+                      <PDFDownloadLink
+                        className='w-fit flex'
+                        document={<DocumentFirstSPF data={data} gradeLevel={gradeLevel.split(" ")[1]} section={section} />}
+                        fileName={`SF1_${gradeLevel.trim()}_${section}_${new Date().getFullYear()}.pdf`}
+                      >
                         {({ blob, url, loading, error }) => (
                           <div aria-disabled={loading} className={cn("text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center", loading && "select-none bg-primary/80")}>
                             {loading ? "Loading Document..." : "Download SF1 PDF"}
@@ -438,6 +533,28 @@ const ReportsPage = () => {
             {/* Add the table for attendance here */}
             <div className='mt-4'>{attendance && <DataTable columns={attendanceColumn} data={attendance as AttendanceTableColumn[]} />}</div>
             {/* Add downloadable pdf */}
+            <div className='mt-5'>
+              {/* {attendance && (
+                <PDFViewer className='w-full' height={900}>
+                  <DocumentSecondSPF month={format(new Date(`${parseInt(monthAttendance) + 1}-01-2024`), "MMMM")} data={attendance} gradeLevel={gradeLevel.split(" ")[1]} section={section} />
+                </PDFViewer>
+              )} */}
+              {attendance && (
+                <PDFDownloadLink
+                  className='w-fit flex'
+                  document={
+                    <DocumentSecondSPF month={format(new Date(`${parseInt(monthAttendance) + 1}-01-2024`), "MMMM")} data={attendance} gradeLevel={gradeLevel.split(" ")[1]} section={section} />
+                  }
+                  fileName={`SF2_${gradeLevel.trim()}_${section}_${new Date().getFullYear()}_${format(new Date(`${parseInt(monthAttendance) + 1}-01-2024`), "MMMM")}_.pdf`}
+                >
+                  {({ blob, url, loading, error }) => (
+                    <div aria-disabled={loading} className={cn("text-primary-foreground font-bold bg-primary px-4 py-2 rounded-md w-fit text-center", loading && "select-none bg-primary/80")}>
+                      {loading ? "Loading Document..." : "Download SF2 PDF"}
+                    </div>
+                  )}
+                </PDFDownloadLink>
+              )}
+            </div>
           </TabsContent>
           <TabsContent value='grades'>Change your password here.</TabsContent>
         </Tabs>
