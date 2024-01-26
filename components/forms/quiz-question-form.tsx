@@ -9,21 +9,56 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { redirect, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
 import addQuestion from "@/actions/question/add-question";
 import addAnswers from "@/actions/answers/add-answers";
 import { fetchQuestionsCount } from "@/actions/question/fetch-all-questions";
+import { revalidatePathURL } from "@/actions/redirect-to-subject-page";
+import { unstable_noStore } from "next/cache";
+
+export const dynamic = "force-dynamic";
 
 const QuestionTypeSchema = z.enum(["Multiple Choice", "Identification", "True or False"], { required_error: "Question Type is required" });
-export const OptionsTypeSchema = z.array(
-  z.object({
-    answer: z.string().refine((val) => val !== "", { message: "Answer must be provided for each option" }),
-    is_correct: z.boolean(),
-  }),
-  { required_error: "Every option must be filled with answers" }
-);
+export const OptionsTypeSchema = z
+  .array(
+    z.object({
+      answer: z.string().refine((val) => val !== "", { message: "Answer must be provided for each option" }),
+      is_correct: z.boolean(),
+    }),
+    { required_error: "Every option must be filled with answers" }
+  )
+  .superRefine((val, ctx) => {
+    let count = 0;
+
+    val.map((v) => {
+      v.is_correct && count++;
+    });
+
+    if (val.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "There must be at least one choice",
+        path: ["root"],
+      });
+    }
+
+    if (count > 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "There must only be one correct answer",
+        path: ["root"],
+      });
+    }
+    if (count === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "There must only be one correct answer",
+        path: ["root"],
+      });
+    }
+  });
 export const QuizQuestionSchema = z.object({
   title: z.string({ required_error: "Quiz Title is required" }),
   type: QuestionTypeSchema,
@@ -42,7 +77,7 @@ export const QuizQuestionSchema = z.object({
 // );
 
 const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
-  const [questionNumber, setQuestionNumber] = useState(1);
+  const [questionNumber, setQuestionNumber] = useState<number>();
   const path = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -84,21 +119,24 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
   useEffect(() => {
     // fetch all questions,
     const fetchAllQuestion = async () => {
+      unstable_noStore();
       const { count, error } = await fetchQuestionsCount(quizId);
-      if (!error && count) return setQuestionNumber(count + 1);
+      if (!error && count) return setQuestionNumber((count && count + 1) || 1);
     };
 
     fetchAllQuestion();
     // set the state on question number as the next question
-  }, []);
+  }, [questionNumber]);
 
   const watchType = useWatch<z.infer<typeof QuizQuestionSchema>>({ control: form.control, name: "type" });
 
   const submitAnswer = async (options: z.infer<typeof OptionsTypeSchema>, questionId: string) => {
     // insert mo ung kada option sa db
     // insert mo ung id ng bawat option sa question_answers kasama ung questionId
+
     const { data, error } = await addAnswers(options, questionId);
-    console.log("insert answer", data, error);
+
+    if (error) form.setError("root", { message: error.message });
 
     return { data, error };
   };
@@ -113,6 +151,10 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
   };
 
   const onNextQuestion = async (values: z.infer<typeof QuizQuestionSchema>) => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.log(form.formState.isValid);
+      return console.error("form is invalid");
+    }
     let isCorrectCount = 0;
     if (values.options.length === 0) form.setError("root", { message: "Choices must not be empty" });
 
@@ -120,9 +162,6 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
       if (val.is_correct === true) isCorrectCount++;
       if (val.answer === "") form.setError(`options.${index}.answer`, { message: "Answer must not be empty" });
     });
-
-    if (isCorrectCount === 0 || isCorrectCount > 1) form.setError("root", { message: "There must be one correct answer" });
-    if (form.formState.errors.root || form.formState.errors.options) return console.log(form.formState.errors.root, form.formState.errors.options);
 
     const questionId = await createQuestion(values);
     const { data, error } = await submitAnswer(values.options, questionId as string);
@@ -132,8 +171,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
     form.setValue("type", "Multiple Choice");
     form.setValue("title", "");
 
-    router.refresh();
-    setQuestionNumber((prev) => prev++);
+    setQuestionNumber((prev) => prev && prev + 1);
   };
 
   const onExit = async () => {
@@ -217,7 +255,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
   return (
     <>
       <Form {...form}>
-        <form method='post' className='flex flex-col w-full gap-6'>
+        <form method='post' onSubmit={form.handleSubmit(onNextQuestion)} className='flex flex-col w-full gap-6'>
           <FormField
             control={form.control}
             name='title'
@@ -321,9 +359,16 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
 
           {watchType === "True or False" && showTrueOrFalse()}
 
-          <div>{form.formState.errors.root && <div className='text-destructive'>{form.formState.errors.root.message}</div>}</div>
+          <div>{form.formState.errors && form.formState.errors.options && <div className='text-destructive'>{form.formState.errors.options.root?.message}</div>}</div>
           <div className='flex justify-end gap-2'>
-            <Button disabled={form.formState.isSubmitting} variant={"default"} className='' onClick={form.handleSubmit(onNextQuestion)}>
+            <Button
+              disabled={form.formState.isSubmitting}
+              variant={"default"}
+              className=''
+              onClick={() => {
+                console.log(form.formState.errors);
+              }}
+            >
               Add Question
             </Button>
             <Button variant={"destructive"} className='' type='button' onClick={onExit}>

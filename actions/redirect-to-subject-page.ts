@@ -23,3 +23,7 @@ export const redirectToSettingsPageActionStudent = () => {
 export const redirectToSubjectPageActionStudent = (subjectId: string) => {
   revalidatePath(`/student/subjects/${subjectId}`);
 };
+
+export const revalidatePathURL = (path: string) => {
+  revalidatePath(path);
+};

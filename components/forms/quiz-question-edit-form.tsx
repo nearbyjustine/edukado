@@ -19,13 +19,44 @@ import { fetchQuestionsCount } from "@/actions/question/fetch-all-questions";
 import { createClient } from "@/utils/supabase/client";
 
 const QuestionEditTypeSchema = z.enum(["Multiple Choice", "Identification", "True or False"], { required_error: "Question Type is required" });
-export const OptionsEditTypeSchema = z.array(
-  z.object({
-    answer: z.string().refine((val) => val !== "", { message: "Answer must be provided for each option" }),
-    is_correct: z.boolean(),
-  }),
-  { required_error: "Every option must be filled with answers" }
-);
+export const OptionsEditTypeSchema = z
+  .array(
+    z.object({
+      answer: z.string().refine((val) => val !== "", { message: "Answer must be provided for each option" }),
+      is_correct: z.boolean(),
+    }),
+    { required_error: "Every option must be filled with answers" }
+  )
+  .superRefine((val, ctx) => {
+    let count = 0;
+
+    val.map((v) => {
+      v.is_correct && count++;
+    });
+
+    if (val.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "There must be at least one choice",
+        path: ["root"],
+      });
+    }
+
+    if (count > 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "There must only be one correct answer",
+        path: ["root"],
+      });
+    }
+    if (count === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "There must only be one correct answer",
+        path: ["root"],
+      });
+    }
+  });
 export const QuizQuestionEditSchema = z.object({
   title: z.string({ required_error: "Quiz Title is required" }),
   type: QuestionEditTypeSchema,
@@ -131,8 +162,10 @@ const QuizQuestionEditForms = ({ quizId, questionId, questionNumber }: { quizId:
   };
 
   const onUpdateQuestion = async (values: z.infer<typeof QuizQuestionEditSchema>) => {
-    console.log("RESULT: ", values);
-
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.log(form.formState.isValid);
+      return console.error("form is invalid");
+    }
     // update question using values
     const { data, error } = await updateQuestion(values, questionId);
     if (!data || error) return console.log("update question error", data, error);
@@ -145,8 +178,6 @@ const QuizQuestionEditForms = ({ quizId, questionId, questionNumber }: { quizId:
     const answerIdArray = answerData.question_answers.map((value) => {
       return value.answers?.id as number;
     });
-
-    console.log("answeridarray", answerIdArray);
 
     // delete answer
     answerIdArray.forEach(async (id) => {
@@ -361,7 +392,7 @@ const QuizQuestionEditForms = ({ quizId, questionId, questionNumber }: { quizId:
           {watchType === "Identification" && showIdentification()}
 
           {watchType === "True or False" && showTrueOrFalse()}
-
+          <div>{form.formState.errors && form.formState.errors.options && <div className='text-destructive'>{form.formState.errors.options.root?.message}</div>}</div>
           <div className='flex justify-end gap-2'>
             <Button variant={"default"} className='' onClick={form.handleSubmit(onUpdateQuestion)}>
               Update Question

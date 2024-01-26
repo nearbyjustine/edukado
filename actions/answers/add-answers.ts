@@ -9,11 +9,16 @@ const addAnswers = async (values: z.infer<typeof OptionsTypeSchema>, question_id
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
+  let count = 0;
+
   const optionsArray = values.map((value) => {
+    value.is_correct && count++;
     return {
       ...value,
     };
   });
+
+  if (count > 1) return { error: { message: "There must only be one correct answer" } };
 
   const { data: optionsInsertData, error: optionsInsertError } = await supabase.from("answers").insert(optionsArray).select();
 
