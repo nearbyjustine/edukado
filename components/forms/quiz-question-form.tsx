@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
 import addQuestion from "@/actions/question/add-question";
@@ -45,6 +45,9 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
   const [questionNumber, setQuestionNumber] = useState(1);
   const path = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
+
   const form = useForm<z.infer<typeof QuizQuestionSchema>>({
     resolver: zodResolver(QuizQuestionSchema),
     reValidateMode: "onChange",
@@ -134,7 +137,7 @@ const QuizQuestionForm = ({ quizId }: { quizId: string }) => {
   };
 
   const onExit = async () => {
-    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path.split("/").slice(0, -1).join("/")}/edit`);
+    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path.split("/").slice(0, -1).join("/")}/edit?type=${type}`);
   };
 
   const showMultipleChoice = (): React.ReactNode => {

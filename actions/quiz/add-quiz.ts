@@ -6,7 +6,7 @@ import moment from "moment";
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-const addQuiz = async (values: z.infer<typeof QuizFormSchema>, subject_id: string, type?: string | null) => {
+const addQuiz = async (values: z.infer<typeof QuizFormSchema>, subject_id: string, is_exam: boolean) => {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
@@ -22,7 +22,7 @@ const addQuiz = async (values: z.infer<typeof QuizFormSchema>, subject_id: strin
 
   const { data, error: insertError } = await supabase
     .from("quizzes")
-    .insert([{ ...values, date_open: dateOpen, date_close: dateClose, teacher_id: user.id, subject_id }])
+    .insert([{ ...values, date_open: dateOpen, date_close: dateClose, teacher_id: user.id, subject_id, is_exam }])
     .select()
     .single();
 

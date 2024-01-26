@@ -27,7 +27,9 @@ const QuizResponsesPage = async ({ params: { quizId } }: { params: { quizId: str
   const pathname = headers().get("next-url");
   return (
     <>
-      <div>Quiz: {quizData.data.title}</div>
+      <div>
+        {quizData.data.is_exam ? "Exam" : "Quiz"}: {quizData.data.title}
+      </div>
       <div>Description: {quizData.data.description}</div>
       <div>Duration: {quizData.data.duration > 0 ? quizData.data.duration + " minutes" : "No time limit"}</div>
       <div>Date Open: {formatDate(quizData.data.date_open)}</div>

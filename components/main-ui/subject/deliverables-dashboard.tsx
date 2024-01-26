@@ -26,6 +26,8 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
 
   const { data: activities, error } = await fetchAllActivitiesBySubject(subjectId);
   const { data: quizzes, error: quizzesError } = await fetchAllQuizBySubject(subjectId);
+  const exams = quizzes?.filter((v) => v.is_exam);
+  const quizzesNotExam = quizzes?.filter((v) => !v.is_exam);
   const { data: topics, error: topicsError } = await fetchAllTopicsEtc(subjectId);
   const { data: students, error: studentsError } = await fetchAllStudentsPerSubject(subjectId);
   const { data: lessons, error: lessonsError } = await fetchLessonsPerSubject(subjectId);
@@ -52,6 +54,7 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
           <TabsTrigger value='discussions'>Discussions</TabsTrigger>
           <TabsTrigger value='activities'>Activities</TabsTrigger>
           <TabsTrigger value='quizzes'>Quizzes</TabsTrigger>
+          <TabsTrigger value='exams'>Exams</TabsTrigger>
           <TabsTrigger value='students'>Students</TabsTrigger>
           <TabsTrigger value='attendance'>Attended Today</TabsTrigger>
         </TabsList>
@@ -87,8 +90,18 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
         </TabsContent>
         <TabsContent value='quizzes'>
           <div className='flex flex-col gap-4'>
-            {quizzes &&
-              quizzes.map((quiz) => {
+            {quizzesNotExam &&
+              quizzesNotExam.map((quiz) => {
+                const dateOpen = moment(new Date(quiz.date_open)).format("MMMM DD, YYYY");
+                const dateClose = moment(new Date(quiz.date_close)).format("MMMM DD, YYYY");
+                return <QuizBox title={quiz.title} date_open={dateOpen} date_close={dateClose} quizId={quiz.id} subjectId={subjectId} key={quiz.id} totalPoints={quiz.total_points} />;
+              })}
+          </div>
+        </TabsContent>
+        <TabsContent value='exams'>
+          <div className='flex flex-col gap-4'>
+            {exams &&
+              exams.map((quiz) => {
                 const dateOpen = moment(new Date(quiz.date_open)).format("MMMM DD, YYYY");
                 const dateClose = moment(new Date(quiz.date_close)).format("MMMM DD, YYYY");
                 return <QuizBox title={quiz.title} date_open={dateOpen} date_close={dateClose} quizId={quiz.id} subjectId={subjectId} key={quiz.id} totalPoints={quiz.total_points} />;

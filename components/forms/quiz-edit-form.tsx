@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DatePicker } from "../calendar/date-picker";
 import addQuiz from "@/actions/quiz/add-quiz";
 import { createClient } from "@/utils/supabase/client";
@@ -57,6 +57,8 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
   const [quizPoints, setQuizPoints] = useState<number>();
   const router = useRouter();
   const path = usePathname();
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
 
   const questionCreationPath = path.split("/").slice(0, -1).join("/");
 
@@ -132,7 +134,7 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
             name='title'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quiz Title</FormLabel>
+                <FormLabel>{type === "exam" ? "Exam" : "Quiz"} Title</FormLabel>
                 <FormControl>
                   <Input type='text' {...field} />
                 </FormControl>
@@ -145,7 +147,7 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
             name='description'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quiz Description</FormLabel>
+                <FormLabel>{type === "exam" ? "Exam" : "Quiz"} Description</FormLabel>
                 <FormControl>
                   <Input type='text' {...field} />
                 </FormControl>

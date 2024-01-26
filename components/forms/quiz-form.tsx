@@ -48,15 +48,15 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
   const onSubmit = async (values: z.infer<typeof QuizFormSchema>) => {
     setIsSubmitting(true);
     console.log(values);
-    const { data, error } = await addQuiz(values, subjectId, type);
+
+    const { data, error } = await addQuiz(values, subjectId, type === "exam");
     if (error || !data) return console.error(error);
 
     // Get newly created id of quiz
     const { id } = data;
 
     // Proceed to CreateQuizQuestionPage
-    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path}/${id}/add-question`);
-    setIsSubmitting(false);
+    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path}/${id}/add-question?type=quiz`);
   };
 
   useEffect(() => {
@@ -176,7 +176,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
           )}
         ></FormField>
         <div className='flex justify-end gap-2'>
-          <Button disabled={form.formState.isSubmitting} className='' type='submit'>
+          <Button disabled={isSubmitting} className='' type='submit'>
             Create Quiz
           </Button>
           <Button onClick={goBack} type='button' className='' variant={"destructive"}>
