@@ -486,6 +486,7 @@ export interface Database {
           description: string | null
           duration: number
           id: string
+          is_exam: boolean
           is_published: boolean
           subject_id: string
           teacher_id: string
@@ -500,6 +501,7 @@ export interface Database {
           description?: string | null
           duration?: number
           id?: string
+          is_exam?: boolean
           is_published?: boolean
           subject_id: string
           teacher_id?: string
@@ -514,6 +516,7 @@ export interface Database {
           description?: string | null
           duration?: number
           id?: string
+          is_exam?: boolean
           is_published?: boolean
           subject_id?: string
           teacher_id?: string

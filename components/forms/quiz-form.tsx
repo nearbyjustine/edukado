@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DatePicker } from "../calendar/date-picker";
 import addQuiz from "@/actions/quiz/add-quiz";
 import { createClient } from "@/utils/supabase/client";
@@ -31,6 +31,9 @@ export const QuizFormSchema = z
 
 const QuizForm = ({ subjectId }: { subjectId: string }) => {
   const [topics, setTopics] = useState<Topic[]>();
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
+
   const router = useRouter();
   const path = usePathname();
   const form = useForm<z.infer<typeof QuizFormSchema>>({

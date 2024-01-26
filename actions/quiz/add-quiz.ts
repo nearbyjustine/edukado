@@ -6,7 +6,7 @@ import moment from "moment";
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-const addQuiz = async (values: z.infer<typeof QuizFormSchema>, subject_id: string) => {
+const addQuiz = async (values: z.infer<typeof QuizFormSchema>, subject_id: string, type?: string | null) => {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
