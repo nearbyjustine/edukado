@@ -31,6 +31,7 @@ export const QuizFormSchema = z
 
 const QuizForm = ({ subjectId }: { subjectId: string }) => {
   const [topics, setTopics] = useState<Topic[]>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
 
@@ -45,8 +46,9 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof QuizFormSchema>) => {
+    setIsSubmitting(true);
     console.log(values);
-    const { data, error } = await addQuiz(values, subjectId);
+    const { data, error } = await addQuiz(values, subjectId, type);
     if (error || !data) return console.error(error);
 
     // Get newly created id of quiz
@@ -54,6 +56,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
 
     // Proceed to CreateQuizQuestionPage
     router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/${path}/${id}/add-question`);
+    setIsSubmitting(false);
   };
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
           name='title'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Quiz Title</FormLabel>
+              <FormLabel>{type === "exam" ? "Exam" : "Quiz"} Title</FormLabel>
               <FormControl>
                 <Input type='text' {...field} />
               </FormControl>
@@ -124,7 +127,7 @@ const QuizForm = ({ subjectId }: { subjectId: string }) => {
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Quiz Description</FormLabel>
+              <FormLabel>{type === "exam" ? "Exam" : "Quiz"} Description</FormLabel>
               <FormControl>
                 <Input type='text' {...field} />
               </FormControl>
