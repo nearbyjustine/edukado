@@ -17,6 +17,7 @@ export const studentGradeColumns: ColumnDef<StudentGradesType>[] = [
   },
   {
     accessorKey: "activities_percentage",
+    accessorFn: (v) => Math.round(v.activities_percentage * 100).toFixed(2),
     header: ({ column }) => {
       return (
         <Button variant='ghost' onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -26,17 +27,7 @@ export const studentGradeColumns: ColumnDef<StudentGradesType>[] = [
       );
     },
   },
-  {
-    accessorKey: "quiz_percentage",
-    header: ({ column }) => {
-      return (
-        <Button variant='ghost' onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Quizzes %
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      );
-    },
-  },
+
   {
     accessorKey: "activities_total_points",
     header: ({ column }) => {
@@ -59,7 +50,18 @@ export const studentGradeColumns: ColumnDef<StudentGradesType>[] = [
       );
     },
   },
-
+  {
+    accessorKey: "quiz_percentage",
+    accessorFn: (v) => Math.round(v.quiz_percentage * 100).toFixed(2),
+    header: ({ column }) => {
+      return (
+        <Button variant='ghost' onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Quizzes %
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+  },
   {
     accessorKey: "quiz_total_points",
     header: ({ column }) => {
