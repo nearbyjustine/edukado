@@ -23,13 +23,13 @@ export async function fetchActivityAnswer(activityId: string) {
     content,
     file_url,
     link_url,
-    profiles (first_name, last_name)
+    students(*, profiles!students_id_fkey(first_name, last_name))
   `
     )
     .eq("activity_id", activityId)
     .eq("student_id", user.id)
     .single();
-  console.log(data);
+  console.log(data, error);
 
   return { data, error };
 }
