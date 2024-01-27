@@ -22,6 +22,8 @@ export default async function EditActivityPage({ params }: { params: { id: strin
         linkUrl={activity.link_url}
         activityId={params.activityId}
         subjectId={params.id}
+        topicId={String(activity.topic_id)}
+        quarter={activity.quarter}
       />
     </div>
   );

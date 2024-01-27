@@ -106,7 +106,7 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
                 students.map((student) => (
                   <div className='border border-primary rounded-md px-2 py-4 font-semibold text-primary text-xl flex items-center gap-4' key={student.id}>
                     <span>
-                      {(student.profiles?.avatar_url && <Image className='w-16 h-16' src={student.profiles?.avatar_url} alt={"Profile pic"} />) || (
+                      {(student.profiles?.avatar_url && <Image width={16} height={16} className='w-16 h-16 rounded-full object-cover' src={student.profiles?.avatar_url} alt={"Profile pic"} />) || (
                         <div className='w-16 h-16 bg-primary rounded-full'></div>
                       )}
                     </span>
@@ -127,9 +127,9 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
                     student && (
                       <div className='border border-primary rounded-md px-2 py-4 font-semibold text-primary text-xl flex items-center gap-4' key={student.id}>
                         <span>
-                          {(student.profiles?.avatar_url && <Image className='w-16 h-16' src={student.profiles?.avatar_url} alt={"Profile pic"} />) || (
-                            <div className='w-16 h-16 bg-primary rounded-full'></div>
-                          )}
+                          {(student.profiles?.avatar_url && (
+                            <Image width={16} height={16} className='w-16 h-16 rounded-full object-cover' src={student.profiles?.avatar_url} alt={"Profile pic"} />
+                          )) || <div className='w-16 h-16 bg-primary rounded-full'></div>}
                         </span>
                         <span className='flex flex-col gap-1'>
                           {student.profiles?.first_name} {student.profiles?.last_name}

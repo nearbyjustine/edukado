@@ -14,7 +14,7 @@ import { updateActivity } from "@/actions/activity/update-activity";
 import { Separator } from "@/components/ui/separator";
 import { DatePicker } from "@/components/calendar/date-picker";
 import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
-import { Topic } from "@/lib/collection.types";
+import { QuarterEnum, Topic } from "@/lib/collection.types";
 import { createClient } from "@/utils/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -34,6 +34,7 @@ export const LessonFormSchema = z.object({
     .optional(),
   url: z.string().url("Must be a valid url").optional(),
   topic_id: z.string(),
+  quarter: z.enum(["1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]),
 });
 
 const LessonEdit = ({
@@ -44,14 +45,16 @@ const LessonEdit = ({
   fileUrl,
   linkUrl,
   topicId,
+  quarter,
 }: {
   subjectId: string;
-  lessonId: number;
+  lessonId: string;
   title: string;
   content: string;
   linkUrl: string;
   fileUrl: string;
   topicId: string;
+  quarter: QuarterEnum;
 }) => {
   const [topics, setTopics] = useState<Topic[]>();
 
@@ -65,6 +68,7 @@ const LessonEdit = ({
       content: content || "",
       url: linkUrl || undefined,
       topic_id: topicId,
+      quarter: quarter,
     },
   });
 
@@ -73,6 +77,7 @@ const LessonEdit = ({
     form.setValue("content", content);
     form.setValue("url", linkUrl || undefined);
     form.setValue("topic_id", topicId);
+    form.setValue("quarter", quarter);
   }, []);
 
   const uploadFile = async (file: File) => {
@@ -212,16 +217,39 @@ const LessonEdit = ({
             </div>
             <FormField
               control={form.control}
-              name='topic_id'
+              name='quarter'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Topic</FormLabel>
                   <FormControl>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger className='w-[180px]'>
+                    <Select onValueChange={field.onChange} defaultValue={topicId}>
+                      <SelectTrigger className='w-full'>
                         <SelectValue placeholder='Set topic' />
                       </SelectTrigger>
                       <SelectContent>{topics && topics.map((topic) => <SelectItem value={topic.id.toString()}>{topic.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='quarter'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quarter</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Set quarter' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+                        <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+                        <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+                        <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+                      </SelectContent>
                     </Select>
                   </FormControl>
                   <FormMessage />

@@ -42,6 +42,7 @@ const ActivityFormSchema = z
     date_open: z.date({ required_error: "Date to start is required" }),
     date_close: z.date({ required_error: "Date to close is required" }),
     topic_id: z.string(),
+    quarter: z.enum(["1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]),
   })
   .refine((data) => data.date_open.getTime() <= data.date_close.getTime(), {
     message: "Opening date must be earlier than closing date",
@@ -80,13 +81,13 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
       if (IMFile) {
         const response = await uploadFile(IMFile);
         const fileUrl = (await response.json()) as { url: string };
-        const { error } = await addActivity(title, content, subjectId, fileUrl.url, linkUrl || "", grade, date_open, date_close, values.topic_id);
+        const { error } = await addActivity(title, content, subjectId, fileUrl.url, linkUrl || "", grade, date_open, date_close, values.topic_id, values.quarter);
         if (error) {
           console.error(error);
           return;
         }
       } else {
-        const { error } = await addActivity(title, content, subjectId, "", linkUrl || "", grade, date_open, date_close, values.topic_id);
+        const { error } = await addActivity(title, content, subjectId, "", linkUrl || "", grade, date_open, date_close, values.topic_id, values.quarter);
         if (error) {
           console.error(error);
           return;
@@ -208,6 +209,29 @@ const ActivityModal = ({ subjectId }: { subjectId: string }) => {
                         </Link>
                       )}
                     </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='quarter'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quarter</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Set quarter' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+                        <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+                        <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+                        <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

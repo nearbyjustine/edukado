@@ -14,7 +14,7 @@ import { updateActivity } from "@/actions/activity/update-activity";
 import { Separator } from "@/components/ui/separator";
 import { DatePicker } from "@/components/calendar/date-picker";
 import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
-import { Topic } from "@/lib/collection.types";
+import { QuarterEnum, Topic } from "@/lib/collection.types";
 import { createClient } from "@/utils/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -38,6 +38,7 @@ const ActivityFormSchema = z
     date_open: z.date({ required_error: "Date to start is required" }),
     date_close: z.date({ required_error: "Date to close is required" }),
     topic_id: z.string(),
+    quarter: z.enum(["1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]),
   })
   .refine((data) => data.date_open.getTime() <= data.date_close.getTime(), {
     message: "Opening date must be earlier than closing date",
@@ -54,6 +55,8 @@ const ActivityEdit = ({
   grade,
   date_open,
   date_close,
+  topicId,
+  quarter,
 }: {
   subjectId: string;
   activityId: string;
@@ -64,6 +67,8 @@ const ActivityEdit = ({
   grade: number;
   date_open: string;
   date_close: string | null;
+  topicId: string;
+  quarter: QuarterEnum;
 }) => {
   const [topics, setTopics] = useState<Topic[]>();
 
@@ -79,6 +84,7 @@ const ActivityEdit = ({
       grade: grade,
       date_open: new Date(date_open),
       date_close: (date_close && new Date(date_close)) || undefined,
+      quarter: quarter,
     },
   });
 
@@ -86,6 +92,8 @@ const ActivityEdit = ({
     form.setValue("title", title);
     form.setValue("content", content);
     form.setValue("url", linkUrl || undefined);
+    form.setValue("topic_id", topicId);
+    form.setValue("quarter", quarter);
   }, []);
 
   const uploadFile = async (file: File) => {
@@ -107,13 +115,13 @@ const ActivityEdit = ({
       if (IMFile) {
         const response = await uploadFile(IMFile);
         const fileUrl = (await response.json()) as { url: string };
-        const error = await updateActivity(title, content, activityId, fileUrl.url, linkUrl || "", values.grade, values.date_open, values.date_close);
+        const error = await updateActivity(title, content, activityId, fileUrl.url, linkUrl || "", values.grade, values.date_open, values.date_close, values.topic_id, values.quarter);
         if (error.error) {
           console.error(error);
           return;
         }
       } else {
-        const error = await updateActivity(title, content, activityId, fileUrl || "", linkUrl || "", values.grade, values.date_open, values.date_close);
+        const error = await updateActivity(title, content, activityId, fileUrl || "", linkUrl || "", values.grade, values.date_open, values.date_close, values.topic_id, values.quarter);
         if (error.error) {
           console.error(error);
           return;
@@ -220,11 +228,34 @@ const ActivityEdit = ({
                 <FormItem>
                   <FormLabel>Topic</FormLabel>
                   <FormControl>
-                    <Select onValueChange={field.onChange}>
-                      <SelectTrigger className='w-[180px]'>
+                    <Select onValueChange={field.onChange} defaultValue={topicId}>
+                      <SelectTrigger className='w-full'>
                         <SelectValue placeholder='Set topic' />
                       </SelectTrigger>
                       <SelectContent>{topics && topics.map((topic) => <SelectItem value={topic.id}>{topic.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='quarter'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quarter</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Set quarter' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+                        <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+                        <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+                        <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+                      </SelectContent>
                     </Select>
                   </FormControl>
                   <FormMessage />

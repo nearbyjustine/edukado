@@ -14,7 +14,7 @@ import { updateActivity } from "@/actions/activity/update-activity";
 import { Separator } from "@/components/ui/separator";
 import { DatePicker } from "@/components/calendar/date-picker";
 import { redirectToSubjectPageAction } from "@/actions/redirect-to-subject-page";
-import { Topic } from "@/lib/collection.types";
+import { QuarterEnum, Topic } from "@/lib/collection.types";
 import { createClient } from "@/utils/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -30,9 +30,24 @@ const DiscussionFormSchema = z.object({
   content: z.string({ required_error: "Content is a requirement" }).min(5, { message: "Content is too short" }),
 
   topic_id: z.string(),
+  quarter: z.enum(["1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]),
 });
 
-const DiscussionEdit = ({ subjectId, discussionId, title, content, topicId }: { subjectId: string; discussionId: number; title: string; content: string; topicId: string }) => {
+const DiscussionEdit = ({
+  subjectId,
+  discussionId,
+  title,
+  content,
+  topicId,
+  quarter,
+}: {
+  subjectId: string;
+  discussionId: number;
+  title: string;
+  content: string;
+  topicId: string;
+  quarter: QuarterEnum;
+}) => {
   const [topics, setTopics] = useState<Topic[]>();
 
   const router = useRouter();
@@ -44,6 +59,7 @@ const DiscussionEdit = ({ subjectId, discussionId, title, content, topicId }: { 
       title: title || "",
       content: content || "",
       topic_id: topicId,
+      quarter: quarter,
     },
   });
 
@@ -51,6 +67,7 @@ const DiscussionEdit = ({ subjectId, discussionId, title, content, topicId }: { 
     form.setValue("title", title);
     form.setValue("content", content);
     form.setValue("topic_id", topicId);
+    form.setValue("quarter", quarter);
   }, []);
 
   const onSubmit = (values: z.infer<typeof DiscussionFormSchema>) => {
@@ -133,6 +150,29 @@ const DiscussionEdit = ({ subjectId, discussionId, title, content, topicId }: { 
                         <SelectValue placeholder='Set topic' />
                       </SelectTrigger>
                       <SelectContent>{topics && topics.map((topic) => <SelectItem value={topic.id.toString()}>{topic.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='quarter'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quarter</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Set quarter' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+                        <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+                        <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+                        <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+                      </SelectContent>
                     </Select>
                   </FormControl>
                   <FormMessage />

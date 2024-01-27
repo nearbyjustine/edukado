@@ -32,6 +32,7 @@ const DiscussionFormSchema = z.object({
   content: z.string({ required_error: "Content is a requirement" }).min(5, { message: "Content is too short" }),
 
   topic_id: z.string(),
+  quarter: z.enum(["1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]),
 });
 
 const DiscussionForm = ({ subjectId }: { subjectId: string }) => {
@@ -151,6 +152,29 @@ const DiscussionForm = ({ subjectId }: { subjectId: string }) => {
                         </Link>
                       )}
                     </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='quarter'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quarter</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Set quarter' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+                        <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+                        <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+                        <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -20,6 +20,7 @@ export interface Database {
           id: string
           is_published: boolean
           link_url: string | null
+          quarter: Database["public"]["Enums"]["quarter_enum"]
           subject_id: string
           teacher_id: string
           title: string
@@ -35,6 +36,7 @@ export interface Database {
           id?: string
           is_published?: boolean
           link_url?: string | null
+          quarter?: Database["public"]["Enums"]["quarter_enum"]
           subject_id: string
           teacher_id?: string
           title?: string
@@ -50,6 +52,7 @@ export interface Database {
           id?: string
           is_published?: boolean
           link_url?: string | null
+          quarter?: Database["public"]["Enums"]["quarter_enum"]
           subject_id?: string
           teacher_id?: string
           title?: string
@@ -174,6 +177,7 @@ export interface Database {
           created_at: string
           id: number
           is_published: boolean
+          quarter: Database["public"]["Enums"]["quarter_enum"]
           subject_id: string
           teacher_id: string
           title: string
@@ -184,6 +188,7 @@ export interface Database {
           created_at?: string
           id?: number
           is_published?: boolean
+          quarter?: Database["public"]["Enums"]["quarter_enum"]
           subject_id: string
           teacher_id?: string
           title?: string
@@ -194,6 +199,7 @@ export interface Database {
           created_at?: string
           id?: number
           is_published?: boolean
+          quarter?: Database["public"]["Enums"]["quarter_enum"]
           subject_id?: string
           teacher_id?: string
           title?: string
@@ -298,6 +304,7 @@ export interface Database {
           id: number
           is_published: boolean
           link_url: string
+          quarter: Database["public"]["Enums"]["quarter_enum"]
           subject_id: string
           teacher_id: string
           title: string
@@ -310,6 +317,7 @@ export interface Database {
           id?: number
           is_published?: boolean
           link_url?: string
+          quarter?: Database["public"]["Enums"]["quarter_enum"]
           subject_id: string
           teacher_id?: string
           title?: string
@@ -322,6 +330,7 @@ export interface Database {
           id?: number
           is_published?: boolean
           link_url?: string
+          quarter?: Database["public"]["Enums"]["quarter_enum"]
           subject_id?: string
           teacher_id?: string
           title?: string
@@ -488,6 +497,7 @@ export interface Database {
           id: string
           is_exam: boolean
           is_published: boolean
+          quarter: Database["public"]["Enums"]["quarter_enum"]
           subject_id: string
           teacher_id: string
           title: string
@@ -503,6 +513,7 @@ export interface Database {
           id?: string
           is_exam?: boolean
           is_published?: boolean
+          quarter?: Database["public"]["Enums"]["quarter_enum"]
           subject_id: string
           teacher_id?: string
           title?: string
@@ -518,6 +529,7 @@ export interface Database {
           id?: string
           is_exam?: boolean
           is_published?: boolean
+          quarter?: Database["public"]["Enums"]["quarter_enum"]
           subject_id?: string
           teacher_id?: string
           title?: string
@@ -948,6 +960,56 @@ export interface Database {
         }
         Returns: number
       }
+      get_grades: {
+        Args: {
+          class_grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          class_section: string
+          class_quarter: Database["public"]["Enums"]["quarter_enum"]
+        }
+        Returns: {
+          name: string
+          quiz_total_points: number
+          student_total_points: number
+          title: string
+        }[]
+      }
+      get_grades_activities: {
+        Args: {
+          class_grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          class_section: string
+          class_quarter: Database["public"]["Enums"]["quarter_enum"]
+        }
+        Returns: {
+          name: string
+          activity_total_points: number
+          student_total_points: number
+          title: string
+        }[]
+      }
+      get_grades_combined: {
+        Args: {
+          class_grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          class_section: string
+          class_quarter: Database["public"]["Enums"]["quarter_enum"]
+        }
+        Returns: {
+          name: string
+          grades: Json
+        }[]
+      }
+      get_grades_quiz: {
+        Args: {
+          class_grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          class_section: string
+          class_quarter: Database["public"]["Enums"]["quarter_enum"]
+        }
+        Returns: {
+          name: string
+          quiz_total_points: number
+          student_total_points: number
+          title: string
+        }[]
+      }
       get_reports_student_information: {
         Args: {
           arg_grade_level: Database["public"]["Enums"]["grade_level_enum"]
@@ -982,6 +1044,33 @@ export interface Database {
           name: string
           grade_level: Database["public"]["Enums"]["grade_level_enum"]
           section: string
+        }[]
+      }
+      get_summary_totals: {
+        Args: {
+          class_grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          class_section: string
+          class_quarter: Database["public"]["Enums"]["quarter_enum"]
+        }
+        Returns: {
+          activities_total_points_sum: number
+          quiz_total_points_sum: number
+          student_answers_activities_total_points_sum: number
+          quiz_total_points_activities_sum: number
+        }[]
+      }
+      get_summary_totals_per_student: {
+        Args: {
+          class_grade_level: Database["public"]["Enums"]["grade_level_enum"]
+          class_section: string
+          class_quarter: Database["public"]["Enums"]["quarter_enum"]
+        }
+        Returns: {
+          name: string
+          activities_total_points_sum: number
+          quiz_total_points_sum: number
+          student_answers_activities_total_points_sum: number
+          quiz_total_points_activities_sum: number
         }[]
       }
       question_add_to_quiz_total_points: {
@@ -1054,6 +1143,11 @@ export interface Database {
         | "Ibanag"
         | "Itawis"
         | "Kankanaey"
+      quarter_enum:
+        | "1st Quarter"
+        | "2nd Quarter"
+        | "3rd Quarter"
+        | "4th Quarter"
       question_type_enum: "Multiple Choice" | "True or False" | "Identification"
       religion_enum:
         | "Roman Catholic"

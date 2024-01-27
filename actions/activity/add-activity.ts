@@ -2,8 +2,20 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import moment from "moment";
+import { QuarterEnum } from "@/lib/collection.types";
 
-export const addActivity = async (title: string, content: string, subjectId: string, fileUrl: string, linkUrl: string, grade: number, date_open: Date, date_close: Date, topic_id: string) => {
+export const addActivity = async (
+  title: string,
+  content: string,
+  subjectId: string,
+  fileUrl: string,
+  linkUrl: string,
+  grade: number,
+  date_open: Date,
+  date_close: Date,
+  topic_id: string,
+  quarter: QuarterEnum
+) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -23,6 +35,7 @@ export const addActivity = async (title: string, content: string, subjectId: str
     date_open: dateOpen,
     date_close: dateClose,
     topic_id,
+    quarter,
   });
   return { error };
 };

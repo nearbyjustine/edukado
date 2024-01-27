@@ -18,6 +18,7 @@ import LessonBox from "../lesson/lesson-box";
 import DiscussionBox from "../discussion/discussion-box";
 import Image from "next/image";
 import { format } from "date-fns";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const revalidate = 0;
 
@@ -46,6 +47,19 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
           {/* <ScanQRButton classroomid={subjectId} /> */}
           <CreateActivityButton subjectId={subjectId} />
         </div>
+      </div>
+      <div>
+        <Select>
+          <SelectTrigger className='w-full'>
+            <SelectValue placeholder='Set quarter' defaultValue='1st Quarter' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+            <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+            <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+            <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <Tabs defaultValue='all'>
         <TabsList>
@@ -115,7 +129,7 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
                 students.map((student) => (
                   <div className='border border-primary rounded-md px-2 py-4 font-semibold text-primary text-xl flex items-center gap-4' key={student.id}>
                     <span>
-                      {(student.profiles?.avatar_url && <Image className='w-16 h-16' src={student.profiles?.avatar_url} alt={"Profile pic"} />) || (
+                      {(student.profiles?.avatar_url && <Image width={16} height={16} className='w-16 h-16 rounded-full object-cover' src={student.profiles?.avatar_url} alt={"Profile pic"} />) || (
                         <div className='w-16 h-16 bg-primary rounded-full'></div>
                       )}
                     </span>
@@ -136,9 +150,9 @@ const DeliverablesDashboard = async ({ subject, gradeLevel, section, subjectId, 
                     student && (
                       <div className='border border-primary rounded-md px-2 py-4 font-semibold text-primary text-xl flex items-center gap-4' key={student.id}>
                         <span>
-                          {(student.profiles?.avatar_url && <Image className='w-16 h-16' src={student.profiles?.avatar_url} alt={"Profile pic"} />) || (
-                            <div className='w-16 h-16 bg-primary rounded-full'></div>
-                          )}
+                          {(student.profiles?.avatar_url && (
+                            <Image width={16} height={16} className='w-16 h-16 rounded-full object-cover' src={student.profiles?.avatar_url} alt={"Profile pic"} />
+                          )) || <div className='w-16 h-16 bg-primary rounded-full'></div>}
                         </span>
                         <span className='flex flex-col gap-1'>
                           {student.profiles?.first_name} {student.profiles?.last_name}

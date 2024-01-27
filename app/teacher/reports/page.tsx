@@ -9,7 +9,7 @@ import { TableCell } from "@david.kucsai/react-pdf-table/lib/TableCell";
 import { DataTableCell } from "@david.kucsai/react-pdf-table/lib/DataTableCell";
 import { TableBody } from "@david.kucsai/react-pdf-table/lib/TableBody";
 import { createClient } from "@/utils/supabase/client";
-import { Classroom, GradeLevelEnum, StudentInformation } from "@/lib/collection.types";
+import { Classroom, GradeLevelEnum, QuarterEnum, StudentInformation } from "@/lib/collection.types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { columns } from "./student-info-column";
 import { DataTable } from "./datatable";
@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, getDaysInMonth, getMonth } from "date-fns";
 import { Json } from "@/lib/database.types";
 import { generateColumn } from "./attendance-column";
+import { studentGradeColumns } from "./student-grades-column";
 
 Font.register({
   family: "Arial Narrow",
@@ -331,6 +332,16 @@ export type AttendanceJSONType = {
   date: string;
 };
 
+export type StudentGradesType = {
+  name: string;
+  activities_percentage: number;
+  quiz_percentage: number;
+  activities_total_points: number;
+  activities_student_total_points: number;
+  quiz_total_points: number;
+  quiz_students_total_points: number;
+};
+
 const ReportsPage = () => {
   const [data, setData] = useState<StudentInformationType[]>();
   const gradeLevels = ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"];
@@ -341,6 +352,32 @@ const ReportsPage = () => {
   const [monthAttendance, setMonthAttendance] = useState("0");
   const [attendance, setAttendance] = useState<AttendanceTableColumn[]>();
   const [attendanceColumn, setAttendanceColumn] = useState<any | undefined>();
+  const [quarter, setQuarter] = useState<QuarterEnum>("1st Quarter");
+  const [grades, setGrades] = useState<StudentGradesType[]>();
+
+  useEffect(() => {
+    const fetchAllGrades = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.rpc("get_summary_totals_per_student", { class_grade_level: gradeLevel, class_quarter: quarter, class_section: section });
+      console.log(data);
+      const gradesArray: StudentGradesType[] = [];
+      data?.map((v) => {
+        gradesArray.push({
+          name: v.name,
+          activities_percentage: v.student_answers_activities_total_points_sum / v.activities_total_points_sum,
+          quiz_percentage: v.quiz_total_points_activities_sum / v.quiz_total_points_sum,
+          activities_student_total_points: v.student_answers_activities_total_points_sum,
+          activities_total_points: v.activities_total_points_sum,
+          quiz_total_points: v.quiz_total_points_sum,
+          quiz_students_total_points: v.quiz_total_points_activities_sum,
+        });
+      });
+
+      setGrades(gradesArray);
+    };
+
+    fetchAllGrades();
+  }, [section, quarter]);
 
   useEffect(() => {
     const fetchAllSections = async () => {
@@ -556,7 +593,20 @@ const ReportsPage = () => {
               )}
             </div>
           </TabsContent>
-          <TabsContent value='grades'>Change your password here.</TabsContent>
+          <TabsContent value='grades'>
+            <Select onValueChange={(v) => setQuarter(v as QuarterEnum)}>
+              <SelectTrigger className='w-full'>
+                <SelectValue placeholder='Set quarter' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+                <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+                <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+                <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className='mt-5'>{grades && <DataTable columns={studentGradeColumns} data={grades as StudentGradesType[]} />}</div>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

@@ -12,7 +12,16 @@ export default async function EditLessonPage({ params }: { params: { id: string;
   }
   return (
     <div>
-      <LessonEdit topicId={lesson.topic_id || ""} content={lesson.content} title={lesson.title} fileUrl={lesson.file_url} linkUrl={lesson.link_url} lessonId={lesson.id} subjectId={params.id} />
+      <LessonEdit
+        topicId={lesson.topic_id || ""}
+        content={lesson.content}
+        title={lesson.title}
+        fileUrl={lesson.file_url}
+        linkUrl={lesson.link_url}
+        lessonId={String(lesson.id)}
+        subjectId={params.id}
+        quarter={lesson.quarter}
+      />
     </div>
   );
 }

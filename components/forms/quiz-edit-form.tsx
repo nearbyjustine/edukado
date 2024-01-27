@@ -45,6 +45,7 @@ export const QuizFormSchema = z
     date_close: z.date({ required_error: "Date to close is required" }),
     duration: z.coerce.number({ required_error: "Duration is required" }).min(0),
     topic_id: z.string(),
+    quarter: z.enum(["1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]),
   })
   .refine((data) => data.date_open.getTime() <= data.date_close.getTime(), {
     message: "Opening date must be earlier than closing date",
@@ -162,11 +163,34 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
               <FormItem>
                 <FormLabel>Topic</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className='w-[180px]'>
                       <SelectValue placeholder='Set topic' />
                     </SelectTrigger>
                     <SelectContent>{topics && topics.map((topic) => <SelectItem value={topic.id}>{topic.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='quarter'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quarter</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Set quarter' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+                      <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+                      <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+                      <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+                    </SelectContent>
                   </Select>
                 </FormControl>
                 <FormMessage />
@@ -208,14 +232,14 @@ const QuizEditForm = ({ subjectId, quizId }: { subjectId: string; quizId: string
                 <FormControl>
                   <Input {...field} type='number' min={0} />
                 </FormControl>
-                <FormDescription>Set duration of quiz in minutes. 0 means no duration.</FormDescription>
+                <FormDescription>Set duration of {type === "exam" ? "exam" : "quiz"} in minutes. 0 means no duration.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           ></FormField>
           <div className='flex justify-end gap-2'>
             <Button className='' type='submit'>
-              Update Quiz
+              Update {type === "exam" ? "Exam" : "Quiz"}
             </Button>
             <Button onClick={redirectToSubjectPage} type='button' className='' variant={"secondary"}>
               Proceed to Subject

@@ -36,6 +36,7 @@ const ActivityFormSchema = z.object({
     .optional(),
   url: z.string().url("Must be a valid url").optional(),
   topic_id: z.string(),
+  quarter: z.enum(["1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"]),
 });
 
 const LessonForm = ({ subjectId }: { subjectId: string }) => {
@@ -78,14 +79,14 @@ const LessonForm = ({ subjectId }: { subjectId: string }) => {
         const response = await uploadFile(IMFile);
         const fileUrl = (await response.json()) as { url: string };
         // const { error } = await addActivity(title, content, subjectId, fileUrl.url, linkUrl || "", grade, date_open, date_close, values.topic_id);
-        const { error } = await supabase.from("lessons").insert({ ...otherValues, subject_id: subjectId, file_url: fileUrl.url, link_url: linkUrl, teacher_id: user.id });
+        const { error } = await supabase.from("lessons").insert({ ...otherValues, subject_id: subjectId, file_url: fileUrl.url, link_url: linkUrl, teacher_id: user.id, quarter: otherValues.quarter });
         if (error) {
           console.error(error);
           return;
         }
       } else {
         // const { error } = await addActivity(title, content, subjectId, "", linkUrl || "", grade, date_open, date_close, values.topic_id);
-        const { error } = await supabase.from("lessons").insert({ ...otherValues, subject_id: subjectId, link_url: linkUrl, teacher_id: user.id });
+        const { error } = await supabase.from("lessons").insert({ ...otherValues, subject_id: subjectId, link_url: linkUrl, teacher_id: user.id, quarter: otherValues.quarter });
         if (error) {
           console.error(error);
           return;
@@ -206,6 +207,29 @@ const LessonForm = ({ subjectId }: { subjectId: string }) => {
                         </Link>
                       )}
                     </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='quarter'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quarter</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Set quarter' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='1st Quarter'>1st Quarter</SelectItem>
+                        <SelectItem value='2nd Quarter'>2nd Quarter</SelectItem>
+                        <SelectItem value='3rd Quarter'>3rd Quarter</SelectItem>
+                        <SelectItem value='4th Quarter'>4th Quarter</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

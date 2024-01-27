@@ -11,7 +11,7 @@ const EditDiscussionPage = async ({ params: { id, discussionId } }: { params: { 
   }
   return (
     <div>
-      <DiscussionEdit content={discussion.content} discussionId={discussion.id} subjectId={id} title={discussion.title} topicId={discussion.topic_id as string} />
+      <DiscussionEdit content={discussion.content} discussionId={discussion.id} subjectId={id} title={discussion.title} topicId={discussion.topic_id as string} quarter={discussion.quarter} />
     </div>
   );
 };
