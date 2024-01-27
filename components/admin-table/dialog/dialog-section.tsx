@@ -79,7 +79,7 @@ const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; 
               )}
               {!isEditing && currentAdviser && (
                 <div>
-                  <Link href={`/admin/teacher/${currentAdviserId}`} className='text-primary'>
+                  <Link href={`#`} className='text-primary'>
                     {currentAdviser}
                   </Link>
                 </div>
@@ -92,7 +92,7 @@ const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; 
                 <div className='flex flex-col gap-2'>
                   {students.map((student) => (
                     <div key={student.id} className=''>
-                      <Link href={`/admin/student/${student.id}`} className='text-primary'>
+                      <Link href={`#`} className='text-primary'>
                         {student.profiles?.first_name} {student.profiles?.last_name}
                       </Link>
 
