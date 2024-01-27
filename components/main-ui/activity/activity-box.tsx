@@ -37,20 +37,20 @@ const ActivityBox = ({ answer, maxPoints }: { answer: StudentAnswerActivity; max
     router.refresh();
   };
 
-  if (answer.profiles) {
+  if (answer.students?.profiles) {
     return (
       <div>
         <div className='relative flex flex-col gap-4 p-4 border rounded-lg select-none cursor-pointer'>
           <div className='absolute -top-3 -right-2 bg-primary p-2 text-primary-foreground rounded-md'>
             {answer.points}/{maxPoints}
           </div>
-          <h1 className='text-2xl underline font-bold'>{`${answer.profiles.first_name} ${answer.profiles.last_name}'s Answer`}</h1>
+          <h1 className='text-2xl underline font-bold'>{`${answer.students?.profiles.first_name} ${answer.students?.profiles.last_name}'s Answer`}</h1>
           <div>{parse(answer.content)}</div>
           <div>
             {answer.file_url && (
               <Link className='text-blue-400 hover:underline flex gap-2 items-center' href={answer.file_url}>
                 <ArrowDownToLine width={20} height={20} />
-                {`File that ${answer.profiles.first_name} sent`}
+                {`File that ${answer.students?.profiles.first_name} sent`}
               </Link>
             )}
           </div>
@@ -58,7 +58,7 @@ const ActivityBox = ({ answer, maxPoints }: { answer: StudentAnswerActivity; max
             {answer.link_url && (
               <Link className='text-blue-400 hover:underline flex gap-2 items-center' href={answer.link_url}>
                 <Link2 width={20} height={20} />
-                {`Link that ${answer.profiles.first_name} sent`}
+                {`Link that ${answer.students?.profiles.first_name} sent`}
               </Link>
             )}
           </div>

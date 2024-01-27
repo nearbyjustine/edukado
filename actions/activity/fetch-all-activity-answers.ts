@@ -11,7 +11,7 @@ export async function fetchAllActivityAnswers(id: string) {
     .from("student_answers_activity")
     .select(
       `*,
-    profiles (*)
+    students(*, profiles!students_id_fkey(*))
   `
     )
     .eq("activity_id", id);

@@ -13,7 +13,8 @@ export default async function ActivityPage({ params }: { params: { id: string; a
 
   const { data: activity, error } = await fetchActivityById(params.activityId);
   const { data: answers, error: answerError } = await fetchAllActivityAnswers(params.activityId);
-  if (error || !activity) {
+  if (error || !activity || answerError) {
+    console.log(error, answerError);
     return <div>Error: Something must have happened</div>;
   }
 
