@@ -7,6 +7,7 @@ import { ArrowDownToLine, Link2 } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 0;
+// hi
 
 export default async function ActivityPage({ params }: { params: { id: string; activityId: string } }) {
   const { data: activity, error } = await fetchActivityById(params.activityId);
