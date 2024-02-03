@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import React from "react";
 import { StudentColumns, TeacherColumns } from "./student-column";
 import { Classroom } from "@/lib/collection.types";
+import ImportStudentsButton from "@/components/buttons/import-students-button";
+import ImportTeachersButton from "@/components/buttons/import-teacher-button";
 
 export type PeopleAdmin = {
   classroom_id: string;
@@ -56,14 +58,20 @@ const PeoplePage = async () => {
     };
   });
   return (
-    <div className='mt-10 flex gap-4'>
-      <div className='flex-1'>
-        <div className='font-bold'>Students</div>
-        {studentsArray && <DataTable columns={StudentColumns} data={studentsArray} />}
+    <div>
+      <div className='flex gap-2'>
+        <ImportStudentsButton />
+        <ImportTeachersButton />
       </div>
-      <div className='flex-1'>
-        <div className='font-bold'>Teachers</div>
-        {teachers && <DataTable columns={TeacherColumns} data={teachersArray} />}
+      <div className='mt-10 flex gap-4'>
+        <div className='flex-1'>
+          <div className='font-bold'>Students</div>
+          {studentsArray && <DataTable columns={StudentColumns} data={studentsArray} />}
+        </div>
+        <div className='flex-1'>
+          <div className='font-bold'>Teachers</div>
+          {teachers && <DataTable columns={TeacherColumns} data={teachersArray} />}
+        </div>
       </div>
     </div>
   );

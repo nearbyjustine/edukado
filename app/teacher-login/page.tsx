@@ -36,9 +36,9 @@ export default function AuthenticationPage() {
           <Tabs defaultValue='login' className='flex flex-col justify-center'>
             <TabsList className='mx-auto'>
               <TabsTrigger value='login'>Log In</TabsTrigger>
-              <TabsTrigger value='sign-up'>Sign Up</TabsTrigger>
+              {/* <TabsTrigger value='sign-up'>Sign Up</TabsTrigger> */}
             </TabsList>
-            <TabsContent value='sign-up'>
+            {/* <TabsContent value='sign-up'>
               <div className='mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
                 <div className='flex flex-col space-y-2 text-center'>
                   <h1 className='text-2xl font-semibold tracking-tight'>Create an account</h1>
@@ -56,7 +56,7 @@ export default function AuthenticationPage() {
                   </Link>
                 </p>
               </div>
-            </TabsContent>
+            </TabsContent> */}
             <TabsContent value='login'>
               <div className='mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
                 <div className='flex flex-col space-y-2 text-center'>

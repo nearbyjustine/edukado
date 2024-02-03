@@ -890,16 +890,19 @@ export interface Database {
       teachers: {
         Row: {
           created_at: string
+          grade_level: Database["public"]["Enums"]["grade_level_enum"] | null
           id: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          grade_level?: Database["public"]["Enums"]["grade_level_enum"] | null
           id?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          grade_level?: Database["public"]["Enums"]["grade_level_enum"] | null
           id?: string
           user_id?: string
         }
@@ -959,6 +962,20 @@ export interface Database {
           self_student_quiz_id: number
         }
         Returns: number
+      }
+      create_user_student: {
+        Args: {
+          email: string
+          password: string
+        }
+        Returns: undefined
+      }
+      create_user_teacher: {
+        Args: {
+          email: string
+          password: string
+        }
+        Returns: undefined
       }
       get_grades: {
         Args: {
