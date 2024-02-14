@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { createClient } from "@/utils/supabase/client";
 import TeacherSubjectComboBox from "../combo-box/combo-box-teacher-subject";
-import { User } from "@/lib/collection.types";
+import { GradeLevelEnum, User } from "@/lib/collection.types";
 
 const ChangeSubjectTeacherDialog = ({
   classroomId,
@@ -24,6 +24,7 @@ const ChangeSubjectTeacherDialog = ({
   const [teacherId, setTeacherId] = useState(currentTeacherId);
   const [currentTeacher, setCurrentTeacher] = useState<User | null>();
   const [open, setOpen] = useState(false);
+  const [gradeLevel, setGradeLevel] = useState<GradeLevelEnum | null>();
 
   useEffect(() => {
     const fetchCurrentSubjectTeacher = async () => {
@@ -31,6 +32,7 @@ const ChangeSubjectTeacherDialog = ({
       const { data, error } = await supabase.from("subjects").select("*, teachers(*, profiles(*))").eq("id", subjectId).single();
       if (!data || error) return console.error(error);
       if (data.teachers) {
+        setGradeLevel(data.teachers.grade_level);
         setTeacherId(data.teachers.id);
         setCurrentTeacher(data.teachers.profiles);
       }
@@ -63,7 +65,7 @@ const ChangeSubjectTeacherDialog = ({
             <DrawerTitle>{subjectName}: Add Teacher</DrawerTitle>
           </DrawerHeader>
           <div>
-            <TeacherSubjectComboBox currentTeacherName={`${currentTeacher?.first_name} ${currentTeacher?.last_name}`} setTeacherId={setTeacherId} className='w-full' />
+            <TeacherSubjectComboBox gradeLevel={gradeLevel} currentTeacherName={`${currentTeacher?.first_name} ${currentTeacher?.last_name}`} setTeacherId={setTeacherId} className='w-full' />
           </div>
           <DrawerFooter>
             <Button onClick={updateClassroomTeacher}>Submit</Button>

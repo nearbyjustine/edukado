@@ -33,7 +33,7 @@ export const classroomColumns: ColumnDef<ClassroomWithStudents>[] = [
       );
     },
     cell: ({ row }) => {
-      return <DialogSection row={row} classroomId={row.getValue("id")} />;
+      return <DialogSection row={row} classroomId={row.getValue("id")} gradeLevel={row.getValue("grade_level")} />;
     },
   },
   {

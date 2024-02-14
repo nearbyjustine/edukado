@@ -17,7 +17,7 @@ type StudentList = {
   id: string;
 };
 
-const StudentComboBox = ({ className, setStudentId }: { className?: string; setStudentId: Dispatch<SetStateAction<string>> }) => {
+const StudentComboBox = ({ className, setStudentId, classroomId }: { className?: string; setStudentId: Dispatch<SetStateAction<string>>; classroomId: string }) => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [students, setStudents] = useState<StudentList[]>();
@@ -25,7 +25,11 @@ const StudentComboBox = ({ className, setStudentId }: { className?: string; setS
   useEffect(() => {
     const fetchAllStudents = async () => {
       const supabase = createClient();
-      const { data, error } = await supabase.from("students").select("*, profiles!students_user_id_fkey(*)");
+      const classroom = await supabase.from("classrooms").select("*").eq("id", classroomId).single();
+      if (!classroom.data || classroom.error) return console.error(classroom.error);
+      console.log(classroom.data.grade_level);
+      const { data, error } = await supabase.from("students").select("*, profiles!students_user_id_fkey(*), classrooms!inner(*)").match({ "classrooms.grade_level": classroom.data.grade_level });
+      console.log(data, error);
       if (error || !data) return console.error(error);
       setStudents(data.map((student) => ({ name: `${student.profiles?.first_name} ${student.profiles?.last_name}`, id: student.id })));
     };

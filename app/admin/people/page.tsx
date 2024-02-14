@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import React from "react";
 import { StudentColumns, TeacherColumns } from "./student-column";
-import { Classroom } from "@/lib/collection.types";
+import { Classroom, GradeLevelEnum } from "@/lib/collection.types";
 import ImportStudentsButton from "@/components/buttons/import-students-button";
 import ImportTeachersButton from "@/components/buttons/import-teacher-button";
 
@@ -26,12 +26,16 @@ export type PeopleAdmin = {
 };
 
 export type StudentsArray = {
+  id: string;
   name: string;
-  grade_and_section: string;
+  grade: GradeLevelEnum | undefined;
+  section: string | undefined;
 };
 
 export type TeachersArray = {
+  id: string;
   name: string;
+  grade: GradeLevelEnum | null;
 };
 
 const PeoplePage = async () => {
@@ -48,13 +52,17 @@ const PeoplePage = async () => {
 
   const studentsArray = students.data.map((v) => {
     return {
+      id: v.id,
       name: v.profiles?.last_name + ", " + v.profiles?.first_name,
-      grade_and_section: v.classrooms?.grade_level + " - " + v.classrooms?.section,
+      grade: v.classrooms?.grade_level,
+      section: v.classrooms?.section,
     };
   });
   const teachersArray = teachers.data.map((v) => {
     return {
+      id: v.id,
       name: v.profiles?.last_name + ", " + v.profiles?.first_name,
+      grade: v.grade_level,
     };
   });
   return (

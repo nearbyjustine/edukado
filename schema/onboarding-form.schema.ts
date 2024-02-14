@@ -7,7 +7,7 @@ export const formSchema = z.object({
   middle_name: z.string({ invalid_type_error: "Name must be a string" }).optional(),
   last_name: z.string({ required_error: "Last name is required", invalid_type_error: "Name must be a string" }).min(1, { message: "This field is required" }),
   gender: z.string({ required_error: "Gender is required" }).min(1, { message: "This field is required" }),
-  birth_date: z.date({ required_error: "Date of birth is required" }),
+  birth_date: z.date({ required_error: "Date of birth is required" }).max(new Date(new Date().setFullYear(new Date().getFullYear() - 5)), { message: "Too young" }),
   avatar_image: z
     .custom<File>((val) => val instanceof File, "Please upload a file")
     .refine((file) => file?.size <= MAX_FILE_SIZE, { message: `Max image size is 5MB.` })

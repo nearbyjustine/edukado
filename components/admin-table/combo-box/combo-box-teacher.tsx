@@ -19,6 +19,7 @@ type TeachersList = {
 const TeacherComboBox = ({
   name,
   id,
+  gradeLevel,
   sectionId,
   setCurrentAdviser,
   setIsEditing,
@@ -27,6 +28,7 @@ const TeacherComboBox = ({
   name: string;
   id: string | undefined;
   sectionId: string;
+  gradeLevel: string;
   setCurrentAdviser: React.Dispatch<React.SetStateAction<string>>;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentAdviserId: React.Dispatch<React.SetStateAction<string>>;
@@ -40,7 +42,7 @@ const TeacherComboBox = ({
   useEffect(() => {
     const fetchAllTeachers = async () => {
       const supabase = createClient();
-      const { data, error } = await supabase.from("teachers").select("*, profiles(*)");
+      const { data, error } = await supabase.from("teachers").select("*, profiles(*)").eq("grade_level", gradeLevel);
       if (error || !data) return console.error(error);
       const teacherList: TeachersList[] = data.map((v) => ({ name: `${v.profiles?.first_name} ${v.profiles?.last_name}`, id: v.id }));
       return setTeachers(teacherList);

@@ -10,6 +10,7 @@ import { createClient } from "@/utils/supabase/client";
 const AddStudentToClassroomButtonDialogButton = ({ classroomId, fetch }: { classroomId: string; fetch: () => Promise<void> }) => {
   const [studentId, setStudentId] = useState("");
   const [open, setOpen] = useState(false);
+  console.log(classroomId);
 
   const updateClassroomStudent = async () => {
     const supabase = createClient();
@@ -35,7 +36,7 @@ const AddStudentToClassroomButtonDialogButton = ({ classroomId, fetch }: { class
             <DrawerTitle>Add Student</DrawerTitle>
           </DrawerHeader>
           <div>
-            <StudentComboBox setStudentId={setStudentId} className='w-full' />
+            <StudentComboBox setStudentId={setStudentId} classroomId={classroomId} className='w-full' />
           </div>
           <DrawerFooter>
             <Button onClick={updateClassroomStudent}>Submit</Button>

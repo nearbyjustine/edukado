@@ -15,7 +15,7 @@ import AddStudentToClassroomButtonDialogButton from "./dialog-add-student";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChangeSubjectTeacherDialog from "./dialog-change-subject-teacher";
 
-const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; classroomId: string }) => {
+const DialogSection = ({ row, classroomId, gradeLevel }: { row: Row<ClassroomWithStudents>; classroomId: string; gradeLevel: string }) => {
   const [sectionDetails, setSectionDetails] = useState<ClassroomWithAdviser>();
   const [students, setStudents] = useState<Student[] | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -24,14 +24,17 @@ const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; 
 
   const fetchSectionDetails = async () => {
     const supabase = createClient();
-    const { data, error } = await supabase.from("classrooms").select("*, teachers(*, profiles(*)), subjects(*)").eq("id", classroomId).single();
+    console.log(gradeLevel);
+    const { data, error } = await supabase.from("classrooms").select("*, teachers(*, profiles(*)), subjects(*)").match({ id: classroomId }).single();
+    // const { data: teachers, error: teachersError} = await supabase.from('teachers').select('*').eq('grade_level', gradeLevel);
     if (!data || error) return console.error(error);
+    // if (!teachers || teachersError) return console.error(teachersError);
     if (data.teachers?.profiles) {
       setCurrentAdviser(`${data.teachers.profiles.first_name} ${data.teachers.profiles.last_name}`);
       setCurrentAdviserId(data.teachers.id);
     }
 
-    const { data: subjects, error: subjectsError } = await supabase.from("subjects").select("*, ");
+    // const { data: subjects, error: subjectsError } = await supabase.from("subjects").select("*, ");
 
     setSectionDetails(data);
 
@@ -67,6 +70,7 @@ const DialogSection = ({ row, classroomId }: { row: Row<ClassroomWithStudents>; 
                 <div>
                   {sectionDetails && (
                     <TeacherComboBox
+                      gradeLevel={gradeLevel}
                       sectionId={sectionDetails.id}
                       id={sectionDetails.teachers?.id}
                       name={currentAdviser}
