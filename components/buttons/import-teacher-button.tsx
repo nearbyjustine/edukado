@@ -36,6 +36,7 @@ const ImportTeachersButton = () => {
       values.map(async (v) => {
         const { error } = await supabase.rpc("create_user_teacher", { email: v.email, password: v.password });
         if (error) return console.error(error);
+        alert("Successfully Imported");
       });
     } else {
       console.error("empty or incorrect csv format");
