@@ -8,10 +8,6 @@ import DialogSection from "./dialog/dialog-section";
 
 export const classroomColumns: ColumnDef<ClassroomWithStudents>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
-  },
-  {
     accessorKey: "grade_level",
     header: ({ column }) => {
       return (
